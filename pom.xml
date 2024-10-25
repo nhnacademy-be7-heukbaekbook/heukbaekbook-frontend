@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.nhnacademy</groupId>
-    <artifactId>heukbaek-frontend</artifactId>
+    <artifactId>heukbaekbook-frontend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>heukbaek-frontend</name>
     <description>heukbaek-frontend</description>
