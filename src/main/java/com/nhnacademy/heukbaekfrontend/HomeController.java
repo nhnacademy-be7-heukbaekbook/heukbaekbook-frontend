@@ -6,10 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class IndexController {
+public class HomeController {
 
     @GetMapping("/")
-    public String index(HttpServletRequest request, Model model) {
+    public String home(HttpServletRequest request, Model model) {
         String ip = request.getHeader("x-forwarded-for");
 
         if (ip == null) {
@@ -17,6 +17,6 @@ public class IndexController {
         }
 
         model.addAttribute("ip", ip);
-        return "index";
+        return "home";
     }
 }
