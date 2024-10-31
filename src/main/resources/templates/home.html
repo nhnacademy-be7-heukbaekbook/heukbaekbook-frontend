@@ -8,6 +8,9 @@
 <body>
 <!-- 헤더 -->
 <header>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
     <h1>흑백문고</h1>
     <nav>
         <ul>
@@ -15,7 +18,8 @@
             <li><a href="/categories">카테고리</a></li>
             <li><a href="/cart">장바구니</a></li>
             <li><a href="/login">로그인</a></li>
-            <li><a href="/admins/login">관리자 로그인</a></li>
+            <li><a href="/login">마이페이지</a></li>
+<!--            <li><a href="/admins/login">관리자 로그인</a></li>-->
         </ul>
     </nav>
 </header>
@@ -28,41 +32,19 @@
     </form>
 </section>
 
-<!-- 인기 도서 섹션 -->
-<section id="popular-books">
-    <h2>인기 도서</h2>
-    <div class="book-list">
-        <div th:each="book : ${popularBooks}">
-            <div class="book-item">
-                <img th:src="@{${book.thumbnailUrl}}" alt="도서 이미지">
-                <h3 th:text="${book.title}">도서 제목</h3>
-                <p th:text="${book.author}">저자</p>
-                <p th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', '.', 0)}">가격</p>
-                <a th:href="@{/book/{id}(id=${book.id})}">자세히 보기</a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- 추천 도서 섹션 -->
-<section id="recommended-books">
-    <h2>추천 도서</h2>
-    <div class="book-list">
-        <div th:each="book : ${recommendedBooks}">
-            <div class="book-item">
-                <img th:src="@{${book.thumbnailUrl}}" alt="도서 이미지">
-                <h3 th:text="${book.title}">도서 제목</h3>
-                <p th:text="${book.author}">저자</p>
-                <p th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', '.', 0)}">가격</p>
-                <a th:href="@{/book/{id}(id=${book.id})}">자세히 보기</a>
-            </div>
-        </div>
-    </div>
+<!-- 흑수저 및 백수저 도서 섹션 -->
+<section id="book-buttons">
+    <form th:action="@{/blackBooks}" method="get" style="display: inline;">
+        <button type="submit" class="book-section-button">흑수저</button>
+    </form>
+    <form th:action="@{/whiteBooks}" method="get" style="display: inline;">
+        <button type="submit" class="book-section-button white-button">백수저</button>
+    </form>
 </section>
 
 <!-- 전체 도서 목록 섹션 -->
 <section id="all-books">
-    <h2>전체 도서 목록</h2>
+<!--    <h2>전체 도서 목록</h2>-->
     <div class="book-list">
         <div th:each="book : ${allBooks}">
             <div class="book-item">

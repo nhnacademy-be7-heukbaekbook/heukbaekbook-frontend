@@ -1,13 +1,14 @@
 package com.nhnacademy.heukbaekfrontend.cart.service;
 
+import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 
-import java.util.Map;
+import java.util.List;
 
 
 public interface CartService {
 
-    Map<String, Integer> getBooksFromCart(String sessionId);
+    List<Book> getBooksFromCart(String sessionId);
 
     CartCreateResponse createBookToCart(String sessionId, Long bookId, int quantity);
 

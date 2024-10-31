@@ -1,68 +1,187 @@
+/* 스타일 전체 설정 */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
+    color: #333;
+    background:
+            linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), /* 배경 투명도 설정 */
+            url('/images/logo.png'); /* 로고 이미지 경로 */
+    background-size: 200px 200px; /* 로고 크기 설정 */
+    background-repeat: no-repeat;
+    background-position: center; /* 중앙에 위치 */
+    background-attachment: fixed; /* 페이지 스크롤 시에도 고정 */
+    background-color: #f5f5f5; /* 흰색 배경 */
+    margin: 0;
+    padding: 0;
 }
 
-.login-container {
-    width: 300px;
-    margin: 100px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    text-align: center;
-}
-
-h2 {
-    margin-bottom: 20px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-    text-align: left;
-}
-
-label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
-
-button {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    background-color: #5c9ded;
+/* 헤더와 푸터 스타일 */
+header, footer {
+    display: flex;
+    align-items: center;
+    background-color: #000;
     color: #fff;
+    padding: 1em 2em;
+}
+
+/* 로고 스타일 */
+.logo {
+    width: 100px; /* 로고 크기 조정 */
+    height: auto;
+    margin-right: 15px; /* 로고와 제목 간의 간격 */
+}
+
+/* 헤더 타이틀 스타일 */
+header h1 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+/* 내비게이션 메뉴 오른쪽 정렬 */
+nav {
+    margin-left: auto;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* 버튼 섹션 정렬 */
+#book-buttons {
+    display: flex;
+    justify-content: center; /* 버튼을 가운데로 정렬 (옵션) */
+    gap: 10px; /* 버튼 간 간격 */
+    margin-top: 20px;
+}
+
+/* 버튼 섹션 정렬 */
+#book-buttons {
+    display: flex;
+    justify-content: center; /* 버튼을 가운데로 정렬 */
+    gap: 10px; /* 버튼 간 간격 */
+    margin-top: 20px;
+}
+
+/* 흑수저, 백수저 버튼 기본 스타일 */
+.book-section-button {
+    padding: 15px 30px;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+/* 흑수저 버튼 스타일 */
+.book-section-button {
+    background-color: #000;
+    color: #fff;
+}
+
+.book-section-button:hover {
+    background-color: #333;
+}
+
+/* 백수저 버튼 스타일 */
+.white-button {
+    background-color: #fff;
+    color: #000;
+    border: 1px solid #ccc;
+}
+
+.white-button:hover {
+    background-color: #f0f0f0;
+}
+
+/* 검색 창 스타일 */
+#search-bar form {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+#search-bar input[type="text"] {
+    padding: 10px;
+    border: 1px solid #333;
+    border-radius: 5px 0 0 5px;
+    width: 300px;
+}
+
+#search-bar button {
+    padding: 10px 15px;
+    border: 1px solid #333;
+    background-color: #000;
+    color: #fff;
+    border-radius: 0 5px 5px 0;
     cursor: pointer;
 }
 
-button:hover {
-    background-color: #4b8bd3;
+/* 섹션 제목 스타일 */
+h2 {
+    text-align: center;
+    color: #000;
 }
 
-p {
-    margin-top: 15px;
-    font-size: 14px;
+/* 도서 목록 스타일 */
+.book-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin: 20px 0;
 }
 
-a {
-    color: #5c9ded;
+.book-item {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.book-item:hover {
+    transform: scale(1.05);
+}
+
+.book-item img {
+    max-width: 100%;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.book-item h3, .book-item p, .book-item a {
+    color: #000;
+}
+
+.book-item a {
+    text-decoration: none;
+    color: #555;
+    font-weight: bold;
+}
+
+/* 푸터 내비게이션 링크 스타일 */
+footer nav a {
+    color: #ccc;
+    margin: 0 10px;
     text-decoration: none;
 }
 
-a:hover {
-    text-decoration: underline;
+footer nav a:hover {
+    color: #fff;
 }
