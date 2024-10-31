@@ -1,13 +1,18 @@
 package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
+import com.nhnacademy.heukbaekfrontend.book.domain.Book;
+import com.nhnacademy.heukbaekfrontend.book.dto.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
+import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -16,15 +21,36 @@ public class CartServiceImpl implements CartService {
 
     private final HashOperations<String, String, Integer> hashOperations;
 
-    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate) {
+    private final BookClient bookClient;
+
+    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate, BookClient bookClient) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
+        this.bookClient = bookClient;
     }
 
 
     @Override
-    public Map<String, Integer> getBooksFromCart(String sessionId) {
-        return hashOperations.entries(sessionId);
+    public List<Book> getBooksFromCart(String sessionId) {
+        Map<String, Integer> entries = hashOperations.entries(sessionId);
+        List<Long> bookIds = entries.keySet().stream()
+                .map(Long::parseLong)
+                .toList();
+
+        List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+
+        return booksSummary.stream()
+                .map(bookSummaryResponse -> {
+                    Integer quantity = entries.get(bookSummaryResponse.id().toString());
+                    return new Book(
+                            bookSummaryResponse.id(),
+                            bookSummaryResponse.title(),
+                            bookSummaryResponse.price(),
+                            bookSummaryResponse.discountRate(),
+                            quantity
+                    );
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
