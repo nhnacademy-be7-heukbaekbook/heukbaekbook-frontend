@@ -12,4 +12,7 @@ public interface LoginClient {
 
     @PostMapping("/api/auth/login")
     ResponseEntity<String> login(@RequestBody LoginRequest loginRequest);
+
+    @PostMapping("/api/auth/admin/login")
+    ResponseEntity<String> adminLogin(@RequestBody LoginRequest loginRequest);
 }

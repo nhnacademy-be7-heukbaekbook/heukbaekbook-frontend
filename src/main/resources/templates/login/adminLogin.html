@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>관리자 로그인</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
         body {
@@ -134,10 +134,10 @@
 <body>
 <!-- 로그인 폼 -->
 <div class="login-container">
-    <h2>로그인</h2>
+    <h2>관리자 로그인</h2>
     <div th:if="${error}" class="error-message" th:text="${error}"></div>
-    <form id="loginForm" th:action="@{/login}" method="post">
-    <div class="form-group">
+    <form id="loginForm" th:action="@{/admins/login}" method="post">
+        <div class="form-group">
             <label for="loginId">아이디</label>
             <input type="text" id="loginId" name="loginId" placeholder="아이디를 입력하세요" required>
         </div>
@@ -147,7 +147,6 @@
         </div>
         <button type="submit">로그인</button>
     </form>
-    <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
 </div>
 </body>
 </html>
