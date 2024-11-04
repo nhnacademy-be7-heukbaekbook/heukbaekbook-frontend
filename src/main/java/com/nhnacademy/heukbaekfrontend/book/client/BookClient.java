@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(value = "bookClient", url = "http://localhost:8082/api/books")
+@FeignClient(value = "bookClient", url = "http://localhost:8084/api/books")
 public interface BookClient {
 
     @GetMapping("/summary")

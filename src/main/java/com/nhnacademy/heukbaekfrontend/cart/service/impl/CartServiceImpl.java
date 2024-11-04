@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -50,7 +49,7 @@ public class CartServiceImpl implements CartService {
                             quantity
                     );
                 })
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
