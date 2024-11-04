@@ -1,4 +1,4 @@
-package com.nhnacademy.heukbaekfrontend.config;
+package com.nhnacademy.heukbaekfrontend.common.config;
 
 import feign.okhttp.OkHttpClient;
 import org.springframework.context.annotation.Bean;
