@@ -29,6 +29,6 @@ public class AdminLoginController {
             return "/login/adminLogin";
         }
 
-        return "redirect:/admins/dashboard";
+        return "redirect:/admins/home";
     }
 }
