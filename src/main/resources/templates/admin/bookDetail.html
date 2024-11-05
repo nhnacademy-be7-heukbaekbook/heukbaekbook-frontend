@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 상세 정보</title>
+    <!-- 스타일 시트 추가 -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* 글로벌 폰트 및 기본 스타일 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            color: #2c3e50;
+        }
+        /* 도서 상세 정보 컨테이너 스타일 */
+        .book-detail-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+        }
+        .book-image {
+            flex: 1 1 300px;
+            max-width: 300px;
+            margin-right: 40px;
+            text-align: center;
+        }
+        .book-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .book-info {
+            flex: 2 1 600px;
+        }
+        .book-info h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #34495e;
+        }
+        .book-info .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .book-info .info-table th,
+        .book-info .info-table td {
+            text-align: left;
+            padding: 10px 0;
+        }
+        .book-info .info-table th {
+            width: 120px;
+            color: #34495e;
+            font-weight: bold;
+            vertical-align: top;
+        }
+        .book-info .info-table td {
+            color: #2c3e50;
+        }
+        .book-info .content {
+            margin-top: 30px;
+        }
+        .book-info .content h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #2980b9;
+            border-bottom: 2px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .book-info .content div {
+            margin-bottom: 30px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        /* 뒤로 가기 버튼 */
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 24px;
+            background-color: #2980b9;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-button:hover {
+            background-color: #1f618d;
+        }
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .book-detail-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .book-image {
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+            .book-info {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 -->
+<header>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>흑백문고</h1>
+    <nav>
+        <ul>
+            <li><a href="/">홈</a></li>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/login">로그인</a></li>
+            <li><a href="/mypage">마이페이지</a></li>
+        </ul>
+    </nav>
+</header>
+
+<!-- 도서 상세 정보 -->
+<section class="book-detail-container">
+    <div class="book-image">
+        <img th:src="@{${book.imageUrl}}" alt="도서 이미지">
+    </div>
+    <div class="book-info">
+        <h2 th:text="${book.title}">도서 제목</h2>
+        <table class="info-table">
+            <tr>
+                <th>저자</th>
+                <td th:text="${#strings.arrayJoin(book.authors, ', ')}">저자 목록</td>
+            </tr>
+            <tr>
+                <th>출판사</th>
+                <td th:text="${book.publisher}">출판사 이름</td>
+            </tr>
+            <tr>
+                <th>출판일</th>
+                <td th:text="${book.publication}">출판일</td>
+            </tr>
+            <tr>
+                <th>ISBN</th>
+                <td th:text="${book.isbn}">ISBN 번호</td>
+            </tr>
+            <tr>
+                <th>정가</th>
+                <td><span th:text="${book.standardPrice}">정가</span>원</td>
+            </tr>
+            <tr>
+                <th>할인율</th>
+                <td><span th:text="${book.discountRate}">할인율</span>%</td>
+            </tr>
+            <tr>
+                <th>재고</th>
+                <td><span th:text="${book.stock}">재고 수량</span>권</td>
+            </tr>
+            <tr>
+                <th>카테고리</th>
+                <td th:text="${#strings.arrayJoin(book.categories, ', ')}">카테고리 목록</td>
+            </tr>
+            <tr>
+                <th>태그</th>
+                <td th:text="${#strings.arrayJoin(book.tags, ', ')}">태그 목록</td>
+            </tr>
+            <tr>
+                <th>도서 상태</th>
+                <td>
+                    <span th:switch="${book.bookStatus}">
+                        <span th:case="'IN_STOCK'">재고 있음</span>
+                        <span th:case="'OUT_OF_STOCK'">품절</span>
+                        <span th:case="'DISCONTINUED'">절판</span>
+                        <span th:case="'DELETED'">삭제됨</span>
+                        <span th:case="*">알 수 없음</span>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>포장 가능</th>
+                <td th:text="${book.isPackable} ? '가능' : '불가능'">포장 가능 여부</td>
+            </tr>
+        </table>
+        <div class="content">
+            <h3>목차</h3>
+            <div th:utext="${book.index}">목차 내용</div>
+        </div>
+        <div class="content">
+            <h3>설명</h3>
+            <div th:utext="${book.description}">설명 내용</div>
+        </div>
+        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
+    </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
+</footer>
+</body>
+</html>

@@ -1,3 +1,23 @@
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 5000
+        loggerLevel: basic
+
+nhncloud:
+  keymanager:
+    appKey: 500rMJPT021TnyNl
+    userAccessKeyId: j8vqyIPtFlYonUwbGB7e
+    secretAccessKey: 3Ds4nuzS8pYtC3f8
+
+redis:
+  key: "8bf046001ecc4ee09792d17bfa05db73"
+
 spring:
-  application:
-    name: heukbaek-frontend
+  cloud:
+    config:
+      enabled: false
+  main:
+    allow-bean-definition-overriding: true

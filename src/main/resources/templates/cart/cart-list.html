@@ -2,9 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>흑백문고</title>
+  <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
 </head>
 <body>
+
+<!-- 헤더 -->
+<header>
+  <a href="/">
+    <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+  </a>
+  <nav>
+    <ul>
+      <li><a href="/categories">카테고리</a></li>
+      <li><a href="/cart">장바구니</a></li>
+      <li><a href="/login">로그인</a></li>
+      <li><a href="/login">마이페이지</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section>
+    <div class="book-list">
+      <!-- Each book item in the cart -->
+      <div class="book-item" th:each="book : ${cart}">
+        <img th:src="${book.imageUrl}" alt="Book Image">
+        <h3 th:text="${book.title}">Book Title</h3>
+        <p th:text="'Price: $' + ${book.price}">Price</p>
+        <p th:text="'Quantity: ' + ${book.quantity}">Quantity</p>
+        <a href="#" class="white-button">Remove from Cart</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; 2024 흑백문고</p>
+  <nav>
+    <a href="/about">회사 소개</a> |
+    <a href="/contact">문의하기</a> |
+    <a href="/terms">이용 약관</a>
+  </nav>
+</footer>
 
 </body>
 </html>

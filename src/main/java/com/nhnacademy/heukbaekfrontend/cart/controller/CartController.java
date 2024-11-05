@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.cart.controller;
 
+import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartUpdateRequest;
@@ -11,8 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Map;
+import java.util.List;
 
 /**
  * 장바구니 컨트롤러
@@ -31,13 +33,12 @@ public class CartController {
 
     // 장바구니에 있는 모든 책 조회
     @GetMapping
-    public ResponseEntity<Map<String, Integer>> getBooksFromCart(HttpServletRequest request) {
+    public ModelAndView getBooksFromCart(HttpServletRequest request) {
         String sessionId = request.getSession().getId();
         log.info("sessionId: {}", sessionId);
-//        List<BookResponse> cart = cartService.getBooksFromCart(sessionId);
+        List<Book> cart = cartService.getBooksFromCart(sessionId);
 
-//        return new ModelAndView("/cart/cart-list").addObject("cart", cart);
-        return ResponseEntity.ok(cartService.getBooksFromCart(sessionId));
+        return new ModelAndView("/cart/cart-list").addObject("cart", cart);
     }
 
     // 장바구니에 책 조회

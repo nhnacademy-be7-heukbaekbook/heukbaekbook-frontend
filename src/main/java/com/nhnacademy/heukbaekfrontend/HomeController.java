@@ -1,11 +1,13 @@
 package com.nhnacademy.heukbaekfrontend;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@EnableFeignClients
 public class HomeController {
 
     @GetMapping("/")
