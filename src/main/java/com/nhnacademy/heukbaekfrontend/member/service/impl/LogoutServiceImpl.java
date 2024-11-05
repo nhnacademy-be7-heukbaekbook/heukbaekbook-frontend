@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.member.service.impl;
 
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.member.client.LogoutClient;
 import com.nhnacademy.heukbaekfrontend.member.service.LogoutService;
 import jakarta.servlet.http.Cookie;
@@ -14,19 +15,13 @@ import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInte
 @RequiredArgsConstructor
 public class LogoutServiceImpl implements LogoutService {
     private final LogoutClient logoutClient;
+    private final CookieUtil cookieUtil;
 
     @Override
     public void logout(HttpServletResponse response) {
         logoutClient.logout();
 
-        clearCookie(response, ACCESS_TOKEN);
-        clearCookie(response, REFRESH_TOKEN);
-    }
-
-    private void clearCookie(HttpServletResponse response, String cookieName) {
-        Cookie cookie = new Cookie(cookieName, null);
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
+        cookieUtil.deleteCookie(response, ACCESS_TOKEN);
+        cookieUtil.deleteCookie(response, REFRESH_TOKEN);
     }
 }
