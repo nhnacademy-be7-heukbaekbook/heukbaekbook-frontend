@@ -1,6 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.member.service.impl;
 
-import com.nhnacademy.heukbaekfrontend.member.client.AuthClient;
+import com.nhnacademy.heukbaekfrontend.member.client.LogoutClient;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -18,10 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class LogoutServiceImplTest {
 
     @Mock
-    private AuthClient authClient;
-
-    @Mock
-    private HttpServletRequest request;
+    private LogoutClient logoutClient;
 
     @Mock
     private HttpServletResponse response;
@@ -33,7 +30,7 @@ class LogoutServiceImplTest {
     void testLogin() {
         logoutService.logout(response);
 
-        verify(authClient, times(1)).logout();
+        verify(logoutClient, times(1)).logout();
 
         ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
         verify(response, times(2)).addCookie(cookieCaptor.capture());
