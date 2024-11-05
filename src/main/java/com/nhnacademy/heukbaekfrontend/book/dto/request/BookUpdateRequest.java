@@ -15,7 +15,8 @@ public class BookUpdateRequest {
     String description;
     String publication;
     String isbn;
-    List<String> imageUrls;
+    String thumbnailImageUrl;
+    List<String> detailImageUrls;
     boolean isPackable;
     int stock;
     int standardPrice;
