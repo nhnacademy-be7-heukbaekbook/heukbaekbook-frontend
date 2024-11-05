@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.util;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.http.Cookie;
@@ -31,7 +32,6 @@ public class JwtUtil {
                     .verifyWith(secretKey)
                     .build()
                     .parseSignedClaims(token);
-
             return !isExpired(token);
         } catch (JwtException | IllegalArgumentException e) {
             return false;
@@ -39,13 +39,19 @@ public class JwtUtil {
     }
 
     public boolean isExpired(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getExpiration()
-                .before(new Date());
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getExpiration()
+                    .before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true;
+        } catch (JwtException | IllegalArgumentException e) {
+            return false;
+        }
     }
 
     public String getRoleFromToken(String token) {
