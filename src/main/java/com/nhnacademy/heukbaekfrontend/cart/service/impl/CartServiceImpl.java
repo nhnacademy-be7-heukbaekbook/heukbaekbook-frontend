@@ -1,7 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
-import com.nhnacademy.heukbaekfrontend.book.dto.BookSummaryResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;

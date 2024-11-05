@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 수정</title>
+    <!-- Google Fonts 추가 -->
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <!-- 기존 스타일 시트 유지 -->
+    <link rel="stylesheet" href="/css/style.css">
+    <!-- Toast UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <style>
+        /* 글로벌 폰트 설정 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        /* Form Container Styling */
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        /* 버튼 스타일 */
+        .form-container button,
+        .form-container .button {
+            padding: 12px 20px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .form-container button:hover,
+        .form-container .button:hover {
+            background-color: #333333;
+        }
+        .remove-button {
+            padding: 6px 12px;
+            background-color: #e74c3c;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        .remove-button:hover {
+            background-color: #c0392b;
+        }
+        .add-button {
+            padding: 10px 16px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .add-button:hover {
+            background-color: #333333;
+        }
+        /* Success and Error Message Styling */
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 24px;
+            background-color: #7f8c8d;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+        }
+        /* Form 내부의 동적 필드 컨테이너 스타일 */
+        .dynamic-field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dynamic-field input[type="text"] {
+            flex: 1;
+        }
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .dynamic-field {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dynamic-field .remove-button {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+<header>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>흑백문고</h1>
+    <nav>
+        <ul>
+            <li><a href="/">홈</a></li>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/login">로그인</a></li>
+            <li><a href="/mypage">마이페이지</a></li>
+        </ul>
+    </nav>
+</header>
+
+<section class="form-container">
+    <h2>도서 수정</h2>
+    <div th:if="${success}">
+        <p class="success-message">도서가 성공적으로 수정되었습니다.</p>
+    </div>
+    <div th:if="${error}">
+        <p class="error-message">[[${error}]]</p>
+    </div>
+    <!--/*@thymesVar id="bookUpdateRequest" type=""*/-->
+    <form th:action="@{/admins/books/{bookId}(bookId=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+        <!-- PUT 메서드를 사용하기 위한 Hidden Input -->
+        <div class="form-group">
+            <label for="title">제목</label>
+            <input type="text" th:field="*{title}" id="title" required />
+        </div>
+        <div class="form-group">
+            <label for="index">목차</label>
+            <div id="index-editor"></div>
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" name="index" id="index-content" th:field="*{index}" />
+        </div>
+        <div class="form-group">
+            <label for="description">설명</label>
+            <div id="description-editor"></div>
+            <!-- 숨겨진 필드 추가 -->
+            <input type="hidden" name="description" id="description-content" th:field="*{description}" />
+        </div>
+        <div class="form-group">
+            <label for="publication">출판일</label>
+            <input type="text" th:field="*{publication}" id="publication" placeholder="예: 2023-01-01" />
+        </div>
+        <div class="form-group">
+            <label for="isbn">ISBN</label>
+            <input type="text" th:field="*{isbn}" id="isbn" readonly />
+        </div>
+        <div class="form-group">
+            <label>이미지 URL</label>
+            <div id="imageUrls-container">
+                <div th:each="imageUrl, iterStat : *{imageUrls}">
+                    <input type="text" th:field="*{imageUrls[__${iterStat.index}__]}" />
+                    <button type="button" class="remove-button" onclick="removeImageUrl(this)">삭제</button>
+                </div>
+            </div>
+            <button type="button" id="add-imageUrl-button">이미지 URL 추가</button>
+        </div>
+        <div class="form-group">
+            <label>
+                포장 가능 여부
+                <input type="hidden" name="isPackable" value="false">
+                <input type="checkbox" th:field="*{Packable}" id="isPackable" />
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="stock">재고</label>
+            <input type="number" th:field="*{stock}" id="stock" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="standardPrice">정가</label>
+            <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="discountRate">할인율(%)</label>
+            <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="bookStatus">도서 상태</label>
+            <select th:field="*{bookStatus}" id="bookStatus">
+                <option value="IN_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'IN_STOCK'}">재고 있음</option>
+                <option value="OUT_OF_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'OUT_OF_STOCK'}">품절</option>
+                <option value="PENDING" th:selected="${bookUpdateRequest.bookStatus == 'DISCONTINUED'}">절판됨</option>
+                <option value="DELETED" th:selected="${bookUpdateRequest.bookStatus == 'DELETED'}">삭제됨</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="publisher">출판사</label>
+            <input type="text" th:field="*{publisher}" id="publisher" />
+        </div>
+        <!-- 카테고리 필드 -->
+        <div class="form-group">
+            <label>카테고리</label>
+            <div id="categories-container">
+                <div th:each="category, iterStat : *{categories}">
+                    <input type="text" th:field="*{categories[__${iterStat.index}__]}" />
+                    <button type="button" class="remove-button" onclick="removeCategory(this)">삭제</button>
+                </div>
+            </div>
+            <button type="button" id="add-category-button">카테고리 추가</button>
+        </div>
+
+        <!-- 태그 필드 -->
+        <div class="form-group">
+            <label>태그</label>
+            <div id="tags-container">
+                <div th:each="tag, iterStat : *{tags}">
+                    <input type="text" th:field="*{tags[__${iterStat.index}__]}" />
+                    <button type="button" class="remove-button" onclick="removeTag(this)">삭제</button>
+                </div>
+            </div>
+            <button type="button" id="add-tag-button">태그 추가</button>
+        </div>
+
+        <div class="form-group">
+            <label for="authors">저자</label>
+            <input type="text" th:field="*{authors}" id="authors"/>
+        </div>
+        <button type="submit">수정하기</button>
+        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
+    </form>
+</section>
+
+<script>
+    // 목차 및 설명 WYSIWYG Editor 초기화
+    const indexEditor = new toastui.Editor({
+        el: document.querySelector('#index-editor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: /*[[${bookUpdateRequest.index}]]*/ ''
+    });
+
+    const descriptionEditor = new toastui.Editor({
+        el: document.querySelector('#description-editor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: /*[[${bookUpdateRequest.description}]]*/ ''
+    });
+
+    // 폼 제출 시 에디터 내용 숨겨진 필드에 저장
+    document.querySelector("form").addEventListener("submit", function(event) {
+        document.getElementById("index-content").value = indexEditor.getHTML();
+        document.getElementById("description-content").value = descriptionEditor.getHTML();
+    });
+
+    function removeImageUrl(button) {
+        const container = document.getElementById('imageUrls-container');
+        container.removeChild(button.parentNode);
+    }
+
+    // 이미지 URL 입력 필드 추가
+    document.getElementById('add-imageUrl-button').addEventListener('click', function() {
+        const container = document.getElementById('imageUrls-container');
+        const index = container.children.length;
+
+        // 새로운 입력 필드 생성
+        const newDiv = document.createElement('div');
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'imageUrls[' + index + ']';
+        newInput.id = 'imageUrls_' + index;
+        newInput.setAttribute('th:field', '*{imageUrls[' + index + ']}');
+
+        // 삭제 버튼 생성
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerText = '삭제';
+        removeBtn.className = 'remove-button';
+        removeBtn.onclick = function() {
+            removeImageUrl(this);
+        };
+
+        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(removeBtn);
+        container.appendChild(newDiv);
+    });
+
+    // 카테고리 제거 함수
+    function removeCategory(button) {
+        const container = document.getElementById('categories-container');
+        container.removeChild(button.parentNode);
+    }
+
+    // 카테고리 입력 필드 추가
+    document.getElementById('add-category-button').addEventListener('click', function() {
+        const container = document.getElementById('categories-container');
+        const index = container.children.length;
+
+        // 새로운 입력 필드 생성
+        const newDiv = document.createElement('div');
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'categories[' + index + ']';
+        newInput.id = 'categories_' + index;
+        newInput.setAttribute('th:field', '*{categories[' + index + ']}');
+
+        // 삭제 버튼 생성
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerText = '삭제';
+        removeBtn.className = 'remove-button';
+        removeBtn.onclick = function() {
+            removeCategory(this);
+        };
+
+        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(removeBtn);
+        container.appendChild(newDiv);
+    });
+
+    // 태그 제거 함수
+    function removeTag(button) {
+        const container = document.getElementById('tags-container');
+        container.removeChild(button.parentNode);
+    }
+
+    // 태그 입력 필드 추가
+    document.getElementById('add-tag-button').addEventListener('click', function() {
+        const container = document.getElementById('tags-container');
+        const index = container.children.length;
+
+        // 새로운 입력 필드 생성
+        const newDiv = document.createElement('div');
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'tags[' + index + ']';
+        newInput.id = 'tags_' + index;
+        newInput.setAttribute('th:field', '*{tags[' + index + ']}');
+
+        // 삭제 버튼 생성
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerText = '삭제';
+        removeBtn.className = 'remove-button';
+        removeBtn.onclick = function() {
+            removeTag(this);
+        };
+
+        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(removeBtn);
+        container.appendChild(newDiv);
+    });
+
+    // 저자 제거 함수
+    function removeAuthor(button) {
+        const container = document.getElementById('authors-container');
+        container.removeChild(button.parentNode);
+    }
+
+    // 저자 입력 필드 추가
+    document.getElementById('add-author-button').addEventListener('click', function() {
+        const container = document.getElementById('authors-container');
+        const index = container.children.length;
+
+        // 새로운 입력 필드 생성
+        const newDiv = document.createElement('div');
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.name = 'authors[' + index + ']';
+        newInput.id = 'authors_' + index;
+        newInput.setAttribute('th:field', '*{authors[' + index + ']}');
+
+        // 삭제 버튼 생성
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.innerText = '삭제';
+        removeBtn.className = 'remove-button';
+        removeBtn.onclick = function() {
+            removeAuthor(this);
+        };
+
+        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
+        newDiv.appendChild(newInput);
+        newDiv.appendChild(removeBtn);
+        container.appendChild(newDiv);
+    });
+
+</script>
+
+<footer>
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
+</footer>
+</body>
+</html>
