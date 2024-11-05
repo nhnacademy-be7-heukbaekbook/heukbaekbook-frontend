@@ -148,7 +148,7 @@
             </tr>
             <tr th:each="book : ${books}">
                 <td>
-                    <img th:src="@{${book.imageUrl}}" alt="No image" style="width:100px; height:auto;">
+                    <img th:src="@{${book.thumbnailImageUrl}}" alt="No image" style="width:100px; height:auto;">
                 </td>
                 <td th:text="${book.title}">제목</td>
                 <td th:text="${#strings.arrayJoin(book.authors, ', ')}">저자</td>
