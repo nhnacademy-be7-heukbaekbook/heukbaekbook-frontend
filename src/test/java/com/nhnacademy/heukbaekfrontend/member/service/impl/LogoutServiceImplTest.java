@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.member.service.impl;
 
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.member.client.LogoutClient;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,22 +24,18 @@ class LogoutServiceImplTest {
     @Mock
     private HttpServletResponse response;
 
+    @Mock
+    private CookieUtil cookieUtil;
+
     @InjectMocks
     private LogoutServiceImpl logoutService;
 
     @Test
-    void testLogin() {
+    void testLogout() {
         logoutService.logout(response);
 
         verify(logoutClient, times(1)).logout();
-
-        ArgumentCaptor<Cookie> cookieCaptor = ArgumentCaptor.forClass(Cookie.class);
-        verify(response, times(2)).addCookie(cookieCaptor.capture());
-
-        assertEquals("accessToken", cookieCaptor.getAllValues().get(0).getName());
-        assertEquals(0, cookieCaptor.getAllValues().get(0).getMaxAge());
-
-        assertEquals("refreshToken", cookieCaptor.getAllValues().get(1).getName());
-        assertEquals(0, cookieCaptor.getAllValues().get(1).getMaxAge());
+        verify(cookieUtil, times(1)).deleteCookie(response, "accessToken");
+        verify(cookieUtil, times(1)).deleteCookie(response, "refreshToken");
     }
 }
