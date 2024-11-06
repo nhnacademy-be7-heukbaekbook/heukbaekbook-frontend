@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
                 ResponseEntity<String> refreshResponse = authClient.refreshTokens(REFRESH_TOKEN + "=" + refreshToken);
-                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie")).forEach(cookie -> response.addHeader("Set-Cookie", cookie));
+                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie")).forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
             }
 
             filterChain.doFilter(request, response);
