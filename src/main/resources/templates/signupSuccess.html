@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입 성공</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #1a1a1a 50%, #f2f2f2 50%) no-repeat;
+            position: relative;
+        }
+
+        .signup-success-container {
+            background-color: rgba(250, 250, 250, 0.95);
+            padding: 3rem;
+            border-radius: 15px;
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .signup-success-container::before {
+            content: "";
+            background-image: url('/images/logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center center;
+            opacity: 0.04;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            z-index: -1;
+        }
+
+        .signup-success-container h2 {
+            color: #222;
+            margin-bottom: 3rem;
+            font-size: 2rem;
+        }
+
+        .signup-success-container p {
+            color: #444;
+            font-size: 1.2rem;
+        }
+
+        .signup-success-container a {
+            color: #444;
+            text-decoration: underline;
+        }
+
+        .success_text{
+            padding: 1.3rem;
+        }
+
+    </style>
+</head>
+<body>
+<div class="signup-success-container">
+    <h2 th:text="${name} + '님 환영합니다.'"></h2>
+    <div class="success_text">
+        <p>회원가입에 정상적으로 성공하였습니다.</p>
+        <p>흑백 문고의 회원이 되어 주셔서 감사합니다.</p>
+    </div>
+    <p>로그인하여 이용해주세요. <a href="/login">로그인</a></p>
+    <a href="/">메인으로 이동</a>
+</div>
+</body>
+</html>
