@@ -160,22 +160,10 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 </head>
 <body>
-<header>
-    <a href="/">
-        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-    </a>
-    <h1>흑백문고</h1>
-    <nav>
-        <ul>
-            <li><a href="/">홈</a></li>
-            <li><a href="/categories">카테고리</a></li>
-            <li><a href="/cart">장바구니</a></li>
-            <li><a href="/login">로그인</a></li>
-            <li><a href="/mypage">마이페이지</a></li>
-        </ul>
-    </nav>
-</header>
+<header th:replace="~{admin/layout :: header}"></header>
 
+
+<main>
 <section class="form-container">
     <h2>도서 수정</h2>
     <div th:if="${success}">
@@ -291,6 +279,7 @@
         <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
     </form>
 </section>
+</main>
 
 <script>
     // 목차 및 설명 WYSIWYG Editor 초기화
@@ -453,13 +442,7 @@
 
 </script>
 
-<footer>
-    <p>&copy; 2024 흑백문고</p>
-    <nav>
-        <a href="/about">회사 소개</a> |
-        <a href="/contact">문의하기</a> |
-        <a href="/terms">이용 약관</a>
-    </nav>
-</footer>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
 </body>
 </html>

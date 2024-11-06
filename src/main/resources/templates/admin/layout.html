@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${pageTitle}">관리자 페이지 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* 공통 스타일 */
+        header {
+            background-color: #000;
+            color: #fff;
+            padding: 1em 2em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            width: 50px;
+            height: auto;
+            margin-right: 10px;
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 1em 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<header th:fragment="header">
+    <a href="/admins/home">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>관리자 페이지</h1>
+    <nav>
+        <ul>
+            <li>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="link-button">로그아웃</button>
+                </form>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<main th:fragment="content">
+    <!-- 각 페이지의 콘텐츠가 삽입될 영역 -->
+</main>
+
+<footer th:fragment="footer">
+    <p>&copy; 2024 흑백문고 관리자 페이지</p>
+</footer>
+</body>
+</html>

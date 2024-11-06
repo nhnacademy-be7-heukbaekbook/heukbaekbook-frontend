@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle}">흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<!-- 헤더 -->
+<header th:fragment="header">
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>흑백문고</h1>
+    <nav>
+        <ul>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/mypage">마이페이지</a></li>
+            <li th:if="${isLogin}">
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="link-button">로그아웃</button>
+                </form>
+            </li>
+            <li th:unless="${isLogin}">
+                <a href="/login">로그인</a>
+            </li>
+        </ul>
+    </nav>
+</header>
+
+<!-- 메인 콘텐츠 영역 -->
+<main th:fragment="content">
+    <!-- 각 페이지의 콘텐츠가 삽입될 영역 -->
+</main>
+
+<!-- 푸터 -->
+<footer th:fragment="footer">
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
+</footer>
+
+</body>
+</html>

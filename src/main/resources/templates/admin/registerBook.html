@@ -102,23 +102,12 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 </head>
 <body>
-<header>
-    <a href="/">
-        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-    </a>
-    <h1>흑백문고</h1>
-    <nav>
-        <ul>
-            <li><a href="/">홈</a></li>
-            <li><a href="/categories">카테고리</a></li>
-            <li><a href="/cart">장바구니</a></li>
-            <li><a href="/login">로그인</a></li>
-            <li><a href="/mypage">마이페이지</a></li>
-        </ul>
-    </nav>
-</header>
 
-<section class="form-container">
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="form-container">
     <h2>도서 등록</h2>
     <div th:if="${success}">
         <p class="success-message">도서가 성공적으로 등록되었습니다.</p>
@@ -132,12 +121,12 @@
             <input type="text" th:field="*{title}" id="title" required />
         </div>
         <div class="form-group">
-            <label for="index">목차</label>
+            <label for="index-content">목차</label>
             <div id="index-editor"></div>
             <input type="hidden" name="index" id="index-content" th:field="*{index}" />
         </div>
         <div class="form-group">
-            <label for="description">설명</label>
+            <label for="description-content">설명</label>
             <div id="description-editor"></div>
             <input type="hidden" name="description" id="description-content" th:field="*{description}" />
         </div>
@@ -187,7 +176,7 @@
         <button type="submit">등록</button>
         <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
     </form>
-</section>
+</main>
 
 <script>
     const indexEditor = new toastui.Editor({
@@ -210,13 +199,8 @@
     });
 </script>
 
-<footer>
-    <p>&copy; 2024 흑백문고</p>
-    <nav>
-        <a href="/about">회사 소개</a> |
-        <a href="/contact">문의하기</a> |
-        <a href="/terms">이용 약관</a>
-    </nav>
-</footer>
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
 </body>
 </html>
