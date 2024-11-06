@@ -5,6 +5,7 @@ import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
+import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,11 +32,13 @@ public class BookController {
         this.bookClient = bookClient;
     }
 
+    @Admin
     @GetMapping("/admins/aladin")
     public String searchBooks() {
         return "admin/searchBookFromAladin";
     }
 
+    @Admin
     @GetMapping("/admins/books")
     public String viewAllBooks(
             @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
@@ -48,6 +51,7 @@ public class BookController {
         return "admin/viewAllBooks";
     }
 
+    @Admin
     @GetMapping("/books/{bookId}")
     public String viewBook(@PathVariable Long bookId, Model model) {
         BookDetailResponse bookDetail = bookClient.getBook(bookId).getBody();
@@ -55,6 +59,7 @@ public class BookController {
         return "admin/bookDetail";
     }
 
+    @Admin
     @GetMapping("/admins/books/{bookId}")
     public String updateBookForm(@PathVariable Long bookId, Model model) {
         BookDetailResponse bookDetail = bookClient.getBook(bookId).getBody();
@@ -129,6 +134,7 @@ public class BookController {
         return "redirect:" + redirectUrl;
     }
 
+    @Admin
     @GetMapping("/admins/books/register")
     public String showRegisterBookForm(Model model) {
         model.addAttribute("bookCreateRequest", new BookCreateRequest(
