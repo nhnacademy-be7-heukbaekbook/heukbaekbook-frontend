@@ -3,14 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title>흑백문고 - 도서 수정</title>
+    <!-- Google Fonts 추가 -->
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <!-- 기존 스타일 시트 유지 -->
     <link rel="stylesheet" href="/css/style.css">
+    <!-- Toast UI Editor CSS -->
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <style>
         /* 글로벌 폰트 설정 */
         body {
             font-family: 'Noto Sans KR', sans-serif;
         }
+        /* Form Container Styling */
         .form-container {
             max-width: 800px;
             margin: 50px auto;
@@ -42,6 +46,7 @@
             padding: 12px;
             border: 1px solid #bdc3c7;
             border-radius: 4px;
+            box-sizing: border-box;
             font-size: 1em;
             color: #2c3e50;
             transition: border-color 0.3s;
@@ -56,6 +61,7 @@
         .form-group input[type="checkbox"] {
             margin-right: 10px;
         }
+        /* 버튼 스타일 */
         .form-container button,
         .form-container .button {
             padding: 12px 20px;
@@ -100,6 +106,7 @@
         .add-button:hover {
             background-color: #333333;
         }
+        /* Success and Error Message Styling */
         .success-message {
             color: #27ae60;
             text-align: center;
@@ -122,11 +129,11 @@
             text-decoration: none;
             border-radius: 4px;
             transition: background-color 0.3s;
-            cursor: pointer;
         }
         .back-button:hover {
             background-color: #95a5a6;
         }
+        /* Form 내부의 동적 필드 컨테이너 스타일 */
         .dynamic-field {
             display: flex;
             align-items: center;
@@ -135,6 +142,7 @@
         .dynamic-field input[type="text"] {
             flex: 1;
         }
+        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .form-container {
                 padding: 20px;
@@ -152,10 +160,10 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 </head>
 <body>
-
-<!-- 헤더 불러오기 -->
 <header th:replace="~{admin/layout :: header}"></header>
 
+
+<main>
 <section class="form-container">
     <h2>도서 수정</h2>
     <div th:if="${success}">
@@ -164,19 +172,23 @@
     <div th:if="${error}">
         <p class="error-message">[[${error}]]</p>
     </div>
+    <!--/*@thymesVar id="bookUpdateRequest" type=""*/-->
     <form th:action="@{/admins/books/{bookId}(bookId=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+        <!-- PUT 메서드를 사용하기 위한 Hidden Input -->
         <div class="form-group">
             <label for="title">제목</label>
             <input type="text" th:field="*{title}" id="title" required />
         </div>
         <div class="form-group">
-            <label for="index-content">목차</label>
+            <label for="index">목차</label>
             <div id="index-editor"></div>
+            <!-- 숨겨진 필드 추가 -->
             <input type="hidden" name="index" id="index-content" th:field="*{index}" />
         </div>
         <div class="form-group">
-            <label for="description-content">설명</label>
+            <label for="description">설명</label>
             <div id="description-editor"></div>
+            <!-- 숨겨진 필드 추가 -->
             <input type="hidden" name="description" id="description-content" th:field="*{description}" />
         </div>
         <div class="form-group">
@@ -188,7 +200,6 @@
             <input type="text" th:field="*{isbn}" id="isbn" readonly />
         </div>
 
-        <!-- 이미지 URL, 카테고리, 태그 등 동적 필드들 -->
         <div class="form-group">
             <label for="thumbnailImageUrl">썸네일 이미지</label>
             <input type="text" th:field="*{thumbnailImageUrl}" id="thumbnailImageUrl" />
@@ -204,11 +215,71 @@
             </div>
             <button type="button" id="add-imageUrl-button">이미지 URL 추가</button>
         </div>
-        <!-- 기타 폼 요소들 -->
+        <div class="form-group">
+            <label>
+                포장 가능 여부
+                <input type="hidden" name="isPackable" value="false">
+                <input type="checkbox" th:field="*{Packable}" id="isPackable" />
+            </label>
+        </div>
+        <div class="form-group">
+            <label for="stock">재고</label>
+            <input type="number" th:field="*{stock}" id="stock" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="standardPrice">정가</label>
+            <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="discountRate">할인율(%)</label>
+            <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+        </div>
+        <div class="form-group">
+            <label for="bookStatus">도서 상태</label>
+            <select th:field="*{bookStatus}" id="bookStatus">
+                <option value="IN_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'IN_STOCK'}">재고 있음</option>
+                <option value="OUT_OF_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'OUT_OF_STOCK'}">품절</option>
+                <option value="PENDING" th:selected="${bookUpdateRequest.bookStatus == 'DISCONTINUED'}">절판됨</option>
+                <option value="DELETED" th:selected="${bookUpdateRequest.bookStatus == 'DELETED'}">삭제됨</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="publisher">출판사</label>
+            <input type="text" th:field="*{publisher}" id="publisher" />
+        </div>
+        <!-- 카테고리 필드 -->
+        <div class="form-group">
+            <label>카테고리</label>
+            <div id="categories-container">
+                <div th:each="category, iterStat : *{categories}">
+                    <input type="text" th:field="*{categories[__${iterStat.index}__]}" />
+                    <button type="button" class="remove-button" onclick="removeCategory(this)">삭제</button>
+                </div>
+            </div>
+            <button type="button" id="add-category-button">카테고리 추가</button>
+        </div>
+
+        <!-- 태그 필드 -->
+        <div class="form-group">
+            <label>태그</label>
+            <div id="tags-container">
+                <div th:each="tag, iterStat : *{tags}">
+                    <input type="text" th:field="*{tags[__${iterStat.index}__]}" />
+                    <button type="button" class="remove-button" onclick="removeTag(this)">삭제</button>
+                </div>
+            </div>
+            <button type="button" id="add-tag-button">태그 추가</button>
+        </div>
+
+        <div class="form-group">
+            <label for="authors">저자</label>
+            <input type="text" th:field="*{authors}" id="authors"/>
+        </div>
         <button type="submit">수정하기</button>
-        <button type="button" class="back-button" onclick="history.back()">목록으로 돌아가기</button>
+        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
     </form>
 </section>
+</main>
 
 <script>
     // 목차 및 설명 WYSIWYG Editor 초기화
@@ -371,7 +442,6 @@
 
 </script>
 
-<!-- 푸터 불러오기 -->
 <footer th:replace="~{admin/layout :: footer}"></footer>
 
 </body>
