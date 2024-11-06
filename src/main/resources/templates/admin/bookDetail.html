@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>흑백문고 - 도서 상세 정보</title>
-    <!-- 스타일 시트 추가 -->
     <link rel="stylesheet" href="/css/style.css">
     <style>
         /* 글로벌 폰트 및 기본 스타일 설정 */
@@ -88,6 +87,7 @@
             text-align: center;
             text-decoration: none;
             border-radius: 4px;
+            cursor: pointer;
         }
         .back-button:hover {
             background-color: #1f618d;
@@ -109,22 +109,9 @@
     </style>
 </head>
 <body>
-<!-- 헤더 -->
-<header>
-    <a href="/">
-        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-    </a>
-    <h1>흑백문고</h1>
-    <nav>
-        <ul>
-            <li><a href="/">홈</a></li>
-            <li><a href="/categories">카테고리</a></li>
-            <li><a href="/cart">장바구니</a></li>
-            <li><a href="/login">로그인</a></li>
-            <li><a href="/mypage">마이페이지</a></li>
-        </ul>
-    </nav>
-</header>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
 
 <!-- 도서 상세 정보 -->
 <section class="book-detail-container">
@@ -195,18 +182,12 @@
             <h3>설명</h3>
             <div th:utext="${book.description}">설명 내용</div>
         </div>
-        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
+        <button class="back-button" onclick="history.back()">목록으로 돌아가기</button>
     </div>
 </section>
 
-<!-- 푸터 -->
-<footer>
-    <p>&copy; 2024 흑백문고</p>
-    <nav>
-        <a href="/about">회사 소개</a> |
-        <a href="/contact">문의하기</a> |
-        <a href="/terms">이용 약관</a>
-    </nav>
-</footer>
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
 </body>
 </html>
