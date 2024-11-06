@@ -1,9 +1,10 @@
-package com.nhnacademy.heukbaekfrontend.member.controller;
+package com.nhnacademy.heukbaekfrontend.memberset.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.config.TestConfig;
-import com.nhnacademy.heukbaekfrontend.member.dto.LoginRequest;
-import com.nhnacademy.heukbaekfrontend.member.service.LoginService;
+import com.nhnacademy.heukbaekfrontend.memberset.member.controller.AdminLoginController;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.LoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

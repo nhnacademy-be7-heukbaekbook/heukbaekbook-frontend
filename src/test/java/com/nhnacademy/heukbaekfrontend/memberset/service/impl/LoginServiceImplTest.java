@@ -1,7 +1,8 @@
-package com.nhnacademy.heukbaekfrontend.member.service.impl;
+package com.nhnacademy.heukbaekfrontend.memberset.service.impl;
 
-import com.nhnacademy.heukbaekfrontend.member.client.LoginClient;
-import com.nhnacademy.heukbaekfrontend.member.dto.LoginRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.client.LoginClient;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.impl.LoginServiceImpl;
 import feign.FeignException;
 import feign.Request;
 import jakarta.servlet.http.HttpServletResponse;

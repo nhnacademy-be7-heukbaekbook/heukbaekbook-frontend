@@ -1,8 +1,9 @@
-package com.nhnacademy.heukbaekfrontend.member.controller;
+package com.nhnacademy.heukbaekfrontend.memberset.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.config.TestConfig;
-import com.nhnacademy.heukbaekfrontend.member.service.LogoutService;
+import com.nhnacademy.heukbaekfrontend.memberset.member.controller.LogoutController;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
