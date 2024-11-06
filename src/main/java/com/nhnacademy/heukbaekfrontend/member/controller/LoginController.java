@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.member.controller;
 
 import com.nhnacademy.heukbaekfrontend.member.dto.LoginRequest;
+import com.nhnacademy.heukbaekfrontend.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.member.service.LoginService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
