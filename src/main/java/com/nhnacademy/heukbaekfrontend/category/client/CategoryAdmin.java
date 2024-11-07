@@ -12,21 +12,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(value = "categoryAdmin", url = "http://localhost:8082/api/admins/categories")
+@FeignClient(value = "categoryAdmin", url = "http://localhost:8082")
 public interface CategoryAdmin {
 
-    @GetMapping
+    @GetMapping("/api/admins/categories")
     Page<CategoryDetailResponse> getCategories(Pageable pageable);
 
-    @GetMapping("/{id}")
+    @GetMapping("/api/admins/categories/{id}")
     CategoryDetailResponse getCategory(@PathVariable Long id);
 
-    @PostMapping
+    @PostMapping("/api/admins/categories")
     ResponseEntity<CategoryCreateResponse> createCategory(@RequestBody CategoryCreateRequest request);
 
-    @PutMapping("/{id}")
+    @PutMapping("/api/admins/categories/{id}")
     ResponseEntity<CategoryUpdateResponse> updateCategory(@PathVariable Long id, @RequestBody CategoryUpdateRequest request);
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/api/admins/categories/{id}")
     ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable Long id);
 }

@@ -27,8 +27,7 @@ public class BookService {
     }
 
     public Page<BookDetailResponse> getAllBooks(Pageable pageable) {
-        ResponseEntity<Page<BookDetailResponse>> response = bookAdmin.getBooks(pageable);
-        return response.getBody();
+        return bookAdmin.getBooks(pageable).getBody();
     }
 
     public BookDetailResponse getBookById(Long bookId) {

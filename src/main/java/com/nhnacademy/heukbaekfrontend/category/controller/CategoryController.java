@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
+
 @Controller
 public class CategoryController {
 
@@ -34,7 +36,8 @@ public class CategoryController {
     @GetMapping("/admins/categories")
     public String viewAllCategories(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
-                                    Model model) {
+            Model model
+    ) {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
         model.addAttribute("categories", categories);
         return "admin/viewAllCategories";
@@ -112,23 +115,11 @@ public class CategoryController {
         if (response.getStatusCode().is2xxSuccessful()) {
             redirectAttributes.addFlashAttribute("success", true);
         } else {
-            redirectAttributes.addFlashAttribute("error", "도서 삭제에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("error", "카테고리 삭제에 실패했습니다.");
         }
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("/admins/categories");
-        if (page != null) {
-            uriBuilder.queryParam("page", page);
-        }
-        if (size != null) {
-            uriBuilder.queryParam("size", size);
-        }
-        if (sort != null && !sort.isEmpty()) {
-            uriBuilder.queryParam("sort", sort.replaceAll(": ", ","));
-        }
-
-        String redirectUrl = uriBuilder.toUriString();
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/categories");
 
         return "redirect:" + redirectUrl;
     }
-
 }

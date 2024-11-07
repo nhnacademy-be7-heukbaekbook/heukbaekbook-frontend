@@ -19,6 +19,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
+import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
+
 @Controller
 public class BookController {
 
@@ -70,11 +72,6 @@ public class BookController {
         return "admin/viewAllBooks";
     }
 
-    /**
-     * 도서 등록 폼을 보여줍니다.
-     * @param model
-     * @return
-     */
     @Admin
     @GetMapping("/admins/books/register")
     public String showRegisterBookForm(Model model) {
@@ -160,18 +157,7 @@ public class BookController {
             redirectAttributes.addFlashAttribute("error", "도서 삭제에 실패했습니다.");
         }
 
-        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath("/admins/books");
-        if (page != null) {
-            uriBuilder.queryParam("page", page);
-        }
-        if (size != null) {
-            uriBuilder.queryParam("size", size);
-        }
-        if (sort != null && !sort.isEmpty()) {
-            uriBuilder.queryParam("sort", sort.replaceAll(": ", ","));
-        }
-
-        String redirectUrl = uriBuilder.toUriString();
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/books");
 
         return "redirect:" + redirectUrl;
     }
