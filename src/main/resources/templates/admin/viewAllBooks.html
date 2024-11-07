@@ -131,6 +131,19 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
+        .back-to-home-button {
+            padding: 12px 20px; /* 등록 버튼의 패딩 설정 */
+            background-color: #007bff; /* 등록 버튼을 파란색으로 구분 */
+            color: #fff;
+            border-radius: 8px; /* 둥근 모서리 */
+            text-decoration: none;
+            text-align: center;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
         .add-book-button:hover {
             background-color: #0056b3;
             transform: scale(1.05);
@@ -150,6 +163,10 @@
             <a th:href="@{/admins/books/register}" class="add-book-button">직접 등록하기</a>
             <a th:href="@{/admins/aladin}" class="add-book-button">알라딘 등록하기</a>
         </div>
+    </section>
+
+    <section style="text-align: center;">
+        <a th:href="@{/admins/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
     <!-- 도서 목록 -->

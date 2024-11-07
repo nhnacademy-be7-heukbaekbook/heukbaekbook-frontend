@@ -18,11 +18,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
+@RequestMapping("/admins/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -33,7 +33,7 @@ public class CategoryController {
     }
 
     @Admin
-    @GetMapping("/admins/categories")
+    @GetMapping
     public String viewAllCategories(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
             Model model
@@ -44,7 +44,7 @@ public class CategoryController {
     }
 
     @Admin
-    @GetMapping("/admins/categories/register")
+    @GetMapping("/register")
     public String viewRegisterCategoryForm(Model model, Pageable pageable) {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
         model.addAttribute("categoryCreateRequest", new CategoryCreateRequest(0L, ""));
@@ -53,7 +53,7 @@ public class CategoryController {
     }
 
     @Admin
-    @PostMapping("/admins/categories/register")
+    @PostMapping("/register")
     public String registerCategory(@ModelAttribute CategoryCreateRequest request, Model model) {
         ResponseEntity<CategoryCreateResponse> response = categoryService.registerCategory(request);
 
@@ -67,7 +67,7 @@ public class CategoryController {
     }
 
     @Admin
-    @GetMapping("/admins/categories/{category-id}/update")
+    @GetMapping("/{category-id}/update")
     public String updateCategoryForm(@PathVariable(name = "category-id") Long categoryId,
                                      Model model,
                                      Pageable pageable) {
@@ -86,7 +86,7 @@ public class CategoryController {
 
 
     @Admin
-    @PutMapping("/admins/categories/{category-id}")
+    @PutMapping("/{category-id}")
     public String updateCategory(@PathVariable(name = "category-id") Long categoryId,
                                  @ModelAttribute CategoryUpdateRequest request,
                                  Model model) {
@@ -102,7 +102,7 @@ public class CategoryController {
     }
 
     @Admin
-    @DeleteMapping("/admins/categories/{category-id}")
+    @DeleteMapping("/{category-id}")
     public String deleteBook(
             @PathVariable(name = "category-id") Long categoryId,
             @RequestParam(value = "page", required = false) Integer page,

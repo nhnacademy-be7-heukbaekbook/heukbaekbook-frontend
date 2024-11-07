@@ -62,7 +62,20 @@
             cursor: pointer;
             font-size: 1em;
             text-decoration: none;
-            margin: 20px 0;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        .back-to-home-button {
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            margin: 10px 0;
             display: inline-block;
         }
 
@@ -143,6 +156,10 @@
     <!-- "카테고리 추가하기" 버튼 -->
     <section style="text-align: center;">
         <a th:href="@{/admins/categories/register}" class="add-category-button">카테고리 추가하기</a>
+    </section>
+
+    <section style="text-align: center;">
+        <a th:href="@{/admins/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
     <!-- 카테고리 목록 -->

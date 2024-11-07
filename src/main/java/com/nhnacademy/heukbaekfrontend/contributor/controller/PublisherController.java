@@ -1,7 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.contributor.controller;
 
-import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryUpdateRequest;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateResponse;
 import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherUpdateRequest;
@@ -47,7 +45,7 @@ public class PublisherController {
         if (response.getStatusCode().is2xxSuccessful()) {
             model.addAttribute("success", true);
         } else {
-            model.addAttribute("error", "도서 등록에 실패했습니다.");
+            model.addAttribute("error", "출판사 등록에 실패했습니다.");
             model.addAttribute("publisherCreateRequest", request);
         }
         return "admin/registerPublisher";
@@ -84,7 +82,7 @@ public class PublisherController {
 
     @Admin
     @PutMapping("/{publisher-id}")
-    public String updateCategory(@PathVariable(name = "publisher-id") Long publisherId,
+    public String updatePublisher(@PathVariable(name = "publisher-id") Long publisherId,
                                  @ModelAttribute PublisherUpdateRequest request,
                                  Model model) {
         ResponseEntity<PublisherUpdateResponse> response = publisherService.updatePublisher(publisherId, request);
@@ -100,13 +98,13 @@ public class PublisherController {
     @Admin
     @DeleteMapping("/{publisher-id}")
     public String deletePublisher(
-            @PathVariable(name = "publisher-id") Long categoryId,
+            @PathVariable(name = "publisher-id") Long publisherId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort,
             RedirectAttributes redirectAttributes) {
 
-        ResponseEntity<PublisherDeleteResponse> response = publisherService.deletePublisher(categoryId);
+        ResponseEntity<PublisherDeleteResponse> response = publisherService.deletePublisher(publisherId);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             redirectAttributes.addFlashAttribute("success", true);
