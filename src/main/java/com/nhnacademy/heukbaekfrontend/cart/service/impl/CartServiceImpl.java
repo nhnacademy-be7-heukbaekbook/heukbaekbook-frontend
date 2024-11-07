@@ -1,7 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookCartResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
@@ -9,6 +9,9 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -36,17 +39,20 @@ public class CartServiceImpl implements CartService {
                 .map(Long::parseLong)
                 .toList();
 
-        List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+        List<BookCartResponse> booksSummary = bookClient.getBooksSummary(bookIds);
 
         return booksSummary.stream()
-                .map(bookSummaryResponse -> {
-                    Integer quantity = entries.get(bookSummaryResponse.id().toString());
+                .map(bookCartResponse -> {
+                    Integer quantity = entries.get(bookCartResponse.id().toString());
                     return new Book(
-                            bookSummaryResponse.id(),
-                            bookSummaryResponse.title(),
-                            bookSummaryResponse.price(),
-                            bookSummaryResponse.discountRate(),
-                            quantity
+                            bookCartResponse.id(),
+                            bookCartResponse.title(),
+                            bookCartResponse.price(),
+                            bookCartResponse.salePrice(),
+                            bookCartResponse.discountRate(),
+                            bookCartResponse.thumbnailUrl(),
+                            quantity,
+                            calculateTotalPrice(bookCartResponse.salePrice(), quantity)
                     );
                 })
                 .toList();
@@ -86,5 +92,20 @@ public class CartServiceImpl implements CartService {
     @Override
     public void deleteBookFromCart(String sessionId, Long bookId) {
         hashOperations.delete(sessionId, String.valueOf(bookId));
+    }
+
+    private String calculateTotalPrice(String salePriceStr, int quantity) {
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        decimalFormat.setParseBigDecimal(true);
+
+        BigDecimal salePrice ;
+        try {
+            salePrice = (BigDecimal) decimalFormat.parse(salePriceStr);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        BigDecimal totalPrice = salePrice.multiply(BigDecimal.valueOf(quantity));
+
+        return decimalFormat.format(totalPrice);
     }
 }

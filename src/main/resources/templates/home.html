@@ -2,52 +2,131 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>흑백문고 - 메인 페이지</title>
+    <title>흑백문고</title>
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-
 <!-- 헤더 불러오기 -->
 <header th:replace="~{layout :: header}"></header>
 
-<!-- 메인 콘텐츠 영역 -->
-<main th:fragment="content">
-    <!-- 검색 창 -->
-    <section id="search-bar">
-        <form th:action="@{/search}" method="get">
+<!-- 검색 창 -->
+<section id="search-bar">
+    <form th:action="@{/search}" method="get">
+        <label>
             <input type="text" name="keyword" placeholder="도서 검색">
-            <button type="submit">검색</button>
-        </form>
-    </section>
+        </label>
+        <button type="submit">검색</button>
+    </form>
+</section>
 
-    <!-- 흑수저 및 백수저 도서 섹션 -->
-    <section id="book-buttons">
-        <form th:action="@{/blackBooks}" method="get" style="display: inline;">
-            <button type="submit" class="book-section-button">흑수저</button>
-        </form>
-        <form th:action="@{/whiteBooks}" method="get" style="display: inline;">
-            <button type="submit" class="book-section-button white-button">백수저</button>
-        </form>
-    </section>
+<!-- 흑수저 및 백수저 도서 섹션 -->
+<section id="book-buttons">
+    <form th:action="@{/blackBooks}" method="get" style="display: inline;">
+        <button type="submit" class="book-section-button">흑수저</button>
+    </form>
+    <form th:action="@{/whiteBooks}" method="get" style="display: inline;">
+        <button type="submit" class="book-section-button white-button">백수저</button>
+    </form>
+</section>
 
-    <!-- 전체 도서 목록 섹션 -->
-    <section id="all-books">
-        <div class="book-list">
-            <div th:each="book : ${allBooks}">
-                <div class="book-item">
-                    <img th:src="@{${book.thumbnailUrl}}" alt="도서 이미지">
-                    <h3 th:text="${book.title}">도서 제목</h3>
-                    <p th:text="${book.author}">저자</p>
-                    <p th:text="${#numbers.formatDecimal(book.price, 0, 'COMMA', '.', 0)}">가격</p>
-                    <a th:href="@{/book/{id}(id=${book.id})}">자세히 보기</a>
+<section id="all-books">
+    <div class="book-list">
+        <div th:each="book, iterStat : ${page.content}">
+            <div class="book-item">
+                <div class="book-rank" th:text="${page.number * page.size + iterStat.index + 1}">1</div>
+                <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image">
+                <div class="book-details">
+                    <p class="book-title">
+                        <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">제목</a>
+                    </p>
+                    <p class="book-contributor-publisher-">
+                        <span th:each="contributor : ${book.contributors}" th:text="${contributor.name} + ' | '"></span>
+                        <span th:text="${book.publisher.name} + ' | '"></span>
+                        <span th:text="${book.publishedAt}"></span>
+                    </p>
+                    <p class="book-price">
+                        <span th:text="${book.salePrice} + '원'"></span>
+                        <span class="discount" th:text="'(' + ${book.discountRate} + '% 할인)'"></span>
+                    </p>
+                    <p class="book-rating">평점: ★★★★★ 9.7</p>
+                </div>
+                <div class="book-actions">
+                    <!-- 수량 조절 버튼 -->
+                    <div class="quantity-selector">
+                        <button type="button" class="quantity-btn" th:onclick="'decreaseQuantity(' + ${book.id} + ')'">
+                            -
+                        </button>
+                        <label>
+                            <input type="text" th:id="'quantity-' + ${book.id}" value="1" class="quantity-input"
+                                   readonly>
+                        </label>
+                        <button type="button" class="quantity-btn" th:onclick="'increaseQuantity(' + ${book.id} + ')'">
+                            +
+                        </button>
+                    </div>
+                    <button class="cart-btn" th:onclick="'addToCart(' + ${book.id} + ')'">장바구니</button>
+                    <button class="buy-now-btn">바로구매</button>
                 </div>
             </div>
         </div>
-    </section>
-</main>
+    </div>
+</section>
+
+<script>
+    function decreaseQuantity(id) {
+        const quantityInput = document.getElementById(`quantity-${id}`);
+        const hiddenQuantityInput = document.getElementById(`hidden-quantity-${id}`);
+        let currentQuantity = parseInt(quantityInput.value);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+            hiddenQuantityInput.value = currentQuantity - 1;
+        }
+    }
+
+    function increaseQuantity(id) {
+        const quantityInput = document.getElementById(`quantity-${id}`);
+        const hiddenQuantityInput = document.getElementById(`hidden-quantity-${id}`);
+        let currentQuantity = parseInt(quantityInput.value);
+        quantityInput.value = currentQuantity + 1;
+        hiddenQuantityInput.value = currentQuantity + 1;
+    }
+
+    function addToCart(bookId) {
+        const quantity = document.getElementById(`quantity-${bookId}`).value;
+
+        fetch('/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                bookId: bookId,
+                quantity: parseInt(quantity)
+            })
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.text();
+                } else {
+                    throw new Error("Error adding to cart");
+                }
+            })
+            .then(data => {
+                alert("장바구니에 추가되었습니다.");
+                // location.reload(); // 페이지 새로고침
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("장바구니에 추가하는 데 실패했습니다.");
+            });
+    }
+</script>
+
+<div th:replace="~{fragments/pagination :: pagination(${page})}"></div>
 
 <!-- 푸터 불러오기 -->
 <footer th:replace="~{layout :: footer}"></footer>
+
 
 </body>
 </html>
