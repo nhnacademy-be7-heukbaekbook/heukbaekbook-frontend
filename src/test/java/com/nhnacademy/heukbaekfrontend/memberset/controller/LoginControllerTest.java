@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.config.TestConfig;
+import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.controller.LoginController;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LoginService;
@@ -31,6 +32,9 @@ class LoginControllerTest {
 
     @MockBean
     private AuthClient authClient;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
 
     @Test

@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.common.filter;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +25,7 @@ import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInte
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final AuthClient authClient;
     private final CookieUtil cookieUtil;
+    private final JwtUtil jwtUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -32,9 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String refreshToken = cookieUtil.getCookie(request, REFRESH_TOKEN);
 
         try {
-            if (accessToken == null && refreshToken != null) {
+            if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
                 ResponseEntity<String> refreshResponse = authClient.refreshTokens(REFRESH_TOKEN + "=" + refreshToken);
-                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie")).forEach(cookie -> response.addHeader("Set-Cookie", cookie));
+                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie")).forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
             }
 
             filterChain.doFilter(request, response);
@@ -47,5 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             response.sendRedirect(Objects.requireNonNullElse(referer, "/"));
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+
+        return path.startsWith("/css") ||
+                path.startsWith("/images") ||
+                path.startsWith("/js");
     }
 }
