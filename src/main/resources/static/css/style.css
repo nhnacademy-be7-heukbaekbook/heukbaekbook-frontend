@@ -431,3 +431,77 @@ footer {
     margin: auto; /* 가운데 정렬 */
     min-height: 100vh; /* 페이지 전체 높이를 채워주기 위해 */
 }
+
+/* 마이페이지 헤더 영역 스타일 */
+#mypage-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.header-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #000;
+}
+
+.header-greeting {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* 콘텐츠 제목 및 설명 스타일 */
+.content-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.content-description {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* 콘텐츠 박스 스타일 */
+.content-box {
+    border: 1px solid #d0d0d0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.order-summary {
+    padding: 15px;
+    border-bottom: 1px solid #d0d0d0;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.content-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.link-button {
+    text-decoration: none;
+    font-size: 0.9em;
+    color: #000;
+    border: 1px solid #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.link-button:hover {
+    background-color: #333;
+    color: #fff;
+}

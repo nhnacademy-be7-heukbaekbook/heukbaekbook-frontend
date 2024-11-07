@@ -1,31 +1,51 @@
-<!-- 왼쪽 메뉴 리스트 -->
 <aside id="sidebar" th:fragment="sidebar">
-  <div class="menu-group">
-    <h3>주문내역</h3>
-    <ul>
-      <li><a href="#">주문내역/배송조회</a></li>
-      <li><a href="#">반품/환불 신청 및 조회</a></li>
-      <li><a href="#">취소 주문내역</a></li>
-    </ul>
+  <!-- 첫 번째 카드: 나의 마니아 등급 -->
+  <div class="menu-card">
+    <h3>나의 마니아등급 <span class="member-level">일반회원</span></h3>
+    <div class="membership-levels">
+      <span class="level active">일반</span>
+      <span class="level">로얄</span>
+      <span class="level">골드</span>
+      <span class="level">플래  티넘</span>
+    </div>
+    <p class="level-description">
+      3개월간 순수 주문금액이 10만원 이상일 경우<br>
+      다음달 1일, 로얄 회원 등급이 됩니다. <a href="#">더보기</a>
+    </p>
   </div>
 
-  <div class="menu-group">
-    <h3>나의 정보</h3>
-    <ul>
-      <li><a href="#">회원 정보</a></li>
-      <li><a href="#">회원 탈퇴</a></li>
-      <li><a href="#">등급 정보</a></li>
-    </ul>
+  <!-- 두 번째 카드: 주문내역 -->
+  <div class="menu-card">
+    <div class="menu-group">
+      <h3>주문내역</h3>
+      <ul>
+        <li><a href="#">주문내역/배송조회</a></li>
+        <li><a href="#">반품/교환 신청 및 조회</a></li>
+        <li><a href="#">취소 주문내역</a></li>
+        <li><a href="#">세금계산서</a></li>
+      </ul>
+    </div>
+
+    <!-- 추가적인 메뉴 그룹들 -->
+    <div class="menu-group">
+      <h3>나의 정보</h3>
+      <ul>
+        <li><a href="#">회원 정보</a></li>
+        <li><a href="#">회원 탈퇴</a></li>
+        <li><a href="#">등급 정보</a></li>
+      </ul>
+    </div>
+
+    <div class="menu-group">
+      <h3>나의 설정</h3>
+      <ul>
+        <li><a href="#">나의 주소록</a></li>
+        <li><a href="#">나의 좋아요</a></li>
+        <li><a href="#">나의 포인트</a></li>
+        <li><a href="#">나의 쿠폰</a></li>
+        <li><a href="#">나의 리뷰</a></li>
+      </ul>
+    </div>
   </div>
 
-  <div class="menu-group">
-    <h3>나의 설정</h3>
-    <ul>
-      <li><a href="#">나의 주소록</a></li>
-      <li><a href="#">나의 좋아요</a></li>
-      <li><a href="#">나의 포인트</a></li>
-      <li><a href="#">나의 쿠폰</a></li>
-      <li><a href="#">나의 리뷰</a></li>
-    </ul>
-  </div>
 </aside>
