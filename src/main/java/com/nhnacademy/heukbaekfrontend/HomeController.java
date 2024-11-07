@@ -18,10 +18,10 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(HttpServletRequest request, Model model) {
-        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
-        boolean isLogin = accessToken != null;
-
-        model.addAttribute("isLogin", isLogin);
+//        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
+//        boolean isLogin = accessToken != null;
+//
+//        model.addAttribute("isLogin", isLogin);
         return "home";
     }
 }
