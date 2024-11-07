@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.config.TestConfig;
+import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.controller.LogoutController;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class LogoutControllerTest {
 
     @MockBean
     private AuthClient authClient;
+
+    @MockBean
+    private JwtUtil jwtUtil;
 
     @Test
     void testLogout() throws Exception {
