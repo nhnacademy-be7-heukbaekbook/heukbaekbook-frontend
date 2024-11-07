@@ -30,10 +30,10 @@ public class MemberController {
         return "signup";
     }
 
-    @GetMapping("/signupSuccess")
+    @GetMapping("/mypage")
     public String getSignUpForms(Model model) {
 
-        return "signupSuccess";
+        return "mypage/mypage";
     }
 
     @PostMapping

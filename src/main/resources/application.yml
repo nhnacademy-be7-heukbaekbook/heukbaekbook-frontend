@@ -21,3 +21,7 @@ spring:
       enabled: false
   main:
     allow-bean-definition-overriding: true
+
+jwt:
+  secret-key: h3w9qWUDH2K1S7owJK9rgrbQjF6jbRof0ep/6nBN+fA=
+  refresh-secret-key: 35wjsyScjp+rBsbbKALuC/TggP302yV9NvGKNqOhLoU=

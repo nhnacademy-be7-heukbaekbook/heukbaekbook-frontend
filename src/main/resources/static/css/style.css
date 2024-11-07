@@ -390,3 +390,44 @@ footer nav a:hover {
 footer {
     text-align: center;
 }
+
+/* style.css */
+
+.mypage-container {
+    display: flex;
+    margin-left: 270px; /* 사이드바의 고정 너비와 약간의 여백을 더함 */
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* 오른쪽 콘텐츠 영역 스타일 */
+#content-area {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto; /* 가운데 정렬 */
+    min-height: 100vh; /* 페이지 전체 높이를 채워주기 위해 */
+}
+/* style.css */
+
+.mypage-container {
+    width: 60%;
+    display: flex;
+    margin: 0 auto;
+    padding: 20px;
+    flex-grow: 1;
+}
+
+/* 오른쪽 콘텐츠 영역 스타일 */
+#content-area {
+    width: 100%;
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin: auto; /* 가운데 정렬 */
+    min-height: 100vh; /* 페이지 전체 높이를 채워주기 위해 */
+}
