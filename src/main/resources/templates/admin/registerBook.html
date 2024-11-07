@@ -103,10 +103,8 @@
 </head>
 <body>
 
-<!-- 헤더 불러오기 -->
 <header th:replace="~{admin/layout :: header}"></header>
 
-<!-- 메인 콘텐츠 -->
 <main class="form-container">
     <h2>도서 등록</h2>
     <div th:if="${success}">
@@ -115,21 +113,22 @@
     <div th:if="${error}">
         <p class="error-message">[[${error}]]</p>
     </div>
-    <form th:action="@{/admins/books}" th:object="${bookCreateRequest}" method="POST">
+    <form th:action="@{/admins/books/register}" th:object="${bookCreateRequest}" method="POST">
         <div class="form-group">
             <label for="title">제목</label>
             <input type="text" th:field="*{title}" id="title" required />
         </div>
         <div class="form-group">
-            <label for="index-content">목차</label>
-            <div id="index-editor"></div>
-            <input type="hidden" name="index" id="index-content" th:field="*{index}" />
+            <label for="index">목차</label>
+            <textarea th:field="*{index}" id="index" style="display:none;"></textarea>
+            <div id="indexEditor"></div>
         </div>
         <div class="form-group">
-            <label for="description-content">설명</label>
-            <div id="description-editor"></div>
-            <input type="hidden" name="description" id="description-content" th:field="*{description}" />
+            <label for="description">설명</label>
+            <textarea th:field="*{description}" id="description" style="display:none;"></textarea>
+            <div id="descriptionEditor"></div>
         </div>
+
         <div class="form-group">
             <label for="publication">출판일</label>
             <input type="text" th:field="*{publication}" id="publication" />
@@ -180,26 +179,33 @@
 
 <script>
     const indexEditor = new toastui.Editor({
-        el: document.querySelector('#index-editor'),
+        el: document.querySelector('#indexEditor'),
         height: '300px',
         initialEditType: 'wysiwyg',
-        previewStyle: 'vertical'
+        previewStyle: 'vertical',
+        initialValue: document.getElementById('index').value,
+        events: {
+            change: function() {
+                document.getElementById('index').value = indexEditor.getHTML();
+            }
+        }
     });
 
     const descriptionEditor = new toastui.Editor({
-        el: document.querySelector('#description-editor'),
+        el: document.querySelector('#descriptionEditor'),
         height: '300px',
         initialEditType: 'wysiwyg',
-        previewStyle: 'vertical'
+        previewStyle: 'vertical',
+        initialValue: document.getElementById('description').value,
+        events: {
+            change: function() {
+                document.getElementById('description').value = descriptionEditor.getHTML();
+            }
+        }
     });
 
-    document.querySelector("form").addEventListener("submit", function(event) {
-        document.getElementById("index-content").value = indexEditor.getHTML();
-        document.getElementById("description-content").value = descriptionEditor.getHTML();
-    });
 </script>
 
-<!-- 푸터 불러오기 -->
 <footer th:replace="~{admin/layout :: footer}"></footer>
 
 </body>

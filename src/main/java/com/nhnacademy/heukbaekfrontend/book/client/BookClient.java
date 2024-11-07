@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(value = "bookClient", url = "http://localhost:8084/api/books")
+@FeignClient(value = "bookClient", url = "http://localhost:8082")
 public interface BookClient {
 
-    @GetMapping("/summary")
+    @GetMapping("/api/books/summary")
     List<BookSummaryResponse> getBooksSummary(@RequestParam List<Long> bookIds);
 
-    @GetMapping("/{bookId}")
+    @GetMapping("/api/books/{bookId}")
     ResponseEntity<BookDetailResponse> getBook(@PathVariable Long bookId);
 }

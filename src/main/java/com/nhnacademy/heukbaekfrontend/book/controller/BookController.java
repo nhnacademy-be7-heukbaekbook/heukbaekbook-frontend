@@ -1,10 +1,9 @@
 package com.nhnacademy.heukbaekfrontend.book.controller;
 
-import com.nhnacademy.heukbaekfrontend.book.client.BookAdmin;
-import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
+import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,13 +22,11 @@ import java.util.List;
 @Controller
 public class BookController {
 
-    private final BookAdmin bookAdmin;
-    private final BookClient bookClient;
+    private final BookService bookService;
 
     @Autowired
-    public BookController(BookAdmin bookAdmin, BookClient bookClient) {
-        this.bookAdmin = bookAdmin;
-        this.bookClient = bookClient;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
     @Admin
@@ -39,11 +36,33 @@ public class BookController {
     }
 
     @Admin
+    @PostMapping("/admins/aladin")
+    public String searchBooks(@RequestParam("title") String title, Model model) {
+        List<BookSearchResponse> books = bookService.searchBooks(title);
+        model.addAttribute("responses", books);
+        return "admin/searchBookFromAladin";
+    }
+
+    @Admin
+    @PostMapping("/admins/aladin/register")
+    public String selectBookForRegistration(@ModelAttribute BookCreateRequest request, Model model) {
+        model.addAttribute("bookCreateRequest", request);
+        return "admin/registerBook";
+    }
+
+    @GetMapping("/books/{book-id}")
+    public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
+        BookDetailResponse bookDetail = bookService.getBookById(bookId);
+        model.addAttribute("book", bookDetail);
+        return "admin/bookDetail";
+    }
+
+    @Admin
     @GetMapping("/admins/books")
     public String viewAllBooks(
             @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
             Model model) {
-        Page<BookDetailResponse> books = bookAdmin.getBooks(pageable).getBody();
+        Page<BookDetailResponse> books = bookService.getAllBooks(pageable);
         model.addAttribute("books", books);
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("size", pageable.getPageSize());
@@ -51,18 +70,38 @@ public class BookController {
         return "admin/viewAllBooks";
     }
 
+    /**
+     * 도서 등록 폼을 보여줍니다.
+     * @param model
+     * @return
+     */
     @Admin
-    @GetMapping("/books/{bookId}")
-    public String viewBook(@PathVariable Long bookId, Model model) {
-        BookDetailResponse bookDetail = bookClient.getBook(bookId).getBody();
-        model.addAttribute("book", bookDetail);
-        return "admin/bookDetail";
+    @GetMapping("/admins/books/register")
+    public String showRegisterBookForm(Model model) {
+        model.addAttribute("bookCreateRequest", new BookCreateRequest(
+                "", "", "", "", "", "", false, 0, 0, 0.0f, "", "", ""
+        ));
+        return "admin/registerBook";
     }
 
     @Admin
-    @GetMapping("/admins/books/{bookId}")
-    public String updateBookForm(@PathVariable Long bookId, Model model) {
-        BookDetailResponse bookDetail = bookClient.getBook(bookId).getBody();
+    @PostMapping("/admins/books/register")
+    public String registerBook(@ModelAttribute BookCreateRequest request, Model model) {
+        ResponseEntity<BookCreateResponse> response = bookService.registerBook(request);
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            model.addAttribute("success", true);
+        } else {
+            model.addAttribute("error", "도서 등록에 실패했습니다.");
+            model.addAttribute("bookCreateRequest", request);
+        }
+        return "admin/registerBook";
+    }
+
+    @Admin
+    @GetMapping("/admins/books/{book-id}")
+    public String updateBookForm(@PathVariable(name = "book-id") Long bookId, Model model) {
+        BookDetailResponse bookDetail = bookService.getBookById(bookId);
 
         BookUpdateRequest bookUpdateRequest = new BookUpdateRequest(
                 bookDetail.title(),
@@ -88,29 +127,32 @@ public class BookController {
         return "admin/updateBook";
     }
 
+    @Admin
+    @PutMapping("/admins/books/{book-id}")
+    public String updateBook(@PathVariable(name = "book-id") Long bookId,
+                             @ModelAttribute BookUpdateRequest request,
+                             Model model) {
+        ResponseEntity<BookUpdateResponse> response = bookService.updateBook(bookId, request);
 
-    @PostMapping("/admins/aladin")
-    public String searchBooks(@RequestParam("title") String title, Model model) {
-        List<BookSearchResponse> books = bookAdmin.searchBooks(title);
-        model.addAttribute("responses", books);
-        return "admin/searchBookFromAladin";
+        if (response.getStatusCode().is2xxSuccessful()) {
+            model.addAttribute("success", true);
+        } else {
+            model.addAttribute("error", "도서 수정에 실패했습니다.");
+            model.addAttribute("bookUpdateRequest", request);
+        }
+        return "admin/updateBook";
     }
 
-    @PostMapping("/admins/books/select")
-    public String selectBookForRegistration(@ModelAttribute BookCreateRequest request, Model model) {
-        model.addAttribute("bookCreateRequest", request);
-        return "admin/registerBook";
-    }
-
-    @PostMapping("/admins/books/{bookId}/delete")
+    @Admin
+    @DeleteMapping("/admins/books/{book-id}")
     public String deleteBook(
-            @PathVariable Long bookId,
+            @PathVariable(name = "book-id") Long bookId,
             @RequestParam(value = "page", required = false) Integer page,
             @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sort", required = false) String sort,
             RedirectAttributes redirectAttributes) {
 
-        ResponseEntity<BookDeleteResponse> response = bookAdmin.deleteBook(bookId);
+        ResponseEntity<BookDeleteResponse> response = bookService.deleteBook(bookId);
 
         if (response.getStatusCode().is2xxSuccessful()) {
             redirectAttributes.addFlashAttribute("success", true);
@@ -134,38 +176,4 @@ public class BookController {
         return "redirect:" + redirectUrl;
     }
 
-    @Admin
-    @GetMapping("/admins/books/register")
-    public String showRegisterBookForm(Model model) {
-        model.addAttribute("bookCreateRequest", new BookCreateRequest(
-                "", "", "", "", "", "", false, 0, 0, 0.0f, "", "", ""
-        ));
-        return "admin/registerBook";
-    }
-
-    @PostMapping("/admins/books")
-    public String registerBook(@ModelAttribute BookCreateRequest request, Model model) {
-        ResponseEntity<BookCreateResponse> response = bookAdmin.registerBook(request);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            model.addAttribute("success", true);
-        } else {
-            model.addAttribute("error", "도서 등록에 실패했습니다.");
-            model.addAttribute("bookCreateRequest", request);
-        }
-        return "admin/registerBook";
-    }
-
-    @PostMapping("/admins/books/{bookId}")
-    public String updateBook(@PathVariable Long bookId, @ModelAttribute BookUpdateRequest request, Model model) {
-        ResponseEntity<BookUpdateResponse> response = bookAdmin.updateBook(bookId, request);
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            model.addAttribute("success", true);
-        } else {
-            model.addAttribute("error", "도서 수정에 실패했습니다.");
-            model.addAttribute("bookCreateRequest", request);
-        }
-        return "admin/updateBook";
-    }
 }

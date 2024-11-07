@@ -1,91 +1,144 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>흑백문고 - 도서 목록</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        /* 도서 목록 테이블 스타일 */
-        .table-responsive {
-            overflow-x: auto;
+        /* 카드 레이아웃 스타일 */
+        .card-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            table-layout: auto;
-        }
-        th, td {
+
+        .book-card {
+            background-color: #fff;
             border: 1px solid #ddd;
-            padding: 12px;
+            border-radius: 8px;
+            width: 600px; /* 가로가 더 길도록 설정 */
+            padding: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative; /* 버튼 위치를 카드 내에 절대 위치로 설정하기 위해 추가 */
+        }
+
+        .book-card:hover {
+            transform: scale(1.05);
+        }
+
+        .book-thumbnail {
+            width: 150px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-right: 20px;
+        }
+
+        .book-info-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+        }
+
+        .book-info {
             text-align: left;
-            word-wrap: break-word;
-            word-break: break-all;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        th {
-            background-color: #333;
+
+        .book-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .book-detail {
+            font-size: 0.9em;
+            margin-bottom: 4px;
+            color: #666;
+        }
+
+        .book-status {
+            font-weight: bold;
+            color: #2980b9;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end; /* 오른쪽 정렬 */
+            gap: 5px;
+            position: absolute;
+            bottom: 16px; /* 카드 하단에 붙이기 위해 설정 */
+            right: 16px; /* 카드의 오른쪽 끝에 붙이기 위해 설정 */
+        }
+
+        /* 통일된 관리 버튼 스타일 (수정, 삭제, 상세 보기) */
+        .button {
+            height: 40px; /* 버튼 높이 통일 */
+            padding: 0 12px; /* 위아래 패딩 제거, 좌우 패딩 유지 */
+            background-color: #000;
             color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.9em;
+            width: 80px; /* 버튼 너비 줄이기 */
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: flex;
+            align-items: center; /* 세로 중앙 정렬 */
+            justify-content: center; /* 가로 중앙 정렬 */
+            border: none;
+            cursor: pointer;
+            box-sizing: border-box;
         }
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
+
+        .button:hover {
+            background-color: #333;
+            transform: scale(1.05);
         }
-        tbody tr:hover {
-            background-color: #f1f1f1;
+
+        .button-form {
+            width: 80px; /* 버튼들과 동일한 크기로 설정 */
+            cursor: pointer;
         }
+
         .no-results {
             text-align: center;
             padding: 20px;
             font-style: italic;
             color: #555;
         }
+
+        /* 등록 버튼 스타일 - 직접 등록하기와 알라딘 등록하기 */
         .add-book-button {
-            padding: 10px 20px;
-            background-color: #2980b9;
+            padding: 12px 20px; /* 등록 버튼의 패딩 설정 */
+            background-color: #007bff; /* 등록 버튼을 파란색으로 구분 */
             color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+            border-radius: 8px; /* 둥근 모서리 */
+            text-decoration: none;
+            text-align: center;
             font-size: 1em;
-            text-decoration: none;
-            margin: 20px 0;
+            transition: background-color 0.3s ease, transform 0.3s ease;
             display: inline-block;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
+
         .add-book-button:hover {
-            background-color: #333;
-        }
-        .action-button {
-            padding: 8px 16px;
-            background-color: #000;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9em;
-            text-decoration: none;
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-        .action-button:hover {
-            background-color: #333;
-        }
-        .action-buttons {
-            display: flex;
-            flex-direction: column;
-        }
-        @media (max-width: 768px) {
-            .action-buttons {
-                flex-direction: row;
-                flex-wrap: wrap;
-            }
-            .action-button {
-                margin-right: 5px;
-            }
+            background-color: #0056b3;
+            transform: scale(1.05);
         }
     </style>
 </head>
-<body>
 
+<body>
 <!-- 헤더 불러오기 -->
 <header th:replace="~{admin/layout :: header}"></header>
 
@@ -102,68 +155,43 @@
     <!-- 도서 목록 -->
     <section class="results-section" th:if="${books != null}">
         <h2>도서 목록</h2>
-        <div class="table-responsive">
-            <table>
-                <thead>
-                <tr>
-                    <th>표지</th>
-                    <th>제목</th>
-                    <th>저자</th>
-                    <th>카테고리</th>
-                    <th>출판사</th>
-                    <th>출판일</th>
-                    <th>재고</th>
-                    <th>정가</th>
-                    <th>할인율(%)</th>
-                    <th>ISBN</th>
-                    <th>도서 상태</th>
-                    <th>태그</th>
-                    <th>관리</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:if="${books.isEmpty()}">
-                    <td colspan="13" class="no-results">등록된 도서가 없습니다.</td>
-                </tr>
-                <tr th:each="book : ${books}">
-                    <td><img th:src="${book.thumbnailImageUrl}" alt="No image" style="width:100px; height:auto;"></td>
-                    <td th:text="${book.title}">제목</td>
-                    <td th:text="${#strings.arrayJoin(book.authors, ', ')}">저자</td>
-                    <td th:text="${#strings.arrayJoin(book.categories, ', ')}">카테고리</td>
-                    <td th:text="${book.publisher}">출판사</td>
-                    <td th:text="${book.publication}">출판일</td>
-                    <td th:text="${book.stock}">재고</td>
-                    <td th:text="${book.standardPrice}">정가</td>
-                    <td th:text="${book.discountRate}">할인율</td>
-                    <td th:text="${book.isbn}">ISBN</td>
-                    <td>
-                        <span th:switch="${book.bookStatus}">
-                            <span th:case="'IN_STOCK'">재고 있음</span>
-                            <span th:case="'OUT_OF_STOCK'">품절</span>
-                            <span th:case="'DISCONTINUED'">절판</span>
-                            <span th:case="'DELETED'">삭제</span>
-                            <span th:case="*">알 수 없음</span>
-                        </span>
-                    </td>
-                    <td th:text="${#strings.arrayJoin(book.tags, ', ')}">도서 태그</td>
-                    <td>
-                        <div class="action-buttons">
-                            <a th:href="@{/admins/books/{bookId}(bookId=${book.id})}" class="action-button">수정</a>
-                            <form th:action="@{/admins/books/{bookId}/delete(bookId=${book.id})}" method="post" style="display:inline;">
-                                <button type="submit" class="action-button">삭제</button>
-                            </form>
-                            <a th:href="@{/books/{bookId}(bookId=${book.id})}" class="action-button">상세보기</a>
+        <div class="card-container">
+            <div th:if="${books.isEmpty()}" class="no-results">
+                등록된 도서가 없습니다.
+            </div>
+            <div class="book-card" th:each="book : ${books}">
+                <div class="book-info-container">
+                    <img th:src="${book.thumbnailImageUrl}" alt="도서 표지" class="book-thumbnail">
+                    <div class="book-info">
+                        <div>
+                            <div class="book-title" th:text="${book.title}">도서 제목</div>
+                            <div class="book-detail" th:text="|저자: ${#strings.arrayJoin(book.authors, ', ')}|">저자 정보</div>
+                            <div class="book-detail" th:text="|카테고리: ${#strings.arrayJoin(book.categories, ', ')}|">카테고리 정보</div>
+                            <div class="book-detail" th:text="|출판사: ${book.publisher}|">출판사 정보</div>
+                            <div class="book-detail" th:text="|정가: ${book.standardPrice}원|">정가</div>
+                            <div class="book-status" th:switch="${book.bookStatus}">
+                                <div th:case="'IN_STOCK'">상태: 재고 있음</div>
+                                <div th:case="'OUT_OF_STOCK'">상태: 품절</div>
+                                <div th:case="'DISCONTINUED'">상태: 절판</div>
+                                <div th:case="*">상태: 알 수 없음</div>
+                            </div>
                         </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+                    </div>
+                </div>
+                <!-- 관리 버튼 -->
+                <div class="action-buttons">
+                    <a th:href="@{/admins/books/{bookId}(bookId=${book.id})}" class="button">수정</a>
+                    <form th:action="@{/admins/books/{bookId}(bookId=${book.id})}" method="post" class="button-form">
+                        <input type="hidden" name="_method" value="DELETE"/>
+                        <button type="submit" class="button">삭제</button>
+                    </form>
+                    <a th:href="@{/books/{bookId}(bookId=${book.id})}" class="button">상세 보기</a>
+                </div>
+            </div>
         </div>
     </section>
 </main>
 
 <!-- 푸터 불러오기 -->
 <footer th:replace="~{admin/layout :: footer}"></footer>
-
 </body>
-</html>

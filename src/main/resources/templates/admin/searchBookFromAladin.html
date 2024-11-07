@@ -152,7 +152,7 @@
                 <td th:text="${result.salesPrice}">할인가</td>
                 <td>
                     <!-- Register Button as a Form -->
-                    <form th:action="@{/admins/books/select}" method="POST">
+                    <form th:action="@{/admins/aladin/register}" method="POST">
                         <input type="hidden" name="title" th:value="${result.title}" />
                         <input type="hidden" name="description" th:value="${result.description}" />
                         <input type="hidden" name="publication" th:value="${result.pubDate}" />
