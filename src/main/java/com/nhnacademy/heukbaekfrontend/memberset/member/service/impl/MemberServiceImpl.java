@@ -44,4 +44,13 @@ public class MemberServiceImpl implements MemberService {
             throw new RuntimeException();
         }
     }
+
+    @Override
+    public ResponseEntity<MemberResponse> getMember() {
+        try {
+            return memberClient.getMemberInfo();
+        } catch (FeignException fe) {
+            throw new RuntimeException();
+        }
+    }
 }

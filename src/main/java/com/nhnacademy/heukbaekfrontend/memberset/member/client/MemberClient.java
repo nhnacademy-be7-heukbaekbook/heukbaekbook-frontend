@@ -2,8 +2,10 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.client;
 
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -19,4 +21,6 @@ public interface MemberClient {
     @PostMapping("/api/members/existsEmail")
     ResponseEntity<Boolean> existsEmail(@RequestBody String email);
 
+    @GetMapping("/api/members")
+    ResponseEntity<MemberResponse> getMemberInfo();
 }

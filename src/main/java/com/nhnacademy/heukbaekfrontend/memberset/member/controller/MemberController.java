@@ -30,11 +30,7 @@ public class MemberController {
         return "signup";
     }
 
-    @GetMapping("/mypage")
-    public String getSignUpForms(Model model) {
 
-        return "mypage/mypage";
-    }
 
     @PostMapping
     public String doSignup(@Valid @ModelAttribute MemberCreateRequest memberCreateRequest,

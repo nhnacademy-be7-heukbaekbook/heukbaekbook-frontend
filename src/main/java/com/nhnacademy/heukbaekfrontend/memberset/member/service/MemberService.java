@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.service;
 
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
+import feign.Response;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface MemberService {
     ResponseEntity<Boolean> existsLoginId(String loginId);
 
     ResponseEntity<Boolean> existsEmail(String email);
+
+    ResponseEntity<MemberResponse> getMember();
 }

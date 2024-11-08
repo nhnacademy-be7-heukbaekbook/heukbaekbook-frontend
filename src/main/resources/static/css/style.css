@@ -489,13 +489,14 @@ footer {
 
 /* 오른쪽 콘텐츠 영역 스타일 */
 #content-area {
+    width: 100%;
     flex-grow: 1;
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin: auto; /* 가운데 정렬 */
-    min-height: 100vh; /* 페이지 전체 높이를 채워주기 위해 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* 가운데 정렬 */
+    min-height: 70vh; /* 페이지 전체 높이를 채워주기 위해 */
 }
 /* style.css */
 
@@ -507,36 +508,25 @@ footer {
     flex-grow: 1;
 }
 
-/* 오른쪽 콘텐츠 영역 스타일 */
-#content-area {
-    width: 100%;
-    flex-grow: 1;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    margin: auto; /* 가운데 정렬 */
-    min-height: 100vh; /* 페이지 전체 높이를 채워주기 위해 */
-}
-
 /* 마이페이지 헤더 영역 스타일 */
 #mypage-header {
+    margin: 0 auto;
     display: flex;
-    flex-direction: column;
     align-items: center;
     padding: 20px;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 20px;
     text-align: center;
+    flex-grow: 1;
 }
 
 .header-title {
-    font-size: 1.5em;
+    width: 250px;
+    font-size: 2.3em;
     font-weight: bold;
     color: #000;
 }
 
 .header-greeting {
+    width: 100%;
     font-size: 0.9em;
     color: #666;
 }
@@ -577,18 +567,3 @@ footer {
     margin-top: 10px;
 }
 
-.link-button {
-    text-decoration: none;
-    font-size: 0.9em;
-    color: #000;
-    border: 1px solid #333;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-align: center;
-    cursor: pointer;
-}
-
-.link-button:hover {
-    background-color: #333;
-    color: #fff;
-}

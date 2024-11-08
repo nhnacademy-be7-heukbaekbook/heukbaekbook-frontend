@@ -1,16 +1,28 @@
 <aside id="sidebar" th:fragment="sidebar">
+
   <!-- 첫 번째 카드: 나의 마니아 등급 -->
-  <div class="menu-card">
-    <h3>나의 마니아등급 <span class="member-level">일반회원</span></h3>
+  <div class="menu-card" th:object="${memberResponse}">
+    <h3>
+      <span>나의 등급</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'NORMAL'}">일반 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'ROYAL'}">로얄 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'GOLD'}">골드 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'PLATINUM'}">플래티넘 회원</span>
+    </h3>
+
     <div class="membership-levels">
-      <span class="level active">일반</span>
-      <span class="level">로얄</span>
-      <span class="level">골드</span>
-      <span class="level">플래  티넘</span>
+      <!-- 각 등급에 따라 active 클래스가 적용되도록 설정 -->
+      <span th:classappend="${memberResponse.grade.gradeName} == 'NORMAL' ? 'active':null" class="level">일반</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'ROYAL' ? 'active':null" class="level">로얄</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'GOLD' ? 'active':null" class="level">골드</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'PLATINUM' ? 'active':null" class="level">플래  티넘</span>
     </div>
+
+    <!-- 등급 설명 및 조건 표시 -->
     <p class="level-description">
-      3개월간 순수 주문금액이 10만원 이상일 경우<br>
-      다음달 1일, 로얄 회원 등급이 됩니다. <a href="#">더보기</a>
+      순수 주문 금액이 <span th:text="*{#numbers.formatInteger(grade.promotionStandard, 0, 'COMMA') + '원'}">10만원</span> 이상일 경우
+      다음 등급으로 올라갑니다.<br>
+      현재 내 등급 적립률 <span th:text="*{grade.pointPercentage + '%'}">0%</span>
     </p>
   </div>
 
@@ -32,20 +44,18 @@
       <ul>
         <li><a href="#">회원 정보</a></li>
         <li><a href="#">회원 탈퇴</a></li>
-        <li><a href="#">등급 정보</a></li>
+        <li><a href="#">회원 주소록</a></li>
       </ul>
     </div>
 
     <div class="menu-group">
       <h3>나의 설정</h3>
       <ul>
-        <li><a href="#">나의 주소록</a></li>
-        <li><a href="#">나의 좋아요</a></li>
         <li><a href="#">나의 포인트</a></li>
         <li><a href="#">나의 쿠폰</a></li>
+        <li><a href="#">나의 좋아요</a></li>
         <li><a href="#">나의 리뷰</a></li>
       </ul>
     </div>
   </div>
-
 </aside>
