@@ -144,7 +144,7 @@
     <div th:if="${error}">
         <p class="error-message">[[${error}]]</p>
     </div>
-    <form th:action="@{/admins/books/{bookId}(bookId=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+    <form th:action="@{/admins/books/{book-id}(book-id=${bookId})}" th:object="${bookUpdateRequest}" method="post">
         <input type="hidden" name="_method" value="PUT"/>
         <div class="form-group">
             <label for="title">제목</label>
