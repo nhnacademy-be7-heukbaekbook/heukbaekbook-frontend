@@ -15,7 +15,9 @@ function checkDuplicate(type) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: value
+        body: JSON.stringify({
+            value
+        })
     })
         .then(response => response.json())
         .then(isDuplicate => {
