@@ -5,6 +5,7 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +18,7 @@ import java.util.Optional;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/signup")
+@Slf4j
 public class MemberController {
 
     private final MemberService memberService;
@@ -57,7 +59,8 @@ public class MemberController {
     }
 
     @PostMapping("/check-duplicate/loginId")
-    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestBody String loginId){
+    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestBody String loginId) {
+        log.info("loginId: " + loginId);
         return memberService.existsLoginId(loginId);
     }
 
