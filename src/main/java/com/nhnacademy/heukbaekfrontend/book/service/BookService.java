@@ -31,8 +31,7 @@ public class BookService {
     }
 
     public BookDetailResponse getBookById(Long bookId) {
-        ResponseEntity<BookDetailResponse> response = bookClient.getBook(bookId);
-        return response.getBody();
+        return bookClient.getBook(bookId).getBody();
     }
 
     public List<BookSearchResponse> searchBooks(String title) {
