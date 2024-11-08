@@ -18,7 +18,7 @@ public class LoginController {
 
     @GetMapping("/login")
     public String getLoginForm() {
-        return "/login/login";
+        return "login/login";
     }
 
     @PostMapping("/login")
@@ -27,7 +27,7 @@ public class LoginController {
 
         if (!loginSuccess) {
             model.addAttribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-            return "/login/login";
+            return "login/login";
         }
 
         return "redirect:/";

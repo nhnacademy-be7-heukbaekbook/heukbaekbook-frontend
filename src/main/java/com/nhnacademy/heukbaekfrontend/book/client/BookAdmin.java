@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(value = "bookAdmin", url = "http://localhost:8082/api/admins")
+@FeignClient(value = "bookAdmin", url = "http://localhost:8082")
 public interface BookAdmin {
 
-    @PostMapping("/aladin")
+    @PostMapping("/api/admins/aladin")
     List<BookSearchResponse> searchBooks(@RequestParam("title") String title);
 
-    @PostMapping("/books")
+    @PostMapping("/api/admins/books")
     ResponseEntity<BookCreateResponse> registerBook(@RequestBody BookCreateRequest request);
 
-    @GetMapping("/books")
+    @GetMapping("/api/admins/books")
     ResponseEntity<Page<BookDetailResponse>> getBooks(Pageable pageable);
 
-    @PutMapping("/books/{bookId}")
+    @PutMapping("/api/admins/books/{bookId}")
     ResponseEntity<BookUpdateResponse> updateBook(@PathVariable Long bookId, @RequestBody BookUpdateRequest request);
 
-    @DeleteMapping("/books/{bookId}")
+    @DeleteMapping("/api/admins/books/{bookId}")
     ResponseEntity<BookDeleteResponse> deleteBook(@PathVariable Long bookId);
 
 }

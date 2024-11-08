@@ -41,7 +41,7 @@ class LoginControllerTest {
     void testGetLoginForm() throws Exception {
         mockMvc.perform(get("/login"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/login/login"));
+                .andExpect(view().name("login/login"));
     }
 
     @Test
@@ -67,7 +67,7 @@ class LoginControllerTest {
                         .param("username", "user")
                         .param("password", "wrongPassword"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("/login/login"))
+                .andExpect(view().name("login/login"))
                 .andExpect(model().attributeExists("error"))
                 .andExpect(model().attribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요."));
 
