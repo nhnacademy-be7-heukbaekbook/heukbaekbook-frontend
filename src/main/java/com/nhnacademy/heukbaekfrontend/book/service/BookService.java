@@ -6,47 +6,24 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class BookService {
+public interface BookService {
+    Page<BookResponse> getBooks(Pageable pageable);
 
-    private final BookAdmin bookAdmin;
-    private final BookClient bookClient;
+    Page<BookDetailResponse> getAllBooks(Pageable pageable);
 
-    @Autowired
-    public BookService(BookAdmin bookAdmin, BookClient bookClient) {
-        this.bookAdmin = bookAdmin;
-        this.bookClient = bookClient;
-    }
+    BookDetailResponse getBookById(Long bookId);
 
-    public Page<BookDetailResponse> getAllBooks(Pageable pageable) {
-        return bookAdmin.getBooks(pageable).getBody();
-    }
+    List<BookSearchResponse> searchBooks(String title);
 
-    public BookDetailResponse getBookById(Long bookId) {
-        return bookClient.getBook(bookId).getBody();
-    }
+    ResponseEntity<BookDeleteResponse> deleteBook(Long bookId);
 
-    public List<BookSearchResponse> searchBooks(String title) {
-        return bookAdmin.searchBooks(title);
-    }
+    ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request);
 
-    public ResponseEntity<BookDeleteResponse> deleteBook(Long bookId) {
-        return bookAdmin.deleteBook(bookId);
-    }
-
-    public ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request) {
-        return bookAdmin.registerBook(request);
-    }
-
-    public ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request) {
-        return bookAdmin.updateBook(bookId, request);
-    }
+    ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request);
 }
