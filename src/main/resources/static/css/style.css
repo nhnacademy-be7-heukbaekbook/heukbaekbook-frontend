@@ -1,29 +1,18 @@
-/* 전체 페이지 레이아웃 설정 */
-html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
+/* 스타일 전체 설정 */
 body {
     font-family: Arial, sans-serif;
     color: #333;
     background:
-            linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)),
-            url('/images/logo.png');
-    background-size: 200px 200px;
+            linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), /* 배경 투명도 설정 */
+            url('/images/logo.png'); /* 로고 이미지 경로 */
+    background-size: 200px 200px; /* 로고 크기 설정 */
     background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    background-color: #f5f5f5;
+    background-position: center; /* 중앙에 위치 */
+    background-attachment: fixed; /* 페이지 스크롤 시에도 고정 */
+    background-color: #f5f5f5; /* 흰색 배경 */
     margin: 0;
     padding: 0;
-}
-
-/* 메인 컨텐츠 영역을 중간에 배치 */
-main {
-    flex: 1;
+    overflow-x: hidden;
 }
 
 /* 헤더와 푸터 스타일 */
@@ -37,9 +26,9 @@ header, footer {
 
 /* 로고 스타일 */
 .logo {
-    width: 100px;
+    width: 100px; /* 로고 크기 조정 */
     height: auto;
-    margin-right: 15px;
+    margin-right: 15px; /* 로고와 제목 간의 간격 */
 }
 
 /* 헤더 타이틀 스타일 */
@@ -74,200 +63,22 @@ nav ul li a {
 /* 버튼 섹션 정렬 */
 #book-buttons {
     display: flex;
-    justify-content: center;
-    gap: 10px;
+    justify-content: center; /* 버튼을 가운데로 정렬 (옵션) */
+    gap: 10px; /* 버튼 간 간격 */
+    margin-top: 20px;
+}
+
+/* 버튼 섹션 정렬 */
+#book-buttons {
+    display: flex;
+    justify-content: center; /* 버튼을 가운데로 정렬 */
+    gap: 10px; /* 버튼 간 간격 */
     margin-top: 20px;
 }
 
 /* 흑수저, 백수저 버튼 기본 스타일 */
 .book-section-button {
-    padding: 15px 30px;/* 스타일 전체 설정 */
-    body {
-        font-family: Arial, sans-serif;
-        color: #333;
-        background:
-                linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), /* 배경 투명도 설정 */
-                url('/images/logo.png'); /* 로고 이미지 경로 */
-        background-size: 200px 200px; /* 로고 크기 설정 */
-        background-repeat: no-repeat;
-        background-position: center; /* 중앙에 위치 */
-        background-attachment: fixed; /* 페이지 스크롤 시에도 고정 */
-        background-color: #f5f5f5; /* 흰색 배경 */
-        margin: 0;
-        padding: 0;
-    }
-
-    /* 헤더와 푸터 스타일 */
-    header, footer {
-        display: flex;
-        align-items: center;
-        background-color: #000;
-        color: #fff;
-        padding: 1em 2em;
-    }
-
-    /* 로고 스타일 */
-    .logo {
-        width: 100px; /* 로고 크기 조정 */
-        height: auto;
-        margin-right: 15px; /* 로고와 제목 간의 간격 */
-    }
-
-    /* 헤더 타이틀 스타일 */
-    header h1 {
-        margin: 0;
-        font-size: 1.5em;
-    }
-
-    /* 내비게이션 메뉴 오른쪽 정렬 */
-    nav {
-        margin-left: auto;
-    }
-
-    nav ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        gap: 15px;
-    }
-
-    nav ul li {
-        display: inline;
-    }
-
-    nav ul li a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: bold;
-    }
-
-    /* 버튼 섹션 정렬 */
-    #book-buttons {
-        display: flex;
-        justify-content: center; /* 버튼을 가운데로 정렬 (옵션) */
-        gap: 10px; /* 버튼 간 간격 */
-        margin-top: 20px;
-    }
-
-    /* 버튼 섹션 정렬 */
-    #book-buttons {
-        display: flex;
-        justify-content: center; /* 버튼을 가운데로 정렬 */
-        gap: 10px; /* 버튼 간 간격 */
-        margin-top: 20px;
-    }
-
-    /* 흑수저, 백수저 버튼 기본 스타일 */
-    .book-section-button {
-        padding: 15px 30px;
-        border: none;
-        border-radius: 5px;
-        font-size: 1.2em;
-        cursor: pointer;
-        text-align: center;
-        transition: background-color 0.3s;
-    }
-
-    /* 흑수저 버튼 스타일 */
-    .book-section-button {
-        background-color: #000;
-        color: #fff;
-    }
-
-    .book-section-button:hover {
-        background-color: #333;
-    }
-
-    /* 백수저 버튼 스타일 */
-    .white-button {
-        background-color: #fff;
-        color: #000;
-        border: 1px solid #ccc;
-    }
-
-    .white-button:hover {
-        background-color: #f0f0f0;
-    }
-
-    /* 검색 창 스타일 */
-    #search-bar form {
-        display: flex;
-        justify-content: center;
-        margin: 20px 0;
-    }
-
-    #search-bar input[type="text"] {
-        padding: 10px;
-        border: 1px solid #333;
-        border-radius: 5px 0 0 5px;
-        width: 300px;
-    }
-
-    #search-bar button {
-        padding: 10px 15px;
-        border: 1px solid #333;
-        background-color: #000;
-        color: #fff;
-        border-radius: 0 5px 5px 0;
-        cursor: pointer;
-    }
-
-    /* 섹션 제목 스타일 */
-    h2 {
-        text-align: center;
-        color: #000;
-    }
-
-    /* 도서 목록 스타일 */
-    .book-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin: 20px 0;
-    }
-
-    .book-item {
-        background-color: #fff;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        padding: 20px;
-        margin: 10px;
-        width: 200px;
-        text-align: center;
-        transition: transform 0.3s;
-    }
-
-    .book-item:hover {
-        transform: scale(1.05);
-    }
-
-    .book-item img {
-        max-width: 100%;
-        border-radius: 5px;
-        margin-bottom: 10px;
-    }
-
-    .book-item h3, .book-item p, .book-item a {
-        color: #000;
-    }
-
-    .book-item a {
-        text-decoration: none;
-        color: #555;
-        font-weight: bold;
-    }
-
-    /* 푸터 내비게이션 링크 스타일 */
-    footer nav a {
-        color: #ccc;
-        margin: 0 10px;
-        text-decoration: none;
-    }
-
-    footer nav a:hover {
-        color: #fff;
-    }
+    padding: 15px 30px;
     border: none;
     border-radius: 5px;
     font-size: 1.2em;
@@ -276,6 +87,7 @@ nav ul li a {
     transition: background-color 0.3s;
 }
 
+/* 흑수저 버튼 스타일 */
 .book-section-button {
     background-color: #000;
     color: #fff;
@@ -348,11 +160,11 @@ h2 {
     transform: scale(1.05);
 }
 
-.book-item img {
-    max-width: 100%;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
+/*.book-item img {*/
+/*    max-width: 100%;*/
+/*    border-radius: 5px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
 .book-item h3, .book-item p, .book-item a {
     color: #000;
@@ -373,6 +185,281 @@ footer nav a {
 
 footer nav a:hover {
     color: #fff;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    color: #000000;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.pagination a:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/*.pagination .active {*/
+/*    background-color: #000;*/
+/*    color: white;*/
+/*    border-color: #007bff;*/
+/*}*/
+
+.pagination .disabled {
+    color: #ccc;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+#all-books {
+    width: 100%;
+    padding: 20px;
+    background-color: #f0f0f0; /* 연한 회색 배경 */
+}
+
+.book-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.book-item {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    width: 850px; /* 전체 너비를 더 넓힘 */
+    text-align: left;
+    transition: transform 0.3s;
+    margin: 15px 0;
+}
+
+.book-rank {
+    position: absolute;
+    left: -40px; /* 도서 항목의 왼쪽 바깥으로 약간 이동 */
+    top: 50%;
+    transform: translateY(-50%); /* 수직 중앙 정렬 */
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    width: 30px; /* 번호 영역의 너비 */
+    text-align: center;
+}
+
+
+.book-image {
+    max-width: 150px; /* 원하는 크기로 설정 */
+    width: 100%; /* 컨테이너 너비에 맞게 조정 */
+    height: auto; /* 이미지 비율 유지 */
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 30px;
+}
+
+.book-image img {
+    max-width: 250px; /* 이미지 크기를 크게 설정 */
+    height: auto; /* 비율을 유지하면서 크기를 조정 */
+    border-radius: 5px;
+}
+
+.book-details {
+    flex: 1;
+}
+
+/*.book-title {*/
+/*    font-size: 20px;*/
+/*    font-weight: bold;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+.book-actions {
+    display: flex;
+    flex-direction: column; /* 버튼을 세로로 정렬 */
+    align-items: flex-end; /* 오른쪽 끝 정렬 */
+    gap: 10px;
+    margin-left: 10px; /* 콘텐츠와의 간격 추가 */
+}
+
+.cart-btn,
+.buy-now-btn,
+.delete-now-button {
+    padding: 8px 12px;
+    font-size: 15px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #000; /* 배경색을 검정으로 설정 */
+    color: #fff; /* 글씨를 하얗게 설정 */
+    transition: background-color 0.3s, color 0.3s;
+    width: 100px; /* 버튼 크기 고정 */
+}
+
+.cart-btn:hover, .buy-now-btn:hover {
+    background-color: #555; /* 호버 시 더 밝은 검정색 */
+    color: #fff; /* 호버 시 글씨는 하얗게 유지 */
+}
+
+.book-item-link {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: inherit; /* 텍스트 색상 상속 */
+    display: block; /* 링크가 전체 영역을 차지하도록 설정 */
+}
+
+.book-title a {
+    text-decoration: none; /* 기본 상태에서 밑줄 제거 */
+    color: inherit; /* 링크의 텍스트 색상을 상속받도록 설정 */
+}
+
+.book-title a:hover {
+    text-decoration: underline; /* 커서를 올렸을 때 밑줄 추가 */
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn,
+.quantity-input {
+    box-sizing: border-box;
+    width: 35px; /* 가로 크기를 줄임 */
+    height: 30px;
+    border: 1px solid #ddd; /* 연한 회색 테두리 */
+    background-color: #fafafa; /* 더 밝은 배경색 */
+    font-size: 16px; /* 버튼 내부 글씨 크기 조정 */
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888; /* 연한 텍스트 색상 */
+    transition: background-color 0.2s;
+}
+
+.quantity-btn:first-of-type {
+    border-radius: 5px 0 0 5px;
+}
+
+.quantity-btn:last-of-type {
+    border-radius: 0 5px 5px 0;
+}
+
+.quantity-btn:hover {
+    background-color: #f0f0f0; /* 호버 시 더 연한 회색 */
+}
+
+.quantity-input {
+    width: 30px; /* 입력 필드의 너비 */
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    font-size: 16px;
+    color: #333;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #888; /* 취소된 가격을 회색으로 표시 */
+    margin-right: 5px; /* 오른쪽 간격 추가 */
+}
+
+/* 체크박스 크기 조정 */
+.book-checkbox {
+    transform: scale(1.5); /* 원하는 크기로 조정 */
+    margin-right: 10px; /* 책 이미지와의 간격 */
+}
+
+.update-quantity-btn {
+    padding: 6px 12px; /* 버튼 크기 줄임 */
+    font-size: 13px; /* 글씨 크기 줄임 */
+    font-weight: bold; /* 글씨 두께 */
+    color: #ffffff; /* 텍스트 색상 (흰색) */
+    background-color: #000000; /* 기본 배경색 (검정색) */
+    border: none; /* 테두리 제거 */
+    border-radius: 4px; /* 약간 둥근 모서리 */
+    cursor: pointer; /* 마우스 커서 변경 */
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+    margin-top: 8px;
+}
+
+.checkout-summary {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.total-selected-price {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.checkout-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* 버튼 사이 간격 */
+}
+
+.checkout-btn, .guest-checkout-btn, .continue-shopping-btn {
+    width: 150px; /* 모든 버튼의 너비를 동일하게 설정 */
+    padding: 12px 0; /* 위아래 여백 */
+    font-size: 16px; /* 글씨 크기 확대 */
+    font-weight: bold;
+    background-color: #000000; /* 검정색 배경 */
+    color: #fff; /* 흰색 텍스트 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    margin-bottom: 8px;
+}
+
+.select-all-container {
+    display: flex;
+    margin-top: 30px;
+    padding-left: 31%;
+}
+
+.select-all-container label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333; /* 텍스트 색상 */
+    display: flex;
+    align-items: center;
+}
+
+/* 전체 선택 체크박스 스타일 */
+#select-all {
+    transform: scale(1.5); /* 크기 조정 */
+    margin-right: 10px; /* 텍스트와의 간격 */
+    cursor: pointer; /* 포인터 커서로 변경 */
 }
 
 .link-button {

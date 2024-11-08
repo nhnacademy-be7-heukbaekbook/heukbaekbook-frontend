@@ -1,50 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>흑백문고</title>
-  <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css"> <!-- CSS 파일 경로 -->
 </head>
 <body>
 
 <!-- 헤더 -->
 <header>
-  <a href="/">
-    <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-  </a>
-  <nav>
-    <ul>
-      <li><a href="/categories">카테고리</a></li>
-      <li><a href="/cart">장바구니</a></li>
-      <li><a href="/login">로그인</a></li>
-      <li><a href="/login">마이페이지</a></li>
-    </ul>
-  </nav>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <nav>
+        <ul>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/login">로그인</a></li>
+            <li><a href="/login">마이페이지</a></li>
+        </ul>
+    </nav>
 </header>
 
 <main>
-  <section>
-    <div class="book-list">
-      <!-- Each book item in the cart -->
-      <div class="book-item" th:each="book : ${cart}">
-        <img th:src="${book.imageUrl}" alt="Book Image">
-        <h3 th:text="${book.title}">Book Title</h3>
-        <p th:text="'Price: $' + ${book.price}">Price</p>
-        <p th:text="'Quantity: ' + ${book.quantity}">Quantity</p>
-        <a href="#" class="white-button">Remove from Cart</a>
-      </div>
-    </div>
-  </section>
+    <section>
+        <!-- 전체 선택 체크박스 -->
+        <div class="select-all-container">
+            <label>
+                <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)">
+                전체 선택
+            </label>
+        </div>
+        <div class="book-list">
+            <div class="book-item" th:each="book : ${cart}">
+                <div class="book-select">
+                    <!-- 책 선택을 위한 체크박스 -->
+                    <label>
+                        <input type="checkbox" th:id="'select-book-' + ${book.id}" name="selectedBooks" th:value="${book.id}" class="book-checkbox" onchange="updateTotalSelectedPrice()">
+                    </label>
+                </div>
+                <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image">
+                <div class="book-details">
+                    <p class="book-title">
+                        <a th:href="@{/book/{id}(id=${book.id})}" th:text="${book.title}">제목</a>
+                    </p>
+                    <p class="book-price">
+                        <span class="original-price" th:text="${book.price} + '원'"></span>
+                        <span th:text="${book.salePrice} + '원'"></span>
+                        <span class="discount" th:text="'(' + ${book.discountRate} + '% 할인)'"></span>
+                    </p>
+                    <div class="quantity-selector">
+                        <!-- 수량 감소 버튼 -->
+                        <button type="button" class="quantity-btn" th:attr="data-book-id=${book.id}, data-sale-price=${book.salePrice}" onclick="decreaseQuantity(this)">-</button>
+
+                        <!-- 수량 입력 필드 -->
+                        <label>
+                            <input type="text" th:id="'quantity-' + ${book.id}" name="quantity" th:value="${book.quantity}" class="quantity-input" readonly
+                                   th:attr="data-book-id=${book.id}, data-sale-price=${book.salePrice}"/>
+                        </label>
+
+                        <!-- 수량 증가 버튼 -->
+                        <button type="button" class="quantity-btn" th:attr="data-book-id=${book.id}, data-sale-price=${book.salePrice}" onclick="increaseQuantity(this)">+</button>
+                    </div>
+                    <!-- 수량 변경 버튼 -->
+                    <button type="button" class="update-quantity-btn" th:attr="data-book-id=${book.id}" onclick="applyQuantityChange(this)">변경</button>
+                    <!--상품 금액 -->
+                    <p th:id="'total-price-' + ${book.id}" class="total-price" th:text="${book.totalPrice} + '원'">상품 금액</p>
+                </div>
+                <div class="book-actions">
+                    <button class="buy-now-btn">주문하기</button>
+                    <button class="delete-now-button" th:onclick="'deleteFromCart(' + ${book.id} + ')'">삭제</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 선택된 책의 총 상품 금액 표시 및 버튼들 -->
+        <div class="checkout-summary">
+            <p id="total-selected-price" class="total-selected-price">총 상품 금액: 0원</p>
+            <div class="checkout-buttons">
+                <button class="checkout-btn">주문하기</button>
+                <button class="guest-checkout-btn">비회원 주문</button>
+                <button class="continue-shopping-btn">쇼핑 계속하기</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function decreaseQuantity(buttonElement) {
+            const bookId = buttonElement.getAttribute('data-book-id');
+            const quantityInput = document.getElementById(`quantity-${bookId}`);
+            let quantity = parseInt(quantityInput.value) || 1;
+
+            if (quantity > 1) {
+                quantity -= 1;
+                quantityInput.value = quantity;
+            }
+        }
+
+        function increaseQuantity(buttonElement) {
+            const bookId = buttonElement.getAttribute('data-book-id');
+            const quantityInput = document.getElementById(`quantity-${bookId}`);
+            let quantity = parseInt(quantityInput.value) || 1;
+
+            quantity += 1;
+            quantityInput.value = quantity;
+        }
+
+        function updateTotalPrice(inputElement) {
+            const bookId = inputElement.getAttribute('data-book-id');
+            const salePriceText = inputElement.getAttribute('data-sale-price');
+            const salePrice = parseFloat(salePriceText.replace(/,/g, '')) || 0;
+            const quantity = parseInt(inputElement.value) || 1;
+            const totalPrice = salePrice * quantity;
+
+            const totalPriceElement = document.getElementById(`total-price-${bookId}`);
+            if (totalPriceElement) {
+                totalPriceElement.textContent = totalPrice.toLocaleString() + '원';
+            }
+        }
+
+        function deleteFromCart(bookId) {
+            // 확인 메시지를 표시하여 삭제 의사 확인
+            if (!confirm("선택한 상품을 삭제 하시겠습니까?")) return;
+
+            fetch(`/cart/${bookId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload(); // 페이지를 새로고침하여 삭제 결과 반영
+                    } else {
+                        alert("삭제에 실패했습니다. 다시 시도해주세요.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("삭제 중 오류가 발생했습니다.");
+                });
+        }
+
+        function applyQuantityChange(buttonElement) {
+            const bookId = buttonElement.getAttribute('data-book-id');
+            const quantityInput = document.getElementById(`quantity-${bookId}`);
+            const quantity = parseInt(quantityInput.value) || 1;
+            const originalQuantity = parseInt(quantityInput.getAttribute('data-original-quantity')) || 1;
+
+            if (quantity === originalQuantity) {
+                alert('변경된 수량이 없습니다.');
+                return; // 서버 요청을 보내지 않음
+            }
+
+            console.log(`Applying quantity change for book ID ${bookId}: ${quantity}`);
+
+            fetch(`/cart/${bookId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    quantity: parseInt(quantity)
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        quantityInput.setAttribute('data-original-quantity', quantity);
+                        updateTotalPrice(quantityInput);
+                        updateTotalSelectedPrice();
+                    } else {
+                        alert('수량 변경에 실패했습니다.');
+                    }
+                })
+                .catch(error => console.error('Error updating quantity:', error));
+        }
+
+        function updateTotalSelectedPrice() {
+            let totalPrice = 0;
+            const checkboxes = document.querySelectorAll('.book-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    const bookId = checkbox.getAttribute('value');
+                    const quantityInput = document.getElementById(`quantity-${bookId}`);
+                    const salePriceText = quantityInput.getAttribute('data-sale-price');
+                    const salePrice = parseFloat(salePriceText.replace(/,/g, '')) || 0;
+                    const quantity = parseInt(quantityInput.value) || 1;
+                    totalPrice += salePrice * quantity;
+                }
+            });
+
+            const totalSelectedPriceElement = document.getElementById('total-selected-price');
+            if (totalSelectedPriceElement) {
+                totalSelectedPriceElement.textContent = '총 상품 금액: ' + totalPrice.toLocaleString() + '원';
+            }
+        }
+
+        function toggleSelectAll(selectAllCheckbox) {
+            const isChecked = selectAllCheckbox.checked;
+            const checkboxes = document.querySelectorAll('.book-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+
+            console.log("전체 선택 상태:", isChecked);  // 체크 상태 확인
+            // 전체 선택 상태에 따라 총 상품 금액 업데이트
+            updateTotalSelectedPrice();
+        }
+
+        function updateSelectAllCheckbox() {
+            const selectAllCheckbox = document.getElementById('select-all');
+            const checkboxes = document.querySelectorAll('.book-checkbox');
+            selectAllCheckbox.checked = Array.from(checkboxes).every(checkbox => checkbox.checked); // 모든 개별 체크박스가 체크되었는지 확인 후 전체 체크박스 업데이트
+        }
+
+        // 개별 체크박스에 상태 변경 시 updateSelectAllCheckbox 호출
+        document.querySelectorAll('.book-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                updateSelectAllCheckbox();
+                updateTotalSelectedPrice();
+            });
+        });
+
+    </script>
 </main>
 
 <footer>
-  <p>&copy; 2024 흑백문고</p>
-  <nav>
-    <a href="/about">회사 소개</a> |
-    <a href="/contact">문의하기</a> |
-    <a href="/terms">이용 약관</a>
-  </nav>
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
 </footer>
 
 </body>
