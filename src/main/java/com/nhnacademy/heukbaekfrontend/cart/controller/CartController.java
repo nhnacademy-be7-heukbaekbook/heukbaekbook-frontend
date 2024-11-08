@@ -38,7 +38,7 @@ public class CartController {
         log.info("sessionId: {}", sessionId);
         List<Book> cart = cartService.getBooksFromCart(sessionId);
 
-        return new ModelAndView("/cart/cart-list").addObject("cart", cart);
+        return new ModelAndView("cart/cart-list").addObject("cart", cart);
     }
 
     // 장바구니에 책 담기
