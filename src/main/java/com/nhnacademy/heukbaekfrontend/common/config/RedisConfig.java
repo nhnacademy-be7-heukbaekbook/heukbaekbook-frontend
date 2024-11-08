@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.config;
 
+import com.nhnacademy.heukbaekfrontend.common.config.keymanager.SecureKeyManagerConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

@@ -1,6 +1,10 @@
-package com.nhnacademy.heukbaekfrontend.common.config;
+package com.nhnacademy.heukbaekfrontend.common.config.keymanager;
 
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -11,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.Objects;
 
 @Component
+@RequiredArgsConstructor
 public class SecureKeyManagerConfig {
 
     @Value("${nhncloud.keymanager.appKey}")
@@ -21,6 +26,11 @@ public class SecureKeyManagerConfig {
 
     @Value("${nhncloud.keymanager.secretAccessKey}")
     private String secretAccessKey;
+
+    @Value("${jwt.key}")
+    private String jwtKey;
+
+    private final ConfigurableEnvironment env;
 
     private final String endpoint = "https://api-keymanager.nhncloudservice.com";
 
@@ -40,5 +50,12 @@ public class SecureKeyManagerConfig {
         } else {
             throw new RuntimeException("기밀 데이터 조회 실패: " + response.getStatusCode());
         }
+    }
+
+    @PostConstruct
+    public String secretKey() {
+        String secretKey = getSecret(jwtKey);
+        env.getSystemProperties().put("secret.key", secretKey);
+        return secretKey;
     }
 }

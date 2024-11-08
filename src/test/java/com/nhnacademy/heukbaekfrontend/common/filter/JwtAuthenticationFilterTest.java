@@ -99,7 +99,7 @@ class JwtAuthenticationFilterTest {
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(writer, times(1)).write("Unauthorized: Invalid refresh token");
-        verify(response, times(1)).sendRedirect("/");
+        verify(response, times(1)).sendRedirect("/login");
     }
 
     @Test
