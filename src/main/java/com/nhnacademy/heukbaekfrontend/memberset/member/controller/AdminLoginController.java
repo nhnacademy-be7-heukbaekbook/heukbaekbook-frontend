@@ -17,7 +17,7 @@ public class AdminLoginController {
 
     @GetMapping("/admins/login")
     public String getAdminLoginForm() {
-        return "/login/adminLogin";
+        return "login/adminLogin";
     }
 
     @PostMapping("/admins/login")
@@ -26,7 +26,7 @@ public class AdminLoginController {
 
         if (!loginSuccess) {
             model.addAttribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-            return "/login/adminLogin";
+            return "login/adminLogin";
         }
 
         return "redirect:/admins/home";
