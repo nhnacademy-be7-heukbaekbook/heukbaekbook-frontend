@@ -60,7 +60,7 @@ public class MemberController {
 
     @PostMapping("/check-duplicate/loginId")
     public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestBody String loginId) {
-        log.info("loginId: " + loginId);
+        log.info("loginId: {}", loginId);
         return memberService.existsLoginId(loginId);
     }
 
