@@ -1,5 +1,5 @@
 <!-- fragments/pagination.html -->
-<ul class="pagination" th:fragment="pagination(page)">
+<ul class="pagination" th:fragment="pagination(page)" th:if="${page != null and page.totalPages > 0}">
     <!-- 첫 페이지로 이동 -->
     <li th:if="${page.number != -1}" th:classappend="${page.first} ? 'disabled'">
         <a th:href="@{|?page=0|}" th:if="${!page.first}">«</a>

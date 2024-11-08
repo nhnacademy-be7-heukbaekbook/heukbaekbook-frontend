@@ -16,7 +16,7 @@ function checkDuplicate(type) {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            value
+            loginId: value
         })
     })
         .then(response => response.json())
