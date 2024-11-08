@@ -15,13 +15,13 @@ nhncloud:
 redis:
   key: "8bf046001ecc4ee09792d17bfa05db73"
 
+jwt:
+  key: eec8381b385f45c3b990f3be8834eea4
+  secret-key: ${secret.key}
+
 spring:
   cloud:
     config:
       enabled: false
   main:
     allow-bean-definition-overriding: true
-
-jwt:
-  secret-key: h3w9qWUDH2K1S7owJK9rgrbQjF6jbRof0ep/6nBN+fA=
-  refresh-secret-key: 35wjsyScjp+rBsbbKALuC/TggP302yV9NvGKNqOhLoU=

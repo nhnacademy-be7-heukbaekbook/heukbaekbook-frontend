@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.common.filter;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +33,9 @@ class JwtAuthenticationFilterTest {
     private CookieUtil cookieUtil;
 
     @Mock
+    private JwtUtil jwtUtil;
+
+    @Mock
     private HttpServletRequest request;
 
     @Mock
@@ -48,7 +52,7 @@ class JwtAuthenticationFilterTest {
 
     @BeforeEach
     void setUp() {
-        jwtAuthenticationFilter = new JwtAuthenticationFilter(authClient, cookieUtil);
+        jwtAuthenticationFilter = new JwtAuthenticationFilter(authClient, cookieUtil, jwtUtil);
     }
 
     @Test
@@ -95,7 +99,7 @@ class JwtAuthenticationFilterTest {
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(writer, times(1)).write("Unauthorized: Invalid refresh token");
-        verify(response, times(1)).sendRedirect("/");
+        verify(response, times(1)).sendRedirect("/login");
     }
 
     @Test

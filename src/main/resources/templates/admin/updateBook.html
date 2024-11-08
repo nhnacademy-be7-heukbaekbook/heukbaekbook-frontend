@@ -3,18 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>흑백문고 - 도서 수정</title>
-    <!-- Google Fonts 추가 -->
     <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-    <!-- 기존 스타일 시트 유지 -->
     <link rel="stylesheet" href="/css/style.css">
-    <!-- Toast UI Editor CSS -->
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <style>
-        /* 글로벌 폰트 설정 */
         body {
             font-family: 'Noto Sans KR', sans-serif;
         }
-        /* Form Container Styling */
         .form-container {
             max-width: 800px;
             margin: 50px auto;
@@ -61,7 +56,6 @@
         .form-group input[type="checkbox"] {
             margin-right: 10px;
         }
-        /* 버튼 스타일 */
         .form-container button,
         .form-container .button {
             padding: 12px 20px;
@@ -92,21 +86,6 @@
         .remove-button:hover {
             background-color: #c0392b;
         }
-        .add-button {
-            padding: 10px 16px;
-            background-color: #000000;
-            color: #ffffff;
-            border: none;
-            border-radius: 4px;
-            font-size: 0.9em;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-        .add-button:hover {
-            background-color: #333333;
-        }
-        /* Success and Error Message Styling */
         .success-message {
             color: #27ae60;
             text-align: center;
@@ -133,16 +112,9 @@
         .back-button:hover {
             background-color: #95a5a6;
         }
-        /* Form 내부의 동적 필드 컨테이너 스타일 */
-        .dynamic-field {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
         .dynamic-field input[type="text"] {
             flex: 1;
         }
-        /* 반응형 디자인 */
         @media (max-width: 768px) {
             .form-container {
                 padding: 20px;
@@ -172,24 +144,21 @@
     <div th:if="${error}">
         <p class="error-message">[[${error}]]</p>
     </div>
-    <!--/*@thymesVar id="bookUpdateRequest" type=""*/-->
     <form th:action="@{/admins/books/{bookId}(bookId=${bookId})}" th:object="${bookUpdateRequest}" method="post">
-        <!-- PUT 메서드를 사용하기 위한 Hidden Input -->
+        <input type="hidden" name="_method" value="PUT"/>
         <div class="form-group">
             <label for="title">제목</label>
             <input type="text" th:field="*{title}" id="title" required />
         </div>
         <div class="form-group">
             <label for="index">목차</label>
-            <div id="index-editor"></div>
-            <!-- 숨겨진 필드 추가 -->
-            <input type="hidden" name="index" id="index-content" th:field="*{index}" />
+            <textarea th:field="*{index}" id="index" style="display: none;"></textarea>
+            <div id="indexEditor"></div>
         </div>
         <div class="form-group">
             <label for="description">설명</label>
-            <div id="description-editor"></div>
-            <!-- 숨겨진 필드 추가 -->
-            <input type="hidden" name="description" id="description-content" th:field="*{description}" />
+            <textarea th:field="*{description}" id="description" style="display: none;"></textarea>
+            <div id="descriptionEditor"></div>
         </div>
         <div class="form-group">
             <label for="publication">출판일</label>
@@ -204,7 +173,6 @@
             <label for="thumbnailImageUrl">썸네일 이미지</label>
             <input type="text" th:field="*{thumbnailImageUrl}" id="thumbnailImageUrl" />
         </div>
-
         <div class="form-group">
             <label>상세 이미지 URL</label>
             <div id="imageUrls-container">
@@ -247,7 +215,6 @@
             <label for="publisher">출판사</label>
             <input type="text" th:field="*{publisher}" id="publisher" />
         </div>
-        <!-- 카테고리 필드 -->
         <div class="form-group">
             <label>카테고리</label>
             <div id="categories-container">
@@ -259,7 +226,6 @@
             <button type="button" id="add-category-button">카테고리 추가</button>
         </div>
 
-        <!-- 태그 필드 -->
         <div class="form-group">
             <label>태그</label>
             <div id="tags-container">
@@ -282,27 +248,30 @@
 </main>
 
 <script>
-    // 목차 및 설명 WYSIWYG Editor 초기화
     const indexEditor = new toastui.Editor({
-        el: document.querySelector('#index-editor'),
+        el: document.querySelector('#indexEditor'),
         height: '300px',
         initialEditType: 'wysiwyg',
         previewStyle: 'vertical',
-        initialValue: /*[[${bookUpdateRequest.index}]]*/ ''
+        initialValue: document.getElementById('index').value,
+        events: {
+            change: function() {
+                document.getElementById('index').value = indexEditor.getHTML();
+            }
+        }
     });
 
     const descriptionEditor = new toastui.Editor({
-        el: document.querySelector('#description-editor'),
+        el: document.querySelector('#descriptionEditor'),
         height: '300px',
         initialEditType: 'wysiwyg',
         previewStyle: 'vertical',
-        initialValue: /*[[${bookUpdateRequest.description}]]*/ ''
-    });
-
-    // 폼 제출 시 에디터 내용 숨겨진 필드에 저장
-    document.querySelector("form").addEventListener("submit", function(event) {
-        document.getElementById("index-content").value = indexEditor.getHTML();
-        document.getElementById("description-content").value = descriptionEditor.getHTML();
+        initialValue: document.getElementById('description').value,
+        events: {
+            change: function() {
+                document.getElementById('description').value = descriptionEditor.getHTML();
+            }
+        }
     });
 
     function removeImageUrl(button) {
@@ -310,12 +279,10 @@
         container.removeChild(button.parentNode);
     }
 
-    // 이미지 URL 입력 필드 추가
     document.getElementById('add-imageUrl-button').addEventListener('click', function() {
         const container = document.getElementById('imageUrls-container');
         const index = container.children.length;
 
-        // 새로운 입력 필드 생성
         const newDiv = document.createElement('div');
         const newInput = document.createElement('input');
         newInput.type = 'text';
@@ -323,7 +290,6 @@
         newInput.id = 'detailImageUrls_' + index;
         newInput.setAttribute('th:field', '*{detailImageUrls[' + index + ']}');
 
-        // 삭제 버튼 생성
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.innerText = '삭제';
@@ -332,24 +298,20 @@
             removeImageUrl(this);
         };
 
-        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
         newDiv.appendChild(newInput);
         newDiv.appendChild(removeBtn);
         container.appendChild(newDiv);
     });
 
-    // 카테고리 제거 함수
     function removeCategory(button) {
         const container = document.getElementById('categories-container');
         container.removeChild(button.parentNode);
     }
 
-    // 카테고리 입력 필드 추가
     document.getElementById('add-category-button').addEventListener('click', function() {
         const container = document.getElementById('categories-container');
         const index = container.children.length;
 
-        // 새로운 입력 필드 생성
         const newDiv = document.createElement('div');
         const newInput = document.createElement('input');
         newInput.type = 'text';
@@ -357,7 +319,6 @@
         newInput.id = 'categories_' + index;
         newInput.setAttribute('th:field', '*{categories[' + index + ']}');
 
-        // 삭제 버튼 생성
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.innerText = '삭제';
@@ -366,24 +327,20 @@
             removeCategory(this);
         };
 
-        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
         newDiv.appendChild(newInput);
         newDiv.appendChild(removeBtn);
         container.appendChild(newDiv);
     });
 
-    // 태그 제거 함수
     function removeTag(button) {
         const container = document.getElementById('tags-container');
         container.removeChild(button.parentNode);
     }
 
-    // 태그 입력 필드 추가
     document.getElementById('add-tag-button').addEventListener('click', function() {
         const container = document.getElementById('tags-container');
         const index = container.children.length;
 
-        // 새로운 입력 필드 생성
         const newDiv = document.createElement('div');
         const newInput = document.createElement('input');
         newInput.type = 'text';
@@ -391,7 +348,6 @@
         newInput.id = 'tags_' + index;
         newInput.setAttribute('th:field', '*{tags[' + index + ']}');
 
-        // 삭제 버튼 생성
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.innerText = '삭제';
@@ -400,24 +356,20 @@
             removeTag(this);
         };
 
-        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
         newDiv.appendChild(newInput);
         newDiv.appendChild(removeBtn);
         container.appendChild(newDiv);
     });
 
-    // 저자 제거 함수
     function removeAuthor(button) {
         const container = document.getElementById('authors-container');
         container.removeChild(button.parentNode);
     }
 
-    // 저자 입력 필드 추가
     document.getElementById('add-author-button').addEventListener('click', function() {
         const container = document.getElementById('authors-container');
         const index = container.children.length;
 
-        // 새로운 입력 필드 생성
         const newDiv = document.createElement('div');
         const newInput = document.createElement('input');
         newInput.type = 'text';
@@ -425,7 +377,6 @@
         newInput.id = 'authors_' + index;
         newInput.setAttribute('th:field', '*{authors[' + index + ']}');
 
-        // 삭제 버튼 생성
         const removeBtn = document.createElement('button');
         removeBtn.type = 'button';
         removeBtn.innerText = '삭제';
@@ -434,12 +385,10 @@
             removeAuthor(this);
         };
 
-        // 새로운 입력 필드와 삭제 버튼을 컨테이너에 추가
         newDiv.appendChild(newInput);
         newDiv.appendChild(removeBtn);
         container.appendChild(newDiv);
     });
-
 </script>
 
 <footer th:replace="~{admin/layout :: footer}"></footer>
