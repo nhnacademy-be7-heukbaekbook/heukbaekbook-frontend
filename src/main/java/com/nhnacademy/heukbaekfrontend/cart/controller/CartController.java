@@ -41,7 +41,7 @@ public class CartController {
         return new ModelAndView("/cart/cart-list").addObject("cart", cart);
     }
 
-    // 장바구니에 책 조회
+    // 장바구니에 책 담기
     @PostMapping
     public ResponseEntity<CartCreateResponse> createBookToCart(HttpServletRequest request,
                                                                @RequestBody CartCreateRequest cartCreateRequest) {

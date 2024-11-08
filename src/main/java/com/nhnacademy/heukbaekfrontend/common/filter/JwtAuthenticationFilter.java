@@ -36,18 +36,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
                 ResponseEntity<String> refreshResponse = authClient.refreshTokens(REFRESH_TOKEN + "=" + refreshToken);
-                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie")).forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
+
+                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie"))
+                        .forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
+
+                String newAccessToken = extractAccessTokenFromSetCookie(refreshResponse);
+                if (newAccessToken != null) {
+                    request.setAttribute(ACCESS_TOKEN, newAccessToken);
+                }
             }
 
             filterChain.doFilter(request, response);
-
         } catch (Exception e) {
-            String referer = request.getHeader(HttpHeaders.REFERER);
-
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Unauthorized: " + e.getMessage());
+            cookieUtil.deleteCookie(response, REFRESH_TOKEN);
 
-            response.sendRedirect(Objects.requireNonNullElse(referer, "/"));
+
+            response.sendRedirect("/login");
         }
     }
 
@@ -58,5 +64,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         return path.startsWith("/css") ||
                 path.startsWith("/images") ||
                 path.startsWith("/js");
+    }
+
+    private String extractAccessTokenFromSetCookie(ResponseEntity<String> response) {
+        return Objects.requireNonNull(response.getHeaders().get(HttpHeaders.SET_COOKIE)).stream()
+                .filter(cookie -> cookie.startsWith(ACCESS_TOKEN + "="))
+                .map(cookie -> {
+                    int start = cookie.indexOf('=') + 1;
+                    int end = cookie.indexOf(';');
+                    return (end == -1) ? cookie.substring(start) : cookie.substring(start, end);
+                })
+                .findFirst()
+                .orElse(null);
     }
 }
