@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import java.util.Objects;
+
+import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
+
 @Aspect
 @Component
 public class RoleAspect {
@@ -39,7 +43,8 @@ public class RoleAspect {
         }
         HttpServletRequest request = attributes.getRequest();
 
-        String token = jwtUtil.resolveToken(request);
+        String token = getAccessToken(request);
+
         if (token == null || !jwtUtil.validateToken(token)) {
             throw new SecurityException("유효하지 않거나 누락된 토큰입니다.");
         }
@@ -48,5 +53,15 @@ public class RoleAspect {
         if (!requiredRole.equals(role)) {
             throw new SecurityException("사용자가 " + requiredRole + " 권한이 없습니다.");
         }
+    }
+
+    private String getAccessToken(HttpServletRequest request) {
+        String token = jwtUtil.resolveToken(request);
+
+        if (token == null) {
+            token = (String) request.getAttribute(ACCESS_TOKEN);
+        }
+
+        return token;
     }
 }
