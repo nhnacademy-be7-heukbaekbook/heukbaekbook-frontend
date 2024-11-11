@@ -20,7 +20,7 @@ import java.util.List;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins")
+@RequestMapping("/admin")
 public class BookAdminController {
 
     private final BookService bookService;
@@ -148,7 +148,7 @@ public class BookAdminController {
             redirectAttributes.addFlashAttribute("error", "도서 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/books");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/books");
 
         return "redirect:" + redirectUrl;
     }

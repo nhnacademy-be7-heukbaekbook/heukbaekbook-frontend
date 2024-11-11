@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins/tags")
+@RequestMapping("/admin/tags")
 public class TagController {
 
     private final TagService tagService;
@@ -114,7 +114,7 @@ public class TagController {
             redirectAttributes.addFlashAttribute("error", "태그 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/tags");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/tags");
 
         return "redirect:" + redirectUrl;
     }

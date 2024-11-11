@@ -14,21 +14,21 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "ContributorAdmin", url = "http://localhost:8082")
 public interface ContributorAdmin {
 
-    @PostMapping("/api/admins/contributors")
+    @PostMapping("/api/admin/contributors")
     ResponseEntity<ContributorCreateResponse> registerContributor(@RequestBody ContributorCreateRequest request);
 
-    @GetMapping("/api/admins/contributors")
+    @GetMapping("/api/admin/contributors")
     ResponseEntity<Page<ContributorDetailResponse>> getContributors(Pageable pageable);
 
-    @GetMapping("/api/admins/contributors/{contributor-id}")
+    @GetMapping("/api/admin/contributors/{contributor-id}")
     ResponseEntity<ContributorDetailResponse> getContributor(@PathVariable(name = "contributor-id") Long contributorId);
 
-    @PutMapping("/api/admins/contributors/{contributor-id}")
+    @PutMapping("/api/admin/contributors/{contributor-id}")
     ResponseEntity<ContributorUpdateResponse> updateContributor(
             @PathVariable(name = "contributor-id") Long contributorId,
             @RequestBody ContributorUpdateRequest request);
 
-    @DeleteMapping("/api/admins/contributors/{contributor-id}")
+    @DeleteMapping("/api/admin/contributors/{contributor-id}")
     ResponseEntity<ContributorDeleteResponse> deleteContributor(@PathVariable(name = "contributor-id") Long contributorId);
 
 }

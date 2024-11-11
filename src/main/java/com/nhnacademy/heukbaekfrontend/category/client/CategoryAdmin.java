@@ -15,18 +15,18 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(value = "categoryAdmin", url = "http://localhost:8082")
 public interface CategoryAdmin {
 
-    @GetMapping("/api/admins/categories")
+    @GetMapping("/api/admin/categories")
     Page<CategoryDetailResponse> getCategories(Pageable pageable);
 
-    @GetMapping("/api/admins/categories/{id}")
+    @GetMapping("/api/admin/categories/{id}")
     CategoryDetailResponse getCategory(@PathVariable Long id);
 
-    @PostMapping("/api/admins/categories")
+    @PostMapping("/api/admin/categories")
     ResponseEntity<CategoryCreateResponse> createCategory(@RequestBody CategoryCreateRequest request);
 
-    @PutMapping("/api/admins/categories/{id}")
+    @PutMapping("/api/admin/categories/{id}")
     ResponseEntity<CategoryUpdateResponse> updateCategory(@PathVariable Long id, @RequestBody CategoryUpdateRequest request);
 
-    @DeleteMapping("/api/admins/categories/{id}")
+    @DeleteMapping("/api/admin/categories/{id}")
     ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable Long id);
 }

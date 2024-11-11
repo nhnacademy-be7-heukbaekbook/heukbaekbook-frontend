@@ -155,11 +155,11 @@
 <main class="admin-home-container">
     <!-- "카테고리 추가하기" 버튼 -->
     <section style="text-align: center;">
-        <a th:href="@{/admins/categories/register}" class="add-category-button">카테고리 추가하기</a>
+        <a th:href="@{/admin/categories/register}" class="add-category-button">카테고리 추가하기</a>
     </section>
 
     <section style="text-align: center;">
-        <a th:href="@{/admins/home}" class="back-to-home-button">홈으로 돌아가기</a>
+        <a th:href="@{/admin/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
     <!-- 카테고리 목록 -->
@@ -186,9 +186,9 @@
                     <td>
                         <div class="action-buttons">
                             <!-- 수정 버튼 -->
-                            <a th:href="@{/admins/categories/{categoryId}/update(categoryId=${category.id})}" class="action-button">수정</a>
+                            <a th:href="@{/admin/categories/{categoryId}/update(categoryId=${category.id})}" class="action-button">수정</a>
                             <!-- 삭제 버튼 -->
-                            <form th:action="@{/admins/categories/{categoryId}(categoryId=${category.id})}" method="post" style="display:inline;">
+                            <form th:action="@{/admin/categories/{categoryId}(categoryId=${category.id})}" method="post" style="display:inline;">
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <button type="submit" class="action-button">삭제</button>
                             </form>
@@ -204,15 +204,15 @@
         <div class="pagination">
             <ul>
                 <li th:if="${categories.hasPrevious()}">
-                    <a th:href="@{/admins/categories(page=${categories.number - 1}, size=${categories.size})}">이전</a>
+                    <a th:href="@{/admin/categories(page=${categories.number - 1}, size=${categories.size})}">이전</a>
                 </li>
                 <li th:each="pageNum : ${#numbers.sequence(0, categories.totalPages - 1)}"
                     th:classappend="${pageNum == categories.number} ? 'active'">
-                    <a th:href="@{/admins/categories(page=${pageNum}, size=${categories.size})}"
+                    <a th:href="@{/admin/categories(page=${pageNum}, size=${categories.size})}"
                        th:text="${pageNum + 1}">1</a>
                 </li>
                 <li th:if="${categories.hasNext()}">
-                    <a th:href="@{/admins/categories(page=${categories.number + 1}, size=${categories.size})}">다음</a>
+                    <a th:href="@{/admin/categories(page=${categories.number + 1}, size=${categories.size})}">다음</a>
                 </li>
             </ul>
         </div>

@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins/publishers")
+@RequestMapping("/admin/publishers")
 public class PublisherController {
 
     private final PublisherService publisherService;
@@ -112,7 +112,7 @@ public class PublisherController {
             redirectAttributes.addFlashAttribute("error", "출판사 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/publishers");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/publishers");
 
         return "redirect:" + redirectUrl;
     }

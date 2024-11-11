@@ -22,7 +22,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins/categories")
+@RequestMapping("/admin/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -118,7 +118,7 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("error", "카테고리 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/categories");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/categories");
 
         return "redirect:" + redirectUrl;
     }

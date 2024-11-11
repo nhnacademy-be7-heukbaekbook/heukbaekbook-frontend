@@ -118,7 +118,7 @@
         <!-- Error Message -->
         <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-        <form th:action="@{/admins/tags/{tag-id}(tag-id=${tagId})}"
+        <form th:action="@{/admin/tags/{tag-id}(tag-id=${tagId})}"
               th:object="${tagUpdateRequest}"
               method="post">
             <!-- Hidden method field for PUT -->
@@ -135,7 +135,7 @@
 
             <!-- Form Action Buttons -->
             <button type="submit">수정하기</button>
-            <a th:href="@{/admins/tags}" class="back-button">목록으로 돌아가기</a>
+            <a th:href="@{/admin/tags}" class="back-button">목록으로 돌아가기</a>
         </form>
     </section>
 </main>
