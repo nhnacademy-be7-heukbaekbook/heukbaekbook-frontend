@@ -2,9 +2,12 @@ package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookCartResponse;
+import com.nhnacademy.heukbaekfrontend.cart.client.CartClient;
+import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -15,8 +18,10 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CartServiceImpl implements CartService {
 
     private final RedisTemplate<String, Object> redisTemplate;
@@ -25,10 +30,13 @@ public class CartServiceImpl implements CartService {
 
     private final BookClient bookClient;
 
-    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate, BookClient bookClient) {
+    private final CartClient cartClient;
+
+    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate, BookClient bookClient, CartClient cartClient) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
         this.bookClient = bookClient;
+        this.cartClient = cartClient;
     }
 
 
@@ -92,6 +100,22 @@ public class CartServiceImpl implements CartService {
     @Override
     public void deleteBookFromCart(String sessionId, Long bookId) {
         hashOperations.delete(sessionId, String.valueOf(bookId));
+    }
+
+    @Override
+    public void synchronizeCartToDb(String sessionId) {
+        Map<String, Integer> entries = hashOperations.entries(sessionId);
+
+
+        List<CartCreateRequest> cartCreateRequests = entries.entrySet().stream()
+                .map(entry -> new CartCreateRequest(Long.parseLong(entry.getKey()), entry.getValue()))
+                .toList();
+
+        for (CartCreateRequest cartCreateRequest : cartCreateRequests) {
+            log.info("cartCreateRequest : {}", cartCreateRequest);
+        }
+
+        cartClient.synchronizeCartToDb(cartCreateRequests);
     }
 
     private String calculateTotalPrice(String salePriceStr, int quantity) {

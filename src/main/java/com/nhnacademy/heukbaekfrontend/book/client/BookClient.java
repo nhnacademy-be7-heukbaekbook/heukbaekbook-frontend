@@ -24,5 +24,4 @@ public interface BookClient {
 
     @GetMapping
     Page<BookResponse> getBooks(Pageable pageable);
-
 }
