@@ -98,25 +98,26 @@
     function validateForm() {
 
       if (newPassword !== null && newPasswordCheck !== null) {
-        pwCheck(); // 비밀번호 확인
+        // pwCheck(); // 비밀번호 확인
         if (!isCheckedPassword) {
-          alert("새 비밀번호 확인을 완료해주세요.");
+          alert("새 비밀번호 입력을 확인해주세요.");
           return false; // 폼 제출 방지
         }
         return true;
       }
 
-      function pwCheck() {
 
-        if (newPassword === newPasswordCheck && newPassword !== "") {
-          isCheckedPassword = true;
-          document.getElementById("pwConfirm").textContent = "비밀번호 일치";
-          document.getElementById("pwConfirm").style.color = "green";
-        } else {
-          isCheckedPassword = false;
-          document.getElementById("pwConfirm").textContent = "비밀번호 불일치";
-          document.getElementById("pwConfirm").style.color = "red";
-        }
+    }
+    function pwCheck() {
+
+      if (newPassword === newPasswordCheck && newPassword !== "") {
+        isCheckedPassword = true;
+        document.getElementById("pwConfirm").textContent = "비밀번호 일치";
+        document.getElementById("pwConfirm").style.color = "green";
+      } else {
+        isCheckedPassword = false;
+        document.getElementById("pwConfirm").textContent = "비밀번호 불일치";
+        document.getElementById("pwConfirm").style.color = "red";
       }
     }
   </script>
@@ -168,15 +169,15 @@
         <tr>
           <th>새 비밀번호</th>
           <td>
-            <input type="password" id="newPassword" name="newPassword" class="input-full-size" placeholder="새 비밀번호를 입력하세요.">
+            <input type="password" id="newPassword" name="newPassword" class="input-full-size" placeholder="새 비밀번호를 입력하세요." oninput="pw">
             <span class="hint">비밀번호는 8~16자, 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.</span>
           </td>
         </tr>
         <tr>
           <th>새 비밀번호 확인</th>
           <td>
-            <input type="password" id="newPassword_check" name="newPassword_check" class="input-full-size" placeholder="새 비밀번호를 확인을 입력하세요.">
-            <span class="hint" id="pwConfirm">새 비밀번호 확인해주세요</span>
+            <input type="password" id="newPassword_check" name="newPassword_check" class="input-full-size"  oninput="pwCheck()" placeholder="새 비밀번호를 확인을 입력하세요.">
+            <span class="hint" id="pwConfirm">새 비밀번호를 확인해주세요</span>
           </td>
         </tr>
         <tr>

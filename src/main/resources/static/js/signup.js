@@ -49,6 +49,15 @@ function findAddressKakaoAPI() {
     }).open();
 }
 
+function checkingLoginId(){
+    isAvailableLoginID = false;
+}
+
+function checkingEmail(){
+    isAvailableLoginID = false;
+}
+
+
 function validateForm() {
     if (!isAvailableLoginID) {
         alert("아이디 중복 확인을 완료해주세요.");
