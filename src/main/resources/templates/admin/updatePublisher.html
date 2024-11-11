@@ -118,7 +118,7 @@
         <!-- Error Message -->
         <div th:if="${error}" class="error-message" th:text="${error}"></div>
 
-        <form th:action="@{/admins/publishers/{publisher-id}(publisher-id=${publisherId})}"
+        <form th:action="@{/admin/publishers/{publisher-id}(publisher-id=${publisherId})}"
               th:object="${publisherUpdateRequest}"
               method="post">
             <!-- Hidden method field for PUT -->
@@ -136,7 +136,7 @@
 
             <!-- Form Action Buttons -->
             <button type="submit">수정하기</button>
-            <a th:href="@{/admins/publishers}" class="back-button">목록으로 돌아가기</a>
+            <a th:href="@{/admin/publishers}" class="back-button">목록으로 돌아가기</a>
         </form>
     </section>
 </main>

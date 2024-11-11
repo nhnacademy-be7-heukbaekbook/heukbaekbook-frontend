@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "PublisherAdmin", url = "http://localhost:8082")
 public interface PublisherAdmin {
 
-    @PostMapping("/api/admins/publishers")
+    @PostMapping("/api/admin/publishers")
     ResponseEntity<PublisherCreateResponse> registerPublisher(@RequestBody PublisherCreateRequest request);
 
-    @GetMapping("/api/admins/publishers")
+    @GetMapping("/api/admin/publishers")
     Page<PublisherDetailResponse> getPublishers(Pageable pageable);
 
-    @PutMapping("/api/admins/publishers/{publisher-id}")
+    @PutMapping("/api/admin/publishers/{publisher-id}")
     ResponseEntity<PublisherUpdateResponse> updatePublisher(
             @PathVariable(name = "publisher-id") Long publisherId,
             @RequestBody PublisherUpdateRequest request);
 
-    @DeleteMapping("/api/admins/publishers/{publisher-id}")
+    @DeleteMapping("/api/admin/publishers/{publisher-id}")
     ResponseEntity<PublisherDeleteResponse> deletePublisher(@PathVariable(name = "publisher-id") Long publisherId);
 
-    @GetMapping("/api/admins/publishers/{publisher-id}")
+    @GetMapping("/api/admin/publishers/{publisher-id}")
     ResponseEntity<PublisherDetailResponse> getPublisher(@PathVariable(name = "publisher-id") Long publisherId);
 }

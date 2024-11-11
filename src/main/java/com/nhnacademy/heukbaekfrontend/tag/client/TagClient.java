@@ -15,19 +15,19 @@ import org.springframework.web.bind.annotation.*;
 @FeignClient(name = "tag", url = "http://localhost:8082")
 public interface TagClient {
 
-    @PostMapping("/api/admins/tags")
+    @PostMapping("/api/admin/tags")
     ResponseEntity<TagCreateResponse> registerTag(@RequestBody TagCreateRequest request);
 
-    @PutMapping("/api/admins/tags/{tagId}")
+    @PutMapping("/api/admin/tags/{tagId}")
     ResponseEntity<TagUpdateResponse> updateTag(@PathVariable Long tagId, @RequestBody TagUpdateRequest request);
 
-    @DeleteMapping("/api/admins/tags/{tagId}")
+    @DeleteMapping("/api/admin/tags/{tagId}")
     ResponseEntity<TagDeleteResponse> deleteTag(@PathVariable Long tagId);
 
-    @GetMapping("/api/admins/tags/{tagId}")
+    @GetMapping("/api/admin/tags/{tagId}")
     ResponseEntity<TagDetailResponse> getTag(@PathVariable Long tagId);
 
-    @GetMapping("/api/admins/tags")
+    @GetMapping("/api/admin/tags")
     ResponseEntity<Page<TagDetailResponse>> getTags(@RequestParam Pageable pageable);
 
 }

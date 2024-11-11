@@ -103,7 +103,7 @@
         <div th:if="${error}">
             <p class="error-message" th:text="${error}"></p>
         </div>
-        <form th:action="@{/admins/tags}" th:object="${tagCreateRequest}" method="post">
+        <form th:action="@{/admin/tags}" th:object="${tagCreateRequest}" method="post">
             <!-- 출판사 이름 필드 -->
             <div class="form-group">
                 <label for="name">태그 이름</label>
@@ -116,7 +116,7 @@
 
             <!-- 폼 액션 버튼 -->
             <button type="submit">등록하기</button>
-            <a th:href="@{/admins/tags}" class="back-button">목록으로 돌아가기</a>
+            <a th:href="@{/admin/tags}" class="back-button">목록으로 돌아가기</a>
         </form>
     </section>
 </main>

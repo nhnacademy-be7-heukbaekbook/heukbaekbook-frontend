@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AdminLoginController {
     private final LoginService loginService;
 
-    @GetMapping("/admins/login")
+    @GetMapping("/admin/login")
     public String getAdminLoginForm() {
         return "login/adminLogin";
     }
 
-    @PostMapping("/admins/login")
+    @PostMapping("/admin/login")
     public String doAdminLogin(@ModelAttribute LoginRequest loginRequest, HttpServletResponse response, Model model) {
         boolean loginSuccess = loginService.adminLogin(loginRequest, response);
 
@@ -29,6 +29,6 @@ public class AdminLoginController {
             return "login/adminLogin";
         }
 
-        return "redirect:/admins/home";
+        return "redirect:/admin/home";
     }
 }
