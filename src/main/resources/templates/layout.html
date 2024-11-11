@@ -17,7 +17,7 @@
         <ul>
             <li><a href="/categories">카테고리</a></li>
             <li><a href="/cart">장바구니</a></li>
-            <li><a href="/member/mypage">마이페이지</a></li>
+            <li><a href="/members/mypage">마이페이지</a></li>
             <li th:if="${isLogin}">
                 <form th:action="@{/logout}" method="post" style="display: inline;">
                     <button type="submit" class="link-button">로그아웃</button>

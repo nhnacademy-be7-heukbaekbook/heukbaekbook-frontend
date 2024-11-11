@@ -46,7 +46,7 @@
         }
 
         h1 {
-            font-size: 2.5em;
+            font-size: 2.0em;
             color: #222;
             margin-bottom: 1.5rem;
             position: relative;
@@ -95,8 +95,8 @@
 </head>
 <body>
 <div class="container">
-    <h1>403 Forbidden</h1>
-    <p>이 페이지에 접근할 권한이 없습니다.</p>
+    <h1 th:text="${statusCode} + ' ' + ${statusName}">403 Forbidden</h1>
+    <p th:text="${errorMessage}">이 페이지에 접근할 권한이 없습니다.</p>
     <a href="/">홈으로 돌아가기</a>
 </div>
 </body>

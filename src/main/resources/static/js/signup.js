@@ -10,18 +10,18 @@ function checkDuplicate(type) {
         return;
     }
 
-    fetch(`/signup/check-duplicate/${type}`, {
-        method: 'POST',
+    fetch(`/signup/check-duplicate/${type}/${value}`, {
+        method: 'GET',
         headers: {
             "Content-Type": "application/json"
         },
-        body: value
     })
         .then(response => response.json())
         .then(isDuplicate => {
             const messageElement = document.getElementById(type === 'loginId' ? 'checkMessage-loginId' : "checkMessage-email");
             if (isDuplicate) {
                 messageElement.innerText = '이미 사용중입니다.';
+                messageElement.style.color = 'red';
                 if (type === 'loginId') isAvailableLoginID = false;
                 if (type === 'email') isAvailableEmail = false;
             } else {
@@ -49,17 +49,27 @@ function findAddressKakaoAPI() {
     }).open();
 }
 
-function checkingLoginId(){
+const loginIdInput = document.getElementById("loginId");
+loginIdInput.addEventListener("change", function (){
     isAvailableLoginID = false;
-}
+    const messageElement = document.getElementById('checkMessage-loginId');
+    messageElement.style.color = 'red';
+    messageElement.innerText = '아이디 중복을 체크해주세요.';
+});
 
-function checkingEmail(){
-    isAvailableLoginID = false;
-}
+const emailInput = document.getElementById("email");
+emailInput.addEventListener("change", function (){
+    isAvailableEmail = false;
+    const messageElement = document.getElementById('checkMessage-email');
+    messageElement.style.color = 'red';
+    messageElement.innerText = '이메일 중복을 체크해주세요.';
+});
+
 
 
 function validateForm() {
     if (!isAvailableLoginID) {
+
         alert("아이디 중복 확인을 완료해주세요.");
         return false;
     }

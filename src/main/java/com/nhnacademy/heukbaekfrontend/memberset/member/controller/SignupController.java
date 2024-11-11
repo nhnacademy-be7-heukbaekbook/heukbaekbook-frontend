@@ -46,19 +46,20 @@ public class SignupController {
 
         if(optionalMemberResponse.isEmpty()){
             // error 페이지로 이동
-        }else{
-            model.addAttribute("name",optionalMemberResponse.get().name());
         }
+
+        model.addAttribute("name",optionalMemberResponse.get().name());
+
         return "signupSuccess";
     }
 
-    @PostMapping("/check-duplicate/loginId")
-    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestBody String loginId){
+    @GetMapping("/check-duplicate/loginId/{loginId}")
+    public ResponseEntity<Boolean> checkLoginIdDuplicate(@PathVariable String loginId){
         return memberService.existsLoginId(loginId);
     }
 
-    @PostMapping("/check-duplicate/email")
-    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody String email){
+    @GetMapping("/check-duplicate/email/{email}")
+    public ResponseEntity<Boolean> checkEmailDuplicate(@PathVariable String email){
         return memberService.existsEmail(email);
     }
 }

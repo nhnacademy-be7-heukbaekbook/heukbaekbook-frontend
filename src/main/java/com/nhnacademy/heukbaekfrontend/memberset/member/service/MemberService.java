@@ -19,7 +19,9 @@ public interface MemberService {
 
     ResponseEntity<MemberResponse> getMember();
 
-    ResponseEntity<MemberResponse> updateMember(MemberUpdateRequest memberUpdateRequest);
+    Optional<MemberResponse> updateMember(MemberUpdateRequest memberUpdateRequest);
 
-    ResponseEntity<List<MemberAddressDto>> getAllMemberAddress()
+    boolean deleteMember();
+
+    ResponseEntity<List<MemberAddressDto>> getAllMemberAddress();
 }

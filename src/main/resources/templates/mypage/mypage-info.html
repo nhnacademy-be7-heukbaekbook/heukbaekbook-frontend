@@ -90,37 +90,7 @@
     }
 
   </style>
-  <script>
-    let isCheckedPassword = false;
-    const newPassword = document.getElementById("newPassword").value;
-    const newPasswordCheck = document.getElementById("newPassword_check").value;
 
-    function validateForm() {
-
-      if (newPassword !== null && newPasswordCheck !== null) {
-        // pwCheck(); // 비밀번호 확인
-        if (!isCheckedPassword) {
-          alert("새 비밀번호 입력을 확인해주세요.");
-          return false; // 폼 제출 방지
-        }
-        return true;
-      }
-
-
-    }
-    function pwCheck() {
-
-      if (newPassword === newPasswordCheck && newPassword !== "") {
-        isCheckedPassword = true;
-        document.getElementById("pwConfirm").textContent = "비밀번호 일치";
-        document.getElementById("pwConfirm").style.color = "green";
-      } else {
-        isCheckedPassword = false;
-        document.getElementById("pwConfirm").textContent = "비밀번호 불일치";
-        document.getElementById("pwConfirm").style.color = "red";
-      }
-    }
-  </script>
 </head>
 
 <body>
@@ -142,8 +112,13 @@
   <!-- 오른쪽 콘텐츠 영역 -->
   <section id="content-area">
     <h3 class="content-title">회원 정보 수정</h3>
-    <form id="memberUpdateForm" th:action="@{/updateMember}" th:object="${memberResponse}" method="post" onsubmit="return validateForm()">
+    <form id="memberUpdateForm" th:action="@{/members/mypage/info}" th:object="${memberResponse}" method="post" onsubmit="return validateForm()">
       <table class="info-table">
+        <tr>
+
+            <div th:if="${error}" style="color: red" class="error-message" th:text="${error}"></div>
+
+        </tr>
         <tr>
           <th>아이디</th>
           <td><span th:text="*{loginId}"></span></td>
@@ -204,5 +179,81 @@
 <!-- 푸터 레이아웃 적용 -->
 <footer th:replace="~{layout :: footer}"></footer>
 
+<!--<script th:inline="javascript">-->
+<!--  let message = /*[[${message}]]*/ "";-->
+
+<!--  if (message) {-->
+<!--    alert(message);-->
+<!--  }-->
+<!--</script>-->
+<script>
+  let isCheckedPassword = false;
+  const newPassword = document.getElementById("newPassword");
+  const newPasswordCheck = document.getElementById("newPassword_check");
+
+  function validateForm() {
+
+    if (newPassword.value !== null && newPasswordCheck.value !== null) {
+      if (!isCheckedPassword) {
+        alert("새 비밀번호 입력을 재확인해주세요.");
+        return false; // 폼 제출 방지
+      }
+      return true;
+    }
+  }
+
+  function checkPW(){
+    if (newPassword.value === newPasswordCheck) {
+      isCheckedPassword = true;
+    }
+  }
+
+  function checkValidPassword(){
+    const oldPassword = document.getElementById('oldPassword');
+    const newPassword = document.getElementById('newPassword')
+
+    fetch(``)
+
+
+  }
+
+
+  newPasswordCheck.addEventListener("input", function (){
+    const pwConfirm = document.getElementById("pwConfirm");
+    pwConfirm.innerText = "새 비밀번호 확인 불일치";
+    pwConfirm.style.color = "red";
+    isCheckedPassword = false;
+    if(newPassword.value === newPasswordCheck.value){
+      pwConfirm.innerText = "새 비밀번호 확인 일치";
+      pwConfirm.style.color = "green";
+      isCheckedPassword = true;
+    }
+  })
+
+  newPassword.addEventListener("input", function (){
+    const pwConfirm = document.getElementById("pwConfirm");
+    pwConfirm.innerText = "새 비밀번호 확인 불일치";
+    pwConfirm.style.color = "red";
+    isCheckedPassword = false;
+    if(newPassword.value === newPasswordCheck.value){
+      pwConfirm.innerText = "새 비밀번호 확인 일치";
+      pwConfirm.style.color = "green";
+      isCheckedPassword = true;
+    }
+  })
+
+  // function pwCheck() {
+  //
+  //   if (newPassword === newPasswordCheck && newPassword !== "") {
+  //     isCheckedPassword = true;
+  //     document.getElementById("pwConfirm").textContent = "비밀번호 일치";
+  //     document.getElementById("pwConfirm").style.color = "green";
+  //   } else {
+  //     isCheckedPassword = false;
+  //     document.getElementById("pwConfirm").textContent = "비밀번호 불일치";
+  //     document.getElementById("pwConfirm").style.color = "red";
+  //   }
+  // }
+</script>
 </body>
 </html>
