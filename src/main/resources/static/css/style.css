@@ -490,7 +490,7 @@ footer {
 
 /* 오른쪽 콘텐츠 영역 스타일 */
 #content-area {
-    width: 100%;
+    width: 70%;
     flex-grow: 1;
     background-color: #fff;
     padding: 20px;

@@ -87,10 +87,4 @@ public class MemberController {
         return "redirect:/";
     }
 
-
-//    @GetMapping("/address")
-//    public String getMyPageAddress(Model model){
-//        ResponseEntity<List<MemberAddressDto>> memberAddressList = memberService.get
-//
-//    }
 }

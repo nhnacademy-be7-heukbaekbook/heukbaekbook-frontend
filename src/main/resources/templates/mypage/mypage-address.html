@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주소록 관리</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+            /* content-area의 폭을 고정하고, 테이블이 영역을 벗어나지 않도록 overflow 설정 */
+        #content-area {
+            width: 70%;
+            flex-grow: 1;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            min-height: 70vh;
+            overflow-x: auto; /* 수평 스크롤 추가 */
+            max-width: 100%; /* content-area의 최대 폭을 설정하여 화면을 벗어나지 않게 */
+        }
+
+        /* address-table을 content-area 내에서 화면에 맞게 표시 */
+        .address-table {
+            width: 100%; /* 테이블 폭을 content-area에 맞춤 */
+            table-layout: auto; /* 테이블 칸 크기를 자동 조절 */
+        }
+
+        .address-table th, .address-table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+
+    /* 주
+        /* 버튼 스타일 */
+        button {
+            padding: 5px 30px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+
+        /* 텍스트를 가로로 표시하고 줄바꿈 방지 */
+        .address-table td {
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+    <span class="header-title">마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <section id="content-area">
+        <h3 class="content-title">주소록 관리</h3>
+
+        <!-- 주소 목록 테이블 -->
+        <table class="address-table">
+            <thead>
+            <tr>
+                <td colspan="5">
+                    <h3 style="margin: 0; font-size: 1rem">등록된 주소 목록</h3>
+                </td>
+            </tr>
+            <tr>
+                <th>우편번호</th>
+                <th>도로명 주소</th>
+                <th>상세 주소</th>
+                <th>주소 별칭</th>
+                <th colspan="2">관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- List<MemberAddressDto> 출력 -->
+            <tr th:each="address : ${addressList}">
+                <td th:text="${address.postalCode}">우편번호</td>
+                <td th:text="${address.roadNameAddress}">도로명 주소</td>
+                <td th:text="${address.detailAddress}">상세 주소</td>
+                <td th:text="${address.alias}">주소 별칭</td>
+                <td>
+                    <button onclick="editAddress(/* addressId */)">수정</button>
+                    <button onclick="deleteAddress(/* addressId */)">삭제</button>
+                </td>
+            </tr>
+
+            <!-- 새 주소 추가 폼 -->
+            <tr>
+                <td colspan="5">
+                    <h3 style="margin: 0; font-size: 1rem" id="formTitle">새 주소 추가</h3>
+                </td>
+            </tr>
+            <tr>
+                <form th:action="@{/mypage/address-book/save}" method="post" id="addressForm">
+                    <input type="hidden" name="addressId" id="addressId">
+                    <td>
+                        <input type="text" name="postalCode" id="postalCode" readonly required>
+<!--                        <button type="button" onclick="findAddressKakaoAPI()">주소 찾기</button>-->
+                    </td>
+                    <td>
+                        <input type="text" name="roadNameAddress" id="roadNameAddress" readonly required>
+                    </td>
+                    <td>
+                        <input type="text" name="detailAddress" id="detailAddress" required>
+                    </td>
+                    <td>
+                        <input type="text" name="alias" id="alias" required>
+                    </td>
+                    <td>
+                        <button type="submit">저장</button>
+                        <button type="button" onclick="resetForm()">취소</button>
+                    </td>
+                </form>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+<!-- JavaScript for Kakao API -->
+<script>
+    function findAddressKakaoAPI() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var address = data.userSelectedType ? data.roadAddress : "";
+                document.getElementById('postalCode').value = data.zonecode;
+                document.getElementById('roadNameAddress').value = address;
+                document.getElementById('detailAddress').focus();
+            }
+        }).open();
+    }
+
+    function editAddress(addressId) {
+        document.getElementById('formTitle').innerText = '주소 수정';
+        document.getElementById('addressId').value = addressId;
+    }
+
+    function deleteAddress(addressId) {
+        if (confirm('정말로 삭제하시겠습니까?')) {
+            // 삭제 API 호출 로직 추가
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('addressForm').reset();
+        document.getElementById('formTitle').innerText = '새 주소 추가';
+    }
+</script>
+
+</body>
+</html>
