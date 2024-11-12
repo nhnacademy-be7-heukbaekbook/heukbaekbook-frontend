@@ -1,138 +1,89 @@
 package com.nhnacademy.heukbaekfrontend.common.util;
 
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class JwtUtilTest {
 
-    private static final String TEST_SECRET_KEY = "testSecretKey12345678901234567890";
-    private static final String ROLE = "ROLE_MEMBER";
-    private static final Long EXPIRED_MS = 60 * 1000L;
-
     private JwtUtil jwtUtil;
-
-    @Mock
-    private HttpServletRequest request;
-
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        this.jwtUtil = new JwtUtil(TEST_SECRET_KEY);
+        objectMapper = new ObjectMapper();
+        jwtUtil = new JwtUtil(objectMapper);
     }
 
     @Test
-    void testValidateToken_withValidToken() {
-        String token = createTestToken(false);
+    void testIsExpired_withValidTokenNotExpired() throws Exception {
+        String token = createTokenWithExp(System.currentTimeMillis() / 1000 + 60);
 
-        assertTrue(jwtUtil.validateToken(token));
+        assertFalse(jwtUtil.isExpired(token));
     }
 
     @Test
-    void testValidateToken_withExpiredToken() {
-        String expiredToken = createTestToken(true);
+    void testIsExpired_withValidTokenExpired() throws Exception {
+        String token = createTokenWithExp(System.currentTimeMillis() / 1000 - 60);
 
-        assertFalse(jwtUtil.validateToken(expiredToken));
+        assertTrue(jwtUtil.isExpired(token));
     }
 
     @Test
-    void testValidateToken_withInvalidToken() {
-        String invalidToken = "invalid.token";
+    void testIsExpired_withInvalidTokenFormat() {
+        String token = "invalid.token";
 
-        assertFalse(jwtUtil.validateToken(invalidToken));
+        assertTrue(jwtUtil.isExpired(token));
     }
 
     @Test
-    void testIsExpired_withExpiredToken() {
-        String expiredToken = createTestToken(true);
+    void testIsExpired_withMalformedPayload() {
+        String header = Base64.getUrlEncoder().encodeToString("{}".getBytes(StandardCharsets.UTF_8));
+        String payload = "malformedPayload";
+        String signature = "signature";
+        String token = String.join(".", header, payload, signature);
 
-        assertTrue(jwtUtil.isExpired(expiredToken));
+        assertTrue(jwtUtil.isExpired(token));
     }
 
     @Test
-    void testIsExpired_withValidToken() {
-        String validToken = createTestToken(false);
+    void testIsExpired_withoutExpClaim() throws Exception {
+        Map<String, Object> claims = new HashMap<>();
+        String token = createToken(claims);
 
-        assertFalse(jwtUtil.isExpired(validToken));
+        assertTrue(jwtUtil.isExpired(token));
     }
 
     @Test
-    void testIsExpired_withEmptyToken() {
-        String emptyToken = "";
+    void testIsExpired_withNonNumericExpClaim() throws Exception {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("exp", "nonNumericValue");
+        String token = createToken(claims);
 
-        assertFalse(jwtUtil.isExpired(emptyToken));
+        assertTrue(jwtUtil.isExpired(token));
     }
 
-    @Test
-    void testIsExpired_withNullToken() {
-
-        assertFalse(jwtUtil.isExpired(null));
+    private String createTokenWithExp(long exp) throws Exception {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("exp", exp);
+        return createToken(claims);
     }
 
-    @Test
-    void testGetRoleFromToken() {
-        String token = createTestToken(false);
+    private String createToken(Map<String, Object> claims) throws Exception {
+        String headerJson = objectMapper.writeValueAsString(new HashMap<String, Object>());
+        String payloadJson = objectMapper.writeValueAsString(claims);
 
-        String extractedRole = jwtUtil.getRoleFromToken(token);
+        String header = Base64.getUrlEncoder().encodeToString(headerJson.getBytes(StandardCharsets.UTF_8));
+        String payload = Base64.getUrlEncoder().encodeToString(payloadJson.getBytes(StandardCharsets.UTF_8));
+        String signature = "signature";
 
-        assertEquals(ROLE, extractedRole);
-    }
-
-    @Test
-    void testResolveToken_withCookie() {
-        Cookie[] cookies = {new Cookie(ACCESS_TOKEN, "testToken")};
-        when(request.getCookies()).thenReturn(cookies);
-
-        String token = jwtUtil.resolveToken(request);
-
-        assertEquals("testToken", token);
-    }
-
-    @Test
-    void testResolveToken_withoutCookie() {
-        when(request.getCookies()).thenReturn(null);
-
-        String token = jwtUtil.resolveToken(request);
-
-        assertNull(token);
-    }
-
-    @Test
-    void testResolveToken_withMultipleCookie_withoutAccessToken() {
-        Cookie[] cookies = {
-                new Cookie("otherToken", "otherValue"),
-                new Cookie("anotherToken", "anotherValue")
-        };
-        when(request.getCookies()).thenReturn(cookies);
-
-        String token = jwtUtil.resolveToken(request);
-
-        assertNull(token);
-    }
-
-
-    private String createTestToken(boolean expired) {
-        Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + (expired ? -EXPIRED_MS : EXPIRED_MS));
-
-        return Jwts.builder()
-                .claim("role", ROLE)
-                .expiration(expiryDate)
-                .signWith(new SecretKeySpec(TEST_SECRET_KEY.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm()))
-                .compact();
+        return String.join(".", header, payload, signature);
     }
 }

@@ -15,4 +15,6 @@ public interface CartService {
     void updateBookQuantityFromCart(String sessionId, Long bookId, int quantity);
 
     void deleteBookFromCart(String sessionId, Long bookId);
+
+    void synchronizeCartToDb(String sessionId);
 }

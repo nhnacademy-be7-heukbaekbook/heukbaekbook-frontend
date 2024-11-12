@@ -14,19 +14,19 @@ import java.util.List;
 @FeignClient(value = "bookAdmin", url = "http://localhost:8082")
 public interface BookAdmin {
 
-    @PostMapping("/api/admins/aladin")
+    @PostMapping("/api/admin/aladin")
     List<BookSearchResponse> searchBooks(@RequestParam("title") String title);
 
-    @PostMapping("/api/admins/books")
+    @PostMapping("/api/admin/books")
     ResponseEntity<BookCreateResponse> registerBook(@RequestBody BookCreateRequest request);
 
-    @GetMapping("/api/admins/books")
+    @GetMapping("/api/admin/books")
     ResponseEntity<Page<BookDetailResponse>> getBooks(Pageable pageable);
 
-    @PutMapping("/api/admins/books/{bookId}")
+    @PutMapping("/api/admin/books/{bookId}")
     ResponseEntity<BookUpdateResponse> updateBook(@PathVariable Long bookId, @RequestBody BookUpdateRequest request);
 
-    @DeleteMapping("/api/admins/books/{bookId}")
+    @DeleteMapping("/api/admin/books/{bookId}")
     ResponseEntity<BookDeleteResponse> deleteBook(@PathVariable Long bookId);
 
 }

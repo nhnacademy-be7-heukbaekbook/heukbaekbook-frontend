@@ -160,13 +160,13 @@
     <!-- "도서 추가하기" 버튼 -->
     <section style="text-align: center;">
         <div style="display: inline-flex; gap: 20px;">
-            <a th:href="@{/admins/books/register}" class="add-book-button">직접 등록하기</a>
-            <a th:href="@{/admins/aladin}" class="add-book-button">알라딘 등록하기</a>
+            <a th:href="@{/admin/books/register}" class="add-book-button">직접 등록하기</a>
+            <a th:href="@{/admin/aladin}" class="add-book-button">알라딘 등록하기</a>
         </div>
     </section>
 
     <section style="text-align: center;">
-        <a th:href="@{/admins/home}" class="back-to-home-button">홈으로 돌아가기</a>
+        <a th:href="@{/admin/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
     <!-- 도서 목록 -->
@@ -197,8 +197,8 @@
                 </div>
                 <!-- 관리 버튼 -->
                 <div class="action-buttons">
-                    <a th:href="@{/admins/books/{bookId}(bookId=${book.id})}" class="button">수정</a>
-                    <form th:action="@{/admins/books/{bookId}(bookId=${book.id})}" method="post" class="button-form">
+                    <a th:href="@{/admin/books/{bookId}(bookId=${book.id})}" class="button">수정</a>
+                    <form th:action="@{/admin/books/{bookId}(bookId=${book.id})}" method="post" class="button-form">
                         <input type="hidden" name="_method" value="DELETE"/>
                         <button type="submit" class="button">삭제</button>
                     </form>

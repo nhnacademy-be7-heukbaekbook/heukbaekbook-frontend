@@ -116,7 +116,7 @@
         <div th:if="${error}">
             <p class="error-message" th:text="${error}"></p>
         </div>
-        <form th:action="@{/admins/categories/{category-id}(category-id=${categoryId})}"
+        <form th:action="@{/admin/categories/{category-id}(category-id=${categoryId})}"
               th:object="${categoryUpdateRequest}"
               method="post">
             <input type="hidden" name="_method" value="PUT"/>
@@ -137,7 +137,7 @@
                 </select>
             </div>
             <button type="submit">수정하기</button>
-            <a th:href="@{/admins/categories}" class="back-button">목록으로 돌아가기</a>
+            <a th:href="@{/admin/categories}" class="back-button">목록으로 돌아가기</a>
         </form>
     </section>
 </main>

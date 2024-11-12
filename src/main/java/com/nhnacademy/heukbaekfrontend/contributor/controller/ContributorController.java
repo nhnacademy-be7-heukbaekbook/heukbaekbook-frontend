@@ -21,7 +21,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins/contributors")
+@RequestMapping("/admin/contributors")
 public class ContributorController {
 
     private final ContributorService contributorService;
@@ -113,7 +113,7 @@ public class ContributorController {
             redirectAttributes.addFlashAttribute("error", "기여자 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/contributors");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/contributors");
 
         return "redirect:" + redirectUrl;
     }

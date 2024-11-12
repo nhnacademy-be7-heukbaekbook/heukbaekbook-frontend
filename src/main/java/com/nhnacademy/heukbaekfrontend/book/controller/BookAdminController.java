@@ -5,6 +5,7 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -20,7 +21,7 @@ import java.util.List;
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
-@RequestMapping("/admins")
+@RequestMapping("/admin")
 public class BookAdminController {
 
     private final BookService bookService;
@@ -54,7 +55,7 @@ public class BookAdminController {
     @GetMapping("/books")
     public String viewAllBooks(
             @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
-            Model model) {
+            Model model, HttpServletRequest request) {
         Page<BookDetailResponse> books = bookService.getAllBooks(pageable);
         model.addAttribute("books", books);
         model.addAttribute("page", pageable.getPageNumber());
@@ -148,7 +149,7 @@ public class BookAdminController {
             redirectAttributes.addFlashAttribute("error", "도서 삭제에 실패했습니다.");
         }
 
-        String redirectUrl = getRedirectUrl(page, size, sort, "/admins/books");
+        String redirectUrl = getRedirectUrl(page, size, sort, "/admin/books");
 
         return "redirect:" + redirectUrl;
     }

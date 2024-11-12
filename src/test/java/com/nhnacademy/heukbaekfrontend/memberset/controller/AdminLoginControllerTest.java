@@ -38,7 +38,7 @@ class AdminLoginControllerTest {
 
     @Test
     void testGetAdminLoginForm() throws Exception {
-        mockMvc.perform(get("/admins/login"))
+        mockMvc.perform(get("/admin/login"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("login/adminLogin"));
     }
@@ -47,12 +47,12 @@ class AdminLoginControllerTest {
     void testDoAdminLogin_Success() throws Exception {
         when(loginService.adminLogin(any(LoginRequest.class), any(HttpServletResponse.class))).thenReturn(true);
 
-        mockMvc.perform(post("/admins/login")
+        mockMvc.perform(post("/admin/login")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", "admin")
                         .param("password", "adminPassword"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/admins/home"));
+                .andExpect(redirectedUrl("/admin/home"));
 
         verify(loginService).adminLogin(any(LoginRequest.class), any(HttpServletResponse.class));
     }
@@ -61,7 +61,7 @@ class AdminLoginControllerTest {
     void testDoAdminLogin_Failure() throws Exception {
         when(loginService.adminLogin(any(LoginRequest.class), any(HttpServletResponse.class))).thenReturn(false);
 
-        mockMvc.perform(post("/admins/login")
+        mockMvc.perform(post("/admin/login")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("username", "admin")
                         .param("password", "wrongPassword"))
