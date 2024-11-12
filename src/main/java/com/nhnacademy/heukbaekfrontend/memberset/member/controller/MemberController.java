@@ -1,7 +1,8 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.controller;
 
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,62 +11,80 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/signup")
+@RequestMapping("/members/mypage")
 @Slf4j
 public class MemberController {
 
     private final MemberService memberService;
 
     @GetMapping
-    public String getSignUpForm(Model model) {
-        if(!model.containsAttribute("signupForm")){
-            model.addAttribute("signupForm", new MemberCreateRequest(
-                    null, null, null, null, null, null, null, null, null, null));
-        }
-        return "signup";
+    public String getMyPageHome(Model model) {
+        MemberResponse memberResponse = memberService.getMember().getBody();
+        model.addAttribute("memberResponse", memberResponse);
+        return "mypage/mypage";
     }
 
-    @GetMapping("/signupSuccess")
-    public String getSignUpForms(Model model) {
-
-        return "signupSuccess";
+    @GetMapping("/info")
+    public String getMyPageInfo(Model model) {
+        MemberResponse memberResponse = memberService.getMember().getBody();
+        model.addAttribute("memberResponse", memberResponse);
+        return "mypage/mypage-info";
     }
 
-    @PostMapping
-    public String doSignup(@Valid @ModelAttribute MemberCreateRequest memberCreateRequest,
-                           BindingResult bindingResult,
-                           RedirectAttributes redirectAttributes,
-                           Model model) {
+    @PostMapping("/info")
+    public String doUpdateMyPageInfo(@Valid @ModelAttribute MemberUpdateRequest memberUpdateRequest,
+                                     BindingResult bindingResult,
+                                     RedirectAttributes redirectAttributes,
+                                     Model model) {
+
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("signupForm", memberCreateRequest);
+            redirectAttributes.addFlashAttribute("memberResponse", memberUpdateRequest);
             redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
-            return "redirect:/signup";
+            return "redirect:/members/mypage/info";
         }
-        Optional<MemberResponse> optionalMemberResponse = memberService.signup(memberCreateRequest);
+        Optional<MemberResponse> optionalMemberResponse = memberService.updateMember(memberUpdateRequest);
 
-        if(optionalMemberResponse.isEmpty()){
-            // error 페이지로 이동
-        }else{
-            model.addAttribute("name",optionalMemberResponse.get().name());
+
+        if (optionalMemberResponse.isEmpty()) {
+            // error
+            redirectAttributes.addFlashAttribute("error", "처리하지 못했습니다. 다시 시도해주세요.");
+        } else {
+            model.addAttribute("memberResponse", optionalMemberResponse.get());
         }
-        return "signupSuccess";
+
+        model.addAttribute("message", "정상적으로 처리되었습니다.");
+        return "redirect:/members/mypage/info";
     }
 
-    @PostMapping("/check-duplicate/loginId")
-    public ResponseEntity<Boolean> checkLoginIdDuplicate(@RequestBody String loginId) {
-        log.info("loginId: {}", loginId);
-        return memberService.existsLoginId(loginId);
+    @GetMapping("/withdraw")
+    public String getMyPageWithdraw(Model model) {
+        MemberResponse memberResponse = memberService.getMember().getBody();
+        model.addAttribute("memberResponse", memberResponse);
+        return "mypage/mypage-withdraw";
+
     }
 
-    @PostMapping("/check-duplicate/email")
-    public ResponseEntity<Boolean> checkEmailDuplicate(@RequestBody String email){
-        return memberService.existsEmail(email);
+    @PostMapping("/withdraw")
+    public String doMemberWithdraw() {
+        memberService.deleteMember();
+        return "redirect:/";
     }
+
+
+//    @GetMapping("/address")
+//    public String getMyPageAddress(Model model){
+//        ResponseEntity<List<MemberAddressDto>> memberAddressList = memberService.get
+//
+//    }
 }

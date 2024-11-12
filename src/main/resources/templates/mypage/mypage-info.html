@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${pageTitle}">마이페이지</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+  <style>
+    /* 오른쪽 콘텐츠 영역 스타일 */
+    #content-area {
+      background-color: #ffffff; /* 배경색을 흰색으로 설정 */
+      padding: 15px 30px 30px 30px; /* 내부 여백 */
+      border: 1px solid #ddd; /* 연한 테두리 */
+      border-radius: 8px; /* 모서리를 둥글게 */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    }
+
+    /* 콘텐츠 제목 스타일 */
+    .content-title {
+      font-size: 1.2em; /* 글씨 크기 확대 */
+      font-weight: bold;
+      padding-bottom: 10px;
+      color: #333; /* 어두운 색으로 설정 */
+      margin-bottom: 20px; /* 제목 아래 간격 */
+      border-bottom: 1px solid #bfbfbf;
+    }
+
+    /* 정보 테이블 스타일 */
+    .info-table {
+      width: 100%; /* 테이블 전체 너비 사용 */
+      border-collapse: separate;
+      border-spacing: 0 15px; /* 행 간격 */
+    }
+
+    .info-table th {
+      font-size: 1em;
+      text-align: left;
+      font-weight: bold;
+      color: #555; /* 연한 어두운 색으로 설정 */
+      padding-right: 10px;
+    }
+
+    .info-table td {
+      font-size: 0.9em;
+      padding: 10px 0;
+    }
+
+    /* 입력 필드 스타일 */
+    .input-full-size {
+      width: 94%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .input-full-size:focus {
+      border-color: #5a9;
+      box-shadow: 0 0 5px rgba(90, 169, 137, 0.5);
+      outline: none;
+    }
+
+    /* 힌트 텍스트 스타일 */
+    .hint {
+      font-size: 0.8em;
+      color: #888;
+      margin-top: 5px;
+      display: block;
+    }
+
+    /* 버튼 스타일 */
+    .submit-button {
+      background-color: #eaeaea;
+      color: #202020;
+      padding: 10px 20px;
+      border: 1px solid #b3b3b3;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.2s;
+      width: 100%; /* 버튼을 전체 너비로 설정 */
+      margin-top: 20px; /* 버튼 위쪽 여백 */
+    }
+
+    .submit-button:hover {
+      background-color: #858585;
+      color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+  <span class="header-title">마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+
+  <!-- 왼쪽 사이드바 -->
+  <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+  <!-- 오른쪽 콘텐츠 영역 -->
+  <section id="content-area">
+    <h3 class="content-title">회원 정보 수정</h3>
+    <form id="memberUpdateForm" th:action="@{/members/mypage/info}" th:object="${memberResponse}" method="post" onsubmit="return validateForm()">
+      <table class="info-table">
+        <tr>
+
+            <div th:if="${error}" style="color: red" class="error-message" th:text="${error}"></div>
+
+        </tr>
+        <tr>
+          <th>아이디</th>
+          <td><span th:text="*{loginId}"></span></td>
+          <input type="hidden" id="loginId" name="loginId" class="input-full-size" th:field="*{loginId}" readonly>
+        </tr>
+        <tr>
+          <th>이메일</th>
+          <td><span th:text="*{email}">user@example.com</span></td>
+          <input type="hidden" id="email" name="email" class="input-full-size" th:field="*{email}" readonly>
+        </tr>
+        <tr>
+          <th>이름</th>
+          <td>
+            <input type="text" id="name" name="name" class="input-full-size" th:field="*{name}" required>
+          </td>
+        </tr>
+        <tr>
+          <th>비밀번호</th>
+          <td>
+            <input type="password" id="oldPassword" name="oldPassword" class="input-full-size" placeholder="현재 비밀번호를 입력하세요." required>
+          </td>
+        </tr>
+        <tr>
+          <th>새 비밀번호</th>
+          <td>
+            <input type="password" id="newPassword" name="newPassword" class="input-full-size" placeholder="새 비밀번호를 입력하세요." oninput="pw">
+            <span class="hint">비밀번호는 8~16자, 영문 대소문자, 숫자, 특수문자를 포함해야 합니다.</span>
+          </td>
+        </tr>
+        <tr>
+          <th>새 비밀번호 확인</th>
+          <td>
+            <input type="password" id="newPassword_check" name="newPassword_check" class="input-full-size"  oninput="pwCheck()" placeholder="새 비밀번호를 확인을 입력하세요.">
+            <span class="hint" id="pwConfirm">새 비밀번호를 확인해주세요</span>
+          </td>
+        </tr>
+        <tr>
+          <th>생년월일</th>
+          <td>
+            <input type="date" id="birth" name="birth" class="input-full-size" th:field="*{birth}" required>
+          </td>
+        </tr>
+        <tr>
+          <th>전화번호</th>
+          <td>
+            <input type="text" id="phoneNumber" name="phoneNumber" class="input-full-size" th:field="*{phoneNumber}" placeholder="예: 010-1234-5678" required>
+          </td>
+        </tr>
+      </table>
+      <div class="button-group">
+        <button type="submit" class="submit-button">수정하기</button>
+      </div>
+    </form>
+  </section>
+
+</main>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+<!--<script th:inline="javascript">-->
+<!--  let message = /*[[${message}]]*/ "";-->
+
+<!--  if (message) {-->
+<!--    alert(message);-->
+<!--  }-->
+<!--</script>-->
+<script>
+  let isCheckedPassword = false;
+  const newPassword = document.getElementById("newPassword");
+  const newPasswordCheck = document.getElementById("newPassword_check");
+
+  function validateForm() {
+
+    if (newPassword.value !== null && newPasswordCheck.value !== null) {
+      if (!isCheckedPassword) {
+        alert("새 비밀번호 입력을 재확인해주세요.");
+        return false; // 폼 제출 방지
+      }
+      return true;
+    }
+  }
+
+  function checkPW(){
+    if (newPassword.value === newPasswordCheck) {
+      isCheckedPassword = true;
+    }
+  }
+
+  function checkValidPassword(){
+    const oldPassword = document.getElementById('oldPassword');
+    const newPassword = document.getElementById('newPassword')
+
+    fetch(``)
+
+
+  }
+
+
+  newPasswordCheck.addEventListener("input", function (){
+    const pwConfirm = document.getElementById("pwConfirm");
+    pwConfirm.innerText = "새 비밀번호 확인 불일치";
+    pwConfirm.style.color = "red";
+    isCheckedPassword = false;
+    if(newPassword.value === newPasswordCheck.value){
+      pwConfirm.innerText = "새 비밀번호 확인 일치";
+      pwConfirm.style.color = "green";
+      isCheckedPassword = true;
+    }
+  })
+
+  newPassword.addEventListener("input", function (){
+    const pwConfirm = document.getElementById("pwConfirm");
+    pwConfirm.innerText = "새 비밀번호 확인 불일치";
+    pwConfirm.style.color = "red";
+    isCheckedPassword = false;
+    if(newPassword.value === newPasswordCheck.value){
+      pwConfirm.innerText = "새 비밀번호 확인 일치";
+      pwConfirm.style.color = "green";
+      isCheckedPassword = true;
+    }
+  })
+
+  // function pwCheck() {
+  //
+  //   if (newPassword === newPasswordCheck && newPassword !== "") {
+  //     isCheckedPassword = true;
+  //     document.getElementById("pwConfirm").textContent = "비밀번호 일치";
+  //     document.getElementById("pwConfirm").style.color = "green";
+  //   } else {
+  //     isCheckedPassword = false;
+  //     document.getElementById("pwConfirm").textContent = "비밀번호 불일치";
+  //     document.getElementById("pwConfirm").style.color = "red";
+  //   }
+  // }
+</script>
+</body>
+</html>

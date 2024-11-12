@@ -477,3 +477,89 @@ footer nav a:hover {
 footer {
     text-align: center;
 }
+
+/* style.css */
+
+.mypage-container {
+    width: 60%;
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto; /* 중앙 정렬 및 여백 */
+    padding: 20px;
+}
+
+/* 오른쪽 콘텐츠 영역 스타일 */
+#content-area {
+    width: 100%;
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* 가운데 정렬 */
+    min-height: 70vh; /* 페이지 전체 높이를 채워주기 위해 */
+}
+/* style.css */
+
+
+
+/* 마이페이지 헤더 영역 스타일 */
+#mypage-header {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.header-title {
+    margin: 0 auto;
+    width: 250px;
+    font-size: 2.3em;
+    font-weight: bold;
+    color: #000;
+}
+
+.header-greeting {
+    width: 100%;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* 콘텐츠 제목 및 설명 스타일 */
+.content-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.content-description {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* 콘텐츠 박스 스타일 */
+.content-box {
+    border: 1px solid #d0d0d0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.order-summary {
+    padding: 15px;
+    border-bottom: 1px solid #d0d0d0;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.content-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
