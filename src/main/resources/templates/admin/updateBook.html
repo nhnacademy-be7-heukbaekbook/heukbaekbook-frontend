@@ -144,7 +144,7 @@
     <div th:if="${error}">
         <p class="error-message">[[${error}]]</p>
     </div>
-    <form th:action="@{/admins/books/{bookId}(bookId=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+    <form th:action="@{/admin/books/{book-id}(book-id=${bookId})}" th:object="${bookUpdateRequest}" method="post">
         <input type="hidden" name="_method" value="PUT"/>
         <div class="form-group">
             <label for="title">제목</label>
@@ -242,7 +242,7 @@
             <input type="text" th:field="*{authors}" id="authors"/>
         </div>
         <button type="submit">수정하기</button>
-        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
+        <a th:href="@{/admin/books}" class="back-button">목록으로 돌아가기</a>
     </form>
 </section>
 </main>

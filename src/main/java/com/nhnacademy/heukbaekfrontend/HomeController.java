@@ -5,6 +5,7 @@ import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,7 @@ import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInte
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class HomeController {
 
     private final CookieUtil cookieUtil;
@@ -27,6 +29,7 @@ public class HomeController {
     public ModelAndView home(HttpServletRequest request) {
         String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
         boolean isLogin = accessToken != null;
+        log.info("isLogin: {}", isLogin);
 
         ModelAndView modelAndView = new ModelAndView("home");
         Page<BookResponse> page = bookService.getBooks(PageRequest.of(0, 25));

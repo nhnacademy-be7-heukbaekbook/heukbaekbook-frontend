@@ -15,20 +15,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class AdminLoginController {
     private final LoginService loginService;
 
-    @GetMapping("/admins/login")
+    @GetMapping("/admin/login")
     public String getAdminLoginForm() {
-        return "/login/adminLogin";
+        return "login/adminLogin";
     }
 
-    @PostMapping("/admins/login")
+    @PostMapping("/admin/login")
     public String doAdminLogin(@ModelAttribute LoginRequest loginRequest, HttpServletResponse response, Model model) {
         boolean loginSuccess = loginService.adminLogin(loginRequest, response);
 
         if (!loginSuccess) {
             model.addAttribute("error", "로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
-            return "/login/adminLogin";
+            return "login/adminLogin";
         }
 
-        return "redirect:/admins/home";
+        return "redirect:/admin/home";
     }
 }

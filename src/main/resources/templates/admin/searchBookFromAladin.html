@@ -103,7 +103,7 @@
 <main>
     <!-- 검색 폼 -->
     <section class="search-container">
-        <form th:action="@{/admins/aladin}" method="POST">
+        <form th:action="@{/admin/aladin}" method="POST">
             <input type="text" id="query" name="title" placeholder="책 제목을 입력해주세요." required>
             <button type="submit">검색</button>
         </form>
@@ -111,7 +111,7 @@
 
     <!-- "목록으로 돌아가기" 버튼 추가 -->
     <section style="text-align: center;">
-        <a th:href="@{/admins/books}" class="back-button">목록으로 돌아가기</a>
+        <a th:href="@{/admin/books}" class="back-button">목록으로 돌아가기</a>
     </section>
 
     <!-- 검색 결과 -->
@@ -152,7 +152,7 @@
                 <td th:text="${result.salesPrice}">할인가</td>
                 <td>
                     <!-- Register Button as a Form -->
-                    <form th:action="@{/admins/aladin/register}" method="POST">
+                    <form th:action="@{/admin/aladin/register}" method="POST">
                         <input type="hidden" name="title" th:value="${result.title}" />
                         <input type="hidden" name="description" th:value="${result.description}" />
                         <input type="hidden" name="publication" th:value="${result.pubDate}" />

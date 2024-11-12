@@ -156,11 +156,11 @@
 <main class="admin-home-container">
     <!-- "출판사 추가하기" 버튼 -->
     <section style="text-align: center;">
-        <a th:href="@{/admins/contributors/register}" class="add-contributor-button">기여자 추가하기</a>
+        <a th:href="@{/admin/contributors/register}" class="add-contributor-button">기여자 추가하기</a>
     </section>
 
     <section style="text-align: center;">
-        <a th:href="@{/admins/home}" class="back-to-home-button">홈으로 돌아가기</a>
+        <a th:href="@{/admin/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
     <section class="results-section" th:if="${contributors != null}">
@@ -186,9 +186,9 @@
                     <td>
                         <div class="action-buttons">
                             <!-- 수정 버튼 -->
-                            <a th:href="@{/admins/contributors/{contributorId}/update(contributorId=${contributor.id})}" class="action-button">수정</a>
+                            <a th:href="@{/admin/contributors/{contributorId}/update(contributorId=${contributor.id})}" class="action-button">수정</a>
                             <!-- 삭제 버튼 -->
-                            <form th:action="@{/admins/contributors/{contributor-id}(contributor-id=${contributor.id})}" method="post" style="display:inline;">
+                            <form th:action="@{/admin/contributors/{contributor-id}(contributor-id=${contributor.id})}" method="post" style="display:inline;">
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <button type="submit" class="action-button">삭제</button>
                             </form>
@@ -203,15 +203,15 @@
         <div class="pagination">
             <ul>
                 <li th:if="${contributors.hasPrevious()}">
-                    <a th:href="@{/admins/contributors(page=${contributors.number - 1}, size=${contributors.size})}">이전</a>
+                    <a th:href="@{/admin/contributors(page=${contributors.number - 1}, size=${contributors.size})}">이전</a>
                 </li>
                 <li th:each="pageNum : ${#numbers.sequence(0, contributors.totalPages - 1)}"
                     th:classappend="${pageNum == contributors.number} ? 'active'">
-                    <a th:href="@{/admins/contributors(page=${pageNum}, size=${contributors.size})}"
+                    <a th:href="@{/admin/contributors(page=${pageNum}, size=${contributors.size})}"
                        th:text="${pageNum + 1}">1</a>
                 </li>
                 <li th:if="${contributors.hasNext()}">
-                    <a th:href="@{/admins/contributors(page=${contributors.number + 1}, size=${contributors.size})}">다음</a>
+                    <a th:href="@{/admin/contributors(page=${contributors.number + 1}, size=${contributors.size})}">다음</a>
                 </li>
             </ul>
         </div>
