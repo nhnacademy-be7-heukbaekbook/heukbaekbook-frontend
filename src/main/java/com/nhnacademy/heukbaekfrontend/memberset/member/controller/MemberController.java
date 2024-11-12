@@ -37,6 +37,7 @@ public class MemberController {
         return "mypage/mypage";
     }
 
+    @Member
     @GetMapping("/info")
     public String getMyPageInfo(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
@@ -44,6 +45,7 @@ public class MemberController {
         return "mypage/mypage-info";
     }
 
+    @Member
     @PostMapping("/info")
     public String doUpdateMyPageInfo(@Valid @ModelAttribute MemberUpdateRequest memberUpdateRequest,
                                      BindingResult bindingResult,
@@ -69,6 +71,7 @@ public class MemberController {
         return "redirect:/members/mypage/info";
     }
 
+    @Member
     @GetMapping("/withdraw")
     public String getMyPageWithdraw(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
@@ -77,6 +80,7 @@ public class MemberController {
 
     }
 
+    @Member
     @PostMapping("/withdraw")
     public String doMemberWithdraw() {
         memberService.deleteMember();
