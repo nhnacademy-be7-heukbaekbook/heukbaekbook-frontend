@@ -1,78 +1,38 @@
 package com.nhnacademy.heukbaekfrontend.common.util;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.DependsOn;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
-
-import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
+import java.util.Map;
 
 @Component
-@DependsOn("secureKeyManagerConfig")
+@RequiredArgsConstructor
 public class JwtUtil {
+    private static final String EXP = "exp";
 
-    private static final String ROLE = "role";
-
-    private final SecretKey secretKey;
-
-    public JwtUtil(@Value("${jwt.secret-key}") String secret) {
-        this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), Jwts.SIG.HS256.key().build().getAlgorithm());
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token);
-            return !isExpired(token);
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
+    private final ObjectMapper objectMapper;
 
     public boolean isExpired(String token) {
         try {
-            return Jwts.parser()
-                    .verifyWith(secretKey)
-                    .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
-                    .getExpiration()
-                    .before(new Date());
-        } catch (ExpiredJwtException e) {
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public String getRoleFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .get(ROLE, String.class);
-    }
-
-    public String resolveToken(HttpServletRequest request) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (ACCESS_TOKEN.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
+            String[] parts = token.split("\\.");
+            if (parts.length != 3) {
+                return true;
             }
+
+            String payloadJson = new String(Base64.getUrlDecoder().decode(parts[1]), StandardCharsets.UTF_8);
+            Map<String, Object> claims = objectMapper.readValue(payloadJson, new TypeReference<>() {
+            });
+
+            Date expiration = new Date(((Number) claims.get(EXP)).longValue() * 1000L);
+            return expiration.before(new Date());
+        } catch (Exception e) {
+            return true;
         }
-        return null;
     }
 }
+

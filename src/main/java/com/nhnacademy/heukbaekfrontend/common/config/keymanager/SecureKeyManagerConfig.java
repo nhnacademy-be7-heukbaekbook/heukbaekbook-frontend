@@ -27,9 +27,6 @@ public class SecureKeyManagerConfig {
     @Value("${nhncloud.keymanager.secretAccessKey}")
     private String secretAccessKey;
 
-    @Value("${jwt.key}")
-    private String jwtKey;
-
     private final ConfigurableEnvironment env;
 
     private final String endpoint = "https://api-keymanager.nhncloudservice.com";
@@ -50,12 +47,5 @@ public class SecureKeyManagerConfig {
         } else {
             throw new RuntimeException("기밀 데이터 조회 실패: " + response.getStatusCode());
         }
-    }
-
-    @PostConstruct
-    public String secretKey() {
-        String secretKey = getSecret(jwtKey);
-        env.getSystemProperties().put("secret.key", secretKey);
-        return secretKey;
     }
 }
