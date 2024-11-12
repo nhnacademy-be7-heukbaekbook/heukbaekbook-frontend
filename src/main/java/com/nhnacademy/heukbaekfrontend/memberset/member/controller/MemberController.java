@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.controller;
 
+import com.nhnacademy.heukbaekfrontend.common.annotation.Member;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
@@ -28,6 +29,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
+    @Member
     @GetMapping
     public String getMyPageHome(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
