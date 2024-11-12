@@ -15,10 +15,6 @@ nhncloud:
 redis:
   key: "8bf046001ecc4ee09792d17bfa05db73"
 
-jwt:
-  key: eec8381b385f45c3b990f3be8834eea4
-  secret-key: ${secret.key}
-
 spring:
   cloud:
     config:
