@@ -1,12 +1,21 @@
 package com.nhnacademy.heukbaekfrontend.memberset.address.service;
 
-import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressDto;
+import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MemberAddressService {
 
-    List<MemberAddressDto> getMemberAddressesList();
+    List<MemberAddressResponse> getMemberAddressesList();
 
-    Long countMemberAddresses();
+    Optional<MemberAddressResponse> addMemberAddress(MemberAddressRequest memberAddressRequest);
+
+    Optional<MemberAddressResponse> updateMemberAddress(Long addressId, MemberAddressRequest memberAddressRequest);
+
+    boolean deleteMemberAddress(Long addressId);
+
+    ResponseEntity<Long> countMemberAddresses();
 }

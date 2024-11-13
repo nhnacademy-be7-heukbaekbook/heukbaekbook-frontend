@@ -1,13 +1,11 @@
 package com.nhnacademy.heukbaekfrontend.memberset.address.dto;
 
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-
-public record MemberAddressDto(
+public record MemberAddressRequest(
         @NotNull(message = "우편번호를 입력하여 주십시오.")
         Long postalCode,
 
