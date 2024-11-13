@@ -34,7 +34,7 @@ public class MemberAddressController {
         MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute("memberResponse", memberResponse);
         model.addAttribute("addressList", addressList);
-        return REDIRECT_MY_PAGE_ADDRESS;
+        return "mypage/mypage-address";
     }
 
     @Member
