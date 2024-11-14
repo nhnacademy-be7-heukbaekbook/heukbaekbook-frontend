@@ -24,4 +24,8 @@ public interface BookClient {
 
     @GetMapping
     Page<BookResponse> getBooks(Pageable pageable);
+
+    @GetMapping("/search")
+    Page<BookResponse> searchBooks(@RequestParam("keyword") String keyword, Pageable pageable);
+
 }

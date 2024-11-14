@@ -55,4 +55,8 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request) {
         return bookAdmin.updateBook(bookId, request);
     }
+    @Override
+    public Page<BookResponse> searchBooksWithPagination(String keyword, Pageable pageable) {
+        return bookClient.searchBooks(keyword, pageable); // 새 메서드에서 title과 pageable 전달
+    }
 }
