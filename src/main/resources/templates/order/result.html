@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Payment Result</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+<h1>Payment Result</h1>
+
+<div>
+    <p><strong>Code:</strong> <span th:text="${response.code}"></span></p>
+    <p><strong>Success:</strong> <span th:text="${response.success} ? 'Yes' : 'No'"></span></p>
+    <p><strong>Message:</strong> <span th:text="${response.message}"></span></p>
+</div>
+
+<a href="/order">Go Back to Order Page</a>
+</body>
+</html>
