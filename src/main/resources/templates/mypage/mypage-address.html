@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주소록 관리</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+            /* content-area의 폭을 고정하고, 테이블이 영역을 벗어나지 않도록 overflow 설정 */
+
+
+            /* 모달 창 스타일 */
+            #addressModal {
+                display: none;
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #ffffff;
+                padding: 20px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 8px;
+                z-index: 1000;
+                width: 360px;
+                height: auto;
+            }
+
+            /* 배경 오버레이 스타일 */
+            #modalOverlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(147, 147, 147, 0.5);
+                z-index: 999;
+            }
+
+            .content-title {
+                font-size: 1.2em; /* 글씨 크기 확대 */
+                font-weight: bold;
+                padding-bottom: 10px;
+                color: #333; /* 어두운 색으로 설정 */
+                margin-bottom: 20px; /* 제목 아래 간격 */
+                border-bottom: 1px solid #bfbfbf;
+            }
+
+            /* 버튼 스타일 */
+            button {
+                padding: 5px 10px;
+                border: 1px solid #aaa;
+                border-radius: 4px;
+                background-color: #f9f9f9;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #e0e0e0;
+            }
+
+            .address-table td:nth-child(2) {
+                text-align: left;
+            }
+            /* 테이블 셀 스타일 */
+            .address-table td {
+                white-space: nowrap;
+                padding: 10px;
+                text-align: center;
+            }
+            #content-area {
+                border-radius: 5px;
+            }
+
+            /* address-table을 content-area 내에서 화면에 맞게 표시 */
+
+            .address-table {
+                font-size: 0.8rem;
+                width: 100%; /* 테이블 폭을 content-area에 맞춤 */
+                table-layout: auto; /* 테이블 칸 크기를 자동 조절 */
+                border-collapse: collapse;
+            }
+
+            .address-table th {
+                text-align: center;
+                border-top: 1px solid #8f8f8f;
+                border-bottom: 1px solid #8f8f8f;
+                background-color: #e4e4e4;
+            }
+
+            .modal-content{
+                padding-top: 10px;
+                width: 90%;
+                margin: 0 auto;
+            }
+
+            .address-table th, .address-table td {
+                padding: 10px;
+                text-align: left;
+            }
+
+            input {
+                width: 100%;
+                padding: 0.4rem;
+            }
+
+            /* 주
+    /* 버튼 스타일 */
+
+            button {
+                padding: 5px 10px;
+                border: 1px solid #aaa;
+                border-radius: 4px;
+                background-color: #f9f9f9;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            button:hover {
+                background-color: #e0e0e0;
+            }
+
+
+            /* 텍스트를 가로로 표시하고 줄바꿈 방지 */
+
+            .address-table td {
+                white-space: nowrap;
+            }
+            .input-half-size {
+                width: 68%;
+            }
+            .input-full-size {
+                width: 92%;
+            }
+            .button-box{
+                text-align: center;
+                padding-top: 40px;
+            }
+            #modalTitle{
+                padding: 10px;
+                border-bottom: 1px solid lightgray;
+            }
+
+    </style>
+</head>
+<body>
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+    <span class="header-title">마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <section id="content-area">
+        <h3 class="content-title">주소록 관리</h3>
+
+        <!-- 주소 목록 테이블 -->
+        <button style="float: right; margin-bottom: 5px" onclick="openAddressModal()">+ 새 주소 추가</button>
+
+        <!-- 주소 목록 테이블 -->
+        <table class="address-table">
+
+            <thead th:if="${addressList.size() > 0}">
+                <tr>
+                    <th>주소 별칭</th>
+                    <th>우편번호</th>
+                    <th>도로명 주소</th>
+                    <th>상세 주소</th>
+                    <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+            <!-- addressList가 비어있지 않으면 주소 목록을 출력 -->
+            <tr th:each="address : ${addressList}" th:if="${addressList.size() > 0}">
+                <td th:text="${address.alias}">주소 별칭</td>
+                <td th:text="${address.postalCode}">우편번호</td>
+                <td th:text="${address.roadNameAddress}">도로명 주소</td>
+                <td th:text="${address.detailAddress}">상세 주소</td>
+                <td>
+                    <input class="address-id" type="hidden" th:value="${address.addressId}">
+                    <button th:onclick="|openEditModal(this, ${address.addressId})|">수정</button>
+
+                    <form th:action="@{/members/mypage/addresses/{addressId}(addressId=${address.addressId})}" th:id="'deleteForm-' + ${address.addressId}" method="post">
+                        <input type="hidden" name="_method" value="delete"/>
+                        <button type="button" th:onclick="|confirmDeletion(${address.addressId})|">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            <!-- addressList가 비어있으면 안내 메시지 출력 -->
+            <tr th:if="${addressList.size() == 0}">
+                <td colspan="5" style="font-size:1.1rem; padding:5px; text-align: center; color: #777;"><p>등록된 주소지가 없습니다.</p>
+                    <p>주소지를 추가하여 주세요.</p></td>
+            </tr>
+            </tbody>
+
+        </table>
+    </section>
+
+    <!-- 주소 추가/수정 모달 -->
+    <div id="addressModal" style="display: none;">
+        <h3 id="modalTitle">주소 추가</h3>
+        <form th:action="@{/members/mypage/addresses}" method="post" id="addressForm">
+            <input type="hidden" id="methodField" name="_method" value="post"/>
+            <input type="hidden" id="modalAddressId" name="addressId"/>
+            <div class="modal-content">
+                <div>
+                    <input type="text" name="postalCode" class="input-half-size" id="postalCode" placeholder="우편번호" onclick="findAddressKakaoAPI()" readonly required>
+                    <button type="button" style="margin-left: 2px" onclick="findAddressKakaoAPI()">주소 찾기</button>
+                </div>
+                <div>
+                    <input type="text" name="roadNameAddress" class="input-full-size" id="roadNameAddress" placeholder="도로명 주소" onclick="findAddressKakaoAPI()" readonly required>
+                </div>
+                <div>
+                    <input type="text" name="detailAddress" class="input-full-size" id="detailAddress" placeholder="상세 주소" required>
+                </div>
+                <div>
+                    <input type="text" name="alias" class="input-full-size" id="alias" placeholder="주소 별칭 (예: 집, 회사)" required>
+                </div>
+            </div>
+            <div class="button-box">
+                <button type="submit">저장</button>
+                <button type="button" onclick="closeModal()">취소</button>
+            </div>
+        </form>
+    </div>
+    <div id="modalOverlay"></div>
+
+</main>
+<script th:inline="javascript">
+
+    async function checkAddressCount() {
+        try {
+            const response = await fetch(`/members/mypage/addresses/count`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const count = await response.json();
+            return count < 10;
+        } catch (error) {
+            console.error("Error fetching address count:", error);
+            return false;
+        }
+    }
+
+    async function openAddressModal() {
+        const isLessThanTen = await checkAddressCount();
+        if (!isLessThanTen) {
+            alert("주소는 최대 10개까지 등록 가능합니다.");
+            return;
+        }
+        document.getElementById('addressForm').action = '/members/mypage/addresses'; // 기본 추가 URL 설정
+        document.getElementById('methodField').value = 'post';
+        document.getElementById('addressForm').reset();
+        document.getElementById('modalTitle').innerText = '주소 추가';
+        document.getElementById('addressModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+
+
+    function openEditModal(button, addressId) {
+        const row = button.closest('tr');
+        const alias = row.querySelector('td:nth-child(1)').innerText;
+        const postalCode = row.querySelector('td:nth-child(2)').innerText;
+        const roadNameAddress = row.querySelector('td:nth-child(3)').innerText;
+        const detailAddress = row.querySelector('td:nth-child(4)').innerText;
+
+        document.getElementById('modalTitle').innerText = '주소 수정';
+
+        document.getElementById('modalAddressId').value = addressId;
+        document.getElementById('postalCode').value = postalCode;
+        document.getElementById('roadNameAddress').value = roadNameAddress;
+        document.getElementById('detailAddress').value = detailAddress;
+        document.getElementById('alias').value = alias;
+
+        // Set the method to PUT for updating
+        document.getElementById('methodField').value = 'put';
+        document.getElementById('addressForm').action = `/members/mypage/addresses/`+addressId;
+
+        document.getElementById('addressModal').style.display = 'block';
+        document.getElementById('modalOverlay').style.display = 'block';
+    }
+
+    function confirmDeletion(addressId) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            document.getElementById("deleteForm-" + addressId).submit();
+        }
+    }
+
+
+    function closeModal() {
+        document.getElementById('addressModal').style.display = 'none';
+        document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    function findAddressKakaoAPI() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var address = data.userSelectedType ? data.roadAddress : "";
+                document.getElementById('postalCode').value = data.zonecode;
+                document.getElementById('roadNameAddress').value = address;
+                document.getElementById('detailAddress').focus();
+            }
+        }).open();
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeModal(); // ESC 키를 누르면 모달 닫기
+        }
+    });
+</script>
+
+    </body>
+    </html>

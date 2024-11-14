@@ -8,24 +8,24 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "signupClient", url = "http://localhost:8082")
+@FeignClient(name = "signupClient", url = "http://localhost:8082/api/members")
 public interface MemberClient {
 
-    @PostMapping("/api/members")
+    @PostMapping
     ResponseEntity<MemberResponse> signup(@RequestBody MemberCreateRequest memberCreateRequest);
 
-    @GetMapping("/api/members/existsLoginId/{loginId}")
+    @GetMapping("/existsLoginId/{loginId}")
     ResponseEntity<Boolean> existsLoginId(@PathVariable String loginId);
 
-    @GetMapping("/api/members/existsEmail/{email}")
+    @GetMapping("/existsEmail/{email}")
     ResponseEntity<Boolean> existsEmail(@PathVariable String email);
 
-    @GetMapping("/api/members")
+    @GetMapping
     ResponseEntity<MemberResponse> getMemberInfo();
 
-    @PutMapping("/api/members")
+    @PutMapping
     ResponseEntity<MemberResponse> updateMember(@RequestBody MemberUpdateRequest memberUpdateRequest);
 
-    @DeleteMapping("/api/members")
+    @DeleteMapping
     ResponseEntity<MemberResponse> deleteMember();
 }

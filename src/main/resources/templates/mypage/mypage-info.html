@@ -94,7 +94,6 @@
 </head>
 
 <body>
-
 <!-- 헤더 레이아웃 적용 -->
 <header th:replace="~{layout :: header}"></header>
 
@@ -116,7 +115,7 @@
       <table class="info-table">
         <tr>
 
-            <div th:if="${error}" style="color: red" class="error-message" th:text="${error}"></div>
+          <div th:if="${error}" style="color: red" class="error-message" th:text="${error}"></div>
 
         </tr>
         <tr>
@@ -173,6 +172,7 @@
       </div>
     </form>
   </section>
+
 
 </main>
 
