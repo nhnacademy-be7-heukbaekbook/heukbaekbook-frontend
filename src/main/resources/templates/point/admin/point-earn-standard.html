@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 규정 관리 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header, footer {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        main {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 1600px;
+            min-width: 50%;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #000;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .form-container, .list-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .success-message[style*="deleteSuccess"] {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .success-message[style*="updateEarnStandard"] {
+            background-color: #fff9e6;
+            color: #b8860b;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #000;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .action-button.modify {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.modify:hover {
+            background-color: #777;
+        }
+
+        .action-button.delete {
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.delete:hover {
+            background-color: #c9302c;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none; /* 기본적으로 숨김 */
+            position: fixed; /* 고정 위치 */
+            z-index: 1000; /* 최상위 레이어 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 전체 너비 */
+            height: 100%; /* 전체 높이 */
+            overflow: auto; /* 스크롤 */
+            background-color: rgba(0, 0, 0, 0.5); /* 반투명 배경 */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto; /* 중앙 정렬 */
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%; /* 모달 너비 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* 모달 폼 스타일 */
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-top: 10px;
+        }
+
+        .modal-content input, .modal-content select {
+            margin-bottom: 15px;
+            width: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            width: auto;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+<main>
+    <h2>포인트 규정 관리</h2>
+
+    <!-- 성공 메시지 -->
+    <div th:if="${newEarnStandard}" class="success-message">
+        새로운 포인트 규정 "<span th:text="${newEarnStandard.name}"></span>"이(가) 성공적으로 등록되었습니다!
+    </div>
+
+    <!-- 삭제 성공 메시지 -->
+    <div th:if="${deleteSuccess}" class="success-message" style="background-color: #f8d7da; color: #721c24;">
+        ID: "<span th:text="${deleteSuccess}"></span>"이(가) 성공적으로 삭제되었습니다!
+    </div>
+
+    <!-- 수정 성공 메시지 -->
+    <div th:if="${updateEarnStandard}" class="success-message" style="background-color: #fff9e6; color: #b8860b;">
+        포인트 규정 ID: "<span th:text="${updateEarnStandard.id}"></span>"이(가) 성공적으로 수정되었습니다!
+    </div>
+
+
+    <!-- 포인트 규정 등록 폼 -->
+    <section class="form-container">
+        <h3>포인트 규정 등록</h3>
+        <form th:action="@{/admin/point-earn-standard}" method="post">
+            <label for="name">규정 이름</label>
+            <input type="text" id="name" name="name" placeholder="규정 이름" required>
+
+            <label for="point">포인트</label>
+            <input type="number" id="point" name="point" placeholder="포인트" min="0" required>
+
+            <label for="triggerEvent">포인트 적립 적용 시점</label>
+            <select id="triggerEvent" name="triggerEvent" required>
+                <option th:each="event : ${triggerEvents}"
+                        th:value="${event}"
+                        th:text="${event.displayName}">
+                </option>
+            </select>
+
+            <button type="submit">등록</button>
+        </form>
+    </section>
+
+    <!-- 포인트 규정 리스트 -->
+    <section class="list-container">
+        <h3>등록된 포인트 규정</h3>
+        <table>
+            <thead>
+            <tr>
+                <th>규정 ID</th>
+                <th>이름</th>
+                <th>포인트</th>
+                <th>포인트 적립 적용 시점</th>
+                <th>관리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="standard : ${pointEarnStandards}">
+                <td th:text="${standard.id}"></td>
+                <td th:text="${standard.name}"></td>
+                <td th:text="${standard.point}"></td>
+                <td th:text="${standard.triggerEvent.displayName}"></td>
+                <td>
+                    <button type="button" class="action-button modify"
+                            th:data-id="${standard.id}"
+                            th:data-name="${standard.name}"
+                            th:data-point="${standard.point}"
+                            th:data-trigger-event="${standard.triggerEvent}"
+                            onclick="openEditModal(this)">
+                        수정
+                    </button>
+
+                    <!-- Delete 버튼 -->
+                    <form th:action="@{/admin/point-earn-standard/{id}(id=${standard.id})}"
+                          th:id="'deleteForm-' + ${standard.id}" method="post" style="display:inline;">
+                        <input type="hidden" name="_method" value="delete">
+                        <button type="button" class="action-button delete" th:onclick="|confirmDeletion(${standard.id})|">삭제</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 수정 모달 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h3>포인트 규정 수정</h3>
+            <form id="editForm" method="post">
+                <input type="hidden" name="_method" value="put">
+                <input type="hidden" id="edit-id" name="id">
+
+                <label for="edit-name">규정 이름</label>
+                <input type="text" id="edit-name" name="name" placeholder="규정 이름" required>
+
+                <label for="edit-point">포인트</label>
+                <input type="number" id="edit-point" name="point" placeholder="포인트" min="0" required>
+
+                <label for="edit-triggerEvent">포인트 적립 적용 시점</label>
+                <select id="edit-triggerEvent" name="triggerEvent" required>
+                    <option th:each="event : ${triggerEvents}"
+                            th:value="${event}"
+                            th:text="${event.displayName}">
+                    </option>
+                </select>
+
+                <button type="submit">저장</button>
+                <button type="button" onclick="closeModal()">취소</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function confirmDeletion(id) {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                document.getElementById("deleteForm-" + id).submit();
+            }
+        }
+
+        function openEditModal(button) {
+            // 버튼의 data- 속성에서 데이터 가져오기
+            const id = button.getAttribute("data-id");
+            const name = button.getAttribute("data-name");
+            const point = button.getAttribute("data-point");
+            const triggerEvent = button.getAttribute("data-trigger-event");
+
+            // 모달 요소 가져오기
+            const modal = document.getElementById("editModal");
+            const form = document.getElementById("editForm");
+
+            // 폼 액션 설정
+            form.action = "/admin/point-earn-standard/" + id;
+
+            // 폼 필드 값 설정
+            document.getElementById("edit-id").value = id;
+            document.getElementById("edit-name").value = name;
+            document.getElementById("edit-point").value = point;
+            document.getElementById("edit-triggerEvent").value = triggerEvent;
+
+            // 모달 표시
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("editModal");
+            modal.style.display = "none";
+        }
+
+        // 모달 외부 클릭 시 모달 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById("editModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</main>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>
