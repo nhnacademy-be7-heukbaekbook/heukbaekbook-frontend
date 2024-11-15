@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.book.service.impl;
 import com.nhnacademy.heukbaekfrontend.book.client.BookAdmin;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
+import com.nhnacademy.heukbaekfrontend.book.dto.request.BookSearchRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
@@ -39,6 +40,10 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookSearchResponse> searchBooks(String title) {
         return bookAdmin.searchBooks(title);
+    }
+
+    public Page<BookResponse> searchElasticBooks(BookSearchRequest bookSearchRequest, Pageable pageable) {
+        return bookClient.searchBooks(bookSearchRequest, pageable);
     }
 
     @Override

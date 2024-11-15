@@ -1,8 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.book.service;
 
-import com.nhnacademy.heukbaekfrontend.book.client.BookAdmin;
-import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
+import com.nhnacademy.heukbaekfrontend.book.dto.request.BookSearchRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 
@@ -20,6 +19,8 @@ public interface BookService {
     BookDetailResponse getBookById(Long bookId);
 
     List<BookSearchResponse> searchBooks(String title);
+
+    Page<BookResponse> searchElasticBooks(BookSearchRequest bookSearchRequest, Pageable pageable);
 
     ResponseEntity<BookDeleteResponse> deleteBook(Long bookId);
 
