@@ -16,12 +16,13 @@ redis:
   key: "8bf046001ecc4ee09792d17bfa05db73"
 
 spring:
-  cloud:
-    config:
-      enabled: false
   main:
     allow-bean-definition-overriding: true
   session:
     store-type: redis # 세션 저장소를 지정합니다.
     redis:
       namespace: heukbaekbook:session # 세션을 저장하는 데 사용되는 키의 네임스페이스를 지정합니다.
+  data:
+    web:
+      pageable:
+        default-page-size: 25

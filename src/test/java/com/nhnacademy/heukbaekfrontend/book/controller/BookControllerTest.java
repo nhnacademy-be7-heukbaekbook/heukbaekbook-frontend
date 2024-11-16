@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.book.controller;
 
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookDetailResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
+import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,6 +32,9 @@ class BookControllerTest {
     private BookService bookService;
 
     @MockBean
+    private CategoryService categoryService;
+
+    @MockBean
     private CookieUtil cookieUtil;
 
     @MockBean
@@ -39,7 +43,7 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, categoryService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

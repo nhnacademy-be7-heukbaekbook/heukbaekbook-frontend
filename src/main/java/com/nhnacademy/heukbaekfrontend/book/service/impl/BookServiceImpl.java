@@ -55,4 +55,14 @@ public class BookServiceImpl implements BookService {
     public ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request) {
         return bookAdmin.updateBook(bookId, request);
     }
+
+    @Override
+    public Page<BookResponse> getBooksByCategoryId(Long categoryId, Pageable pageable) {
+        return bookClient.getBooksByCategoryId(categoryId, pageable);
+    }
+
+    @Override
+    public BookResponse getBookDetailByBookId(Long bookId) {
+        return bookClient.getBookDetailByBookId(bookId);
+    }
 }
