@@ -19,12 +19,13 @@
 
     async function confirm() {
         const requestData = {
+            orderId: 1,
             paymentKey: paymentKey,
-            orderId: orderId,
+            paymentOrderId: orderId,
             amount: amount,
         };
 
-        const response = await fetch("/toss/confirm", {
+        const response = await fetch("/payment/confirm", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

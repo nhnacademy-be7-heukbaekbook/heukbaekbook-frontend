@@ -11,7 +11,7 @@
             font-family: 'Noto Sans KR', sans-serif;
         }
         .order-container {
-            max-width: 800px;
+            *max-width: 800px;
             margin: 50px auto;
             padding: 40px;
             background-color: #ffffff;
@@ -207,8 +207,8 @@
             await widgets.requestPayment({
                 orderId: orderId, // 랜덤으로 생성된 orderId
                 orderName: orderName, // 입력받은 주문명
-                successUrl: window.location.origin + "/toss/success", // 결제 성공 시 리디렉션될 URL
-                failUrl: window.location.origin + "/toss/fail", // 결제 실패 시 리디렉션될 URL
+                successUrl: window.location.origin + "/payment/success", // 결제 성공 시 리디렉션될 URL
+                failUrl: window.location.origin + "/payment/fail", // 결제 실패 시 리디렉션될 URL
                 customerEmail: customerEmail, // 입력받은 이메일
                 customerName: customerName, // 입력받은 고객명
                 customerMobilePhone: customerPhone, // 입력받은 전화번호
