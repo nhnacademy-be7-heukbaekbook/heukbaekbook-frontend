@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,7 +69,7 @@
 
         .book-status {
             font-weight: bold;
-            color: #2980b9;
+            color: #000;
             margin-top: 5px;
         }
 
@@ -120,7 +122,7 @@
         /* 등록 버튼 스타일 - 직접 등록하기와 알라딘 등록하기 */
         .add-book-button {
             padding: 12px 20px; /* 등록 버튼의 패딩 설정 */
-            background-color: #007bff; /* 등록 버튼을 파란색으로 구분 */
+            background-color: #000000; /* 등록 버튼을 파란색으로 구분 */
             color: #fff;
             border-radius: 8px; /* 둥근 모서리 */
             text-decoration: none;
@@ -133,7 +135,7 @@
 
         .back-to-home-button {
             padding: 12px 20px; /* 등록 버튼의 패딩 설정 */
-            background-color: #007bff; /* 등록 버튼을 파란색으로 구분 */
+            background-color: #000000; /* 등록 버튼을 파란색으로 구분 */
             color: #fff;
             border-radius: 8px; /* 둥근 모서리 */
             text-decoration: none;
@@ -145,12 +147,64 @@
         }
 
         .add-book-button:hover {
-            background-color: #0056b3;
+            background-color: #000000;
             transform: scale(1.05);
         }
+
+        .sort-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+
+        .sort-section label {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        .sort-select {
+            padding: 10px 12px;
+            font-size: 1em;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: border-color 0.3s ease;
+        }
+
+        .sort-select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+
+        .sort-button {
+            padding: 10px 20px;
+            background-color: #000000;
+            color: #fff;
+            font-size: 1em;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .sort-button:hover {
+            background-color: #000000;
+            transform: scale(1.05);
+        }
+
+        .sort-button:active {
+            background-color: #000000;
+            transform: scale(1);
+        }
+
     </style>
 </head>
-
 <body>
 <!-- 헤더 불러오기 -->
 <header th:replace="~{admin/layout :: header}"></header>
@@ -169,14 +223,31 @@
         <a th:href="@{/admin/home}" class="back-to-home-button">홈으로 돌아가기</a>
     </section>
 
+    <section style="text-align: center;">
+        <form method="get" action="/admin/books" class="sort-section">
+            <input type="hidden" name="page" th:value="${page}">
+            <input type="hidden" name="size" th:value="${size}">
+
+            <label for="sort">정렬 기준:</label>
+            <select name="sort" id="sort" class="sort-select">
+                <option value="title,asc" th:selected="${sort == 'title: ASC'}">제목순</option>
+                <option value="price,asc" th:selected="${sort == 'price: ASC'}">가격순</option>
+                <option value="discountRate,desc" th:selected="${sort == 'discountRate: DESC'}">할인율순</option>
+            </select>
+
+            <button type="submit" class="sort-button">정렬</button>
+        </form>
+    </section>
+
     <!-- 도서 목록 -->
     <section class="results-section" th:if="${books != null}">
         <h2>도서 목록</h2>
         <div class="card-container">
-            <div th:if="${books.isEmpty()}" class="no-results">
+            <div th:if="${books.content.isEmpty()}" class="no-results">
                 등록된 도서가 없습니다.
             </div>
-            <div class="book-card" th:each="book : ${books}">
+            <!-- 여기에서 page.content 대신 books.content를 사용 -->
+            <div class="book-card" th:each="book : ${books.content}">
                 <div class="book-info-container">
                     <img th:src="${book.thumbnailImageUrl}" alt="도서 표지" class="book-thumbnail">
                     <div class="book-info">
@@ -206,9 +277,13 @@
                 </div>
             </div>
         </div>
+        <!-- 페이지네이션 컨트롤 추가 -->
+        <div th:replace="~{fragments/pagination :: pagination(${books})}"></div>
     </section>
 </main>
 
 <!-- 푸터 불러오기 -->
 <footer th:replace="~{admin/layout :: footer}"></footer>
 </body>
+</html>
+

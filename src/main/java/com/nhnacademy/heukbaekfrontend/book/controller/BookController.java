@@ -33,7 +33,7 @@ public class BookController {
     public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
         BookDetailResponse bookDetail = bookService.getBookById(bookId);
         model.addAttribute("book", bookDetail);
-        return "admin/bookDetail";
+        return "bookDetail";
     }
 
     @GetMapping("/category")
