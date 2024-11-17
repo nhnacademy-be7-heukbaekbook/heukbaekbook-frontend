@@ -1,7 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.book.service;
 
-import com.nhnacademy.heukbaekfrontend.book.client.BookAdmin;
-import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
@@ -26,4 +24,8 @@ public interface BookService {
     ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request);
 
     ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request);
+
+    Page<BookResponse> getBooksByCategoryId(Long categoryId, Pageable pageable);
+
+    BookResponse getBookDetailByBookId(Long bookId);
 }

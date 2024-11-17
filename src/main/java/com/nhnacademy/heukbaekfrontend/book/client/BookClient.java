@@ -24,4 +24,10 @@ public interface BookClient {
 
     @GetMapping
     Page<BookResponse> getBooks(Pageable pageable);
+
+    @GetMapping("/categories/{categoryId}")
+    Page<BookResponse> getBooksByCategoryId(@PathVariable Long categoryId, Pageable pageable);
+
+    @GetMapping("/detail")
+    BookResponse getBookDetailByBookId(@RequestParam Long bookId);
 }
