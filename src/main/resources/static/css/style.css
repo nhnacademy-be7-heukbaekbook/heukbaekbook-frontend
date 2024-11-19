@@ -616,3 +616,7 @@ main {
     flex: 1;
     padding: 20px;
 }
+
+.toastui-editor-toolbar .tui-svg-icon {
+    fill: #d0d0d0; /* 원하는 색상으로 변경 */
+}

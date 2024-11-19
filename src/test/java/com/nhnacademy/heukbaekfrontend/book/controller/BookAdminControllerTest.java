@@ -4,8 +4,10 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
+import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -45,10 +47,16 @@ class BookAdminControllerTest {
     @MockBean
     private JwtAuthenticationFilter jwtAuthenticationFilter;
 
+    @MockBean
+    private CategoryService categoryService;
+
+    @MockBean
+    private TagService tagService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookAdminController(bookService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookAdminController(bookService, categoryService, tagService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

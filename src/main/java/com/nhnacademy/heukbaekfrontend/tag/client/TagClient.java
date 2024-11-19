@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @FeignClient(name = "tag", url = "http://localhost:8082")
 public interface TagClient {
 
@@ -30,4 +32,6 @@ public interface TagClient {
     @GetMapping("/api/admin/tags")
     ResponseEntity<Page<TagDetailResponse>> getTags(@RequestParam Pageable pageable);
 
+    @GetMapping("/api/admin/tags/list")
+    List<String> getTagList();
 }
