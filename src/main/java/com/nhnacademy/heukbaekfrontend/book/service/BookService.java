@@ -27,5 +27,5 @@ public interface BookService {
 
     Page<BookResponse> getBooksByCategoryId(Long categoryId, Pageable pageable);
 
-    BookResponse getBookDetailByBookId(Long bookId);
+    BookViewResponse getBookDetailByBookId(Long bookId);
 }

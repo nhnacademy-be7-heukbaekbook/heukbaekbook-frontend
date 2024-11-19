@@ -2,7 +2,8 @@ package com.nhnacademy.heukbaekfrontend.book.client;
 
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookDetailResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookCartResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookViewResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,7 +18,7 @@ import java.util.List;
 public interface BookClient {
 
     @GetMapping("/summary")
-    List<BookCartResponse> getBooksSummary(@RequestParam List<Long> bookIds);
+    List<BookSummaryResponse> getBooksSummary(@RequestParam List<Long> bookIds);
 
     @GetMapping("/{bookId}")
     ResponseEntity<BookDetailResponse> getBook(@PathVariable Long bookId);
@@ -29,5 +30,5 @@ public interface BookClient {
     Page<BookResponse> getBooksByCategoryId(@PathVariable Long categoryId, Pageable pageable);
 
     @GetMapping("/detail")
-    BookResponse getBookDetailByBookId(@RequestParam Long bookId);
+    BookViewResponse getBookDetailByBookId(@RequestParam Long bookId);
 }

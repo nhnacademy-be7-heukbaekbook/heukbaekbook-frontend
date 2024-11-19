@@ -55,7 +55,7 @@ public class BookServiceImpl implements BookService {
                 request.title(),
                 request.index(),
                 request.description(),
-                request.publication(),
+                request.publishedAt(),
                 request.isbn(),
                 modifiedImageUrl,
                 request.isPackable(),
@@ -81,7 +81,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse getBookDetailByBookId(Long bookId) {
+    public BookViewResponse getBookDetailByBookId(Long bookId) {
         return bookClient.getBookDetailByBookId(bookId);
     }
 }
