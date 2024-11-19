@@ -24,25 +24,29 @@
             amount: amount,
         };
 
-        const response = await fetch("/toss/confirm", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData),
-        });
+        try {
+            const response = await fetch("/payment/confirm", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData),
+            });
 
-        const json = await response.json();
-
-        if (!response.ok) {
-            // 결제 실패 비즈니스 로직을 구현하세요.
-            console.log(json);
-            window.location.href = `/fail?message=${json.message}&code=${json.code}`;
+            if (!response.ok) {
+                const json = await response.json();
+                console.error("Server error:", json);
+                window.location.href = `/payment/fail?message=${json.message}&code=${json.code}`;
+            } else {
+                const json = await response.json(); // 성공 응답도 로그에 남김
+                console.log("Success response:", json);
+                window.location.href = `/payment/result?orderId=${orderId}&amount=${amount}`;
+            }
+        } catch (error) {
+            console.log("Error during payment confirmation:", error);
         }
-
-        // 결제 성공 비즈니스 로직을 구현하세요.
-        console.log(json);
     }
+
     confirm();
 
     const paymentKeyElement = document.getElementById("paymentKey");
@@ -52,10 +56,9 @@
     orderIdElement.textContent = "주문번호: " + orderId;
     amountElement.textContent = "결제 금액: " + amount;
     paymentKeyElement.textContent = "paymentKey: " + paymentKey;
+
+    window.location.href = '/payment/result';
+
 </script>
 </body>
 </html>
-
-Preview
-
-응답
