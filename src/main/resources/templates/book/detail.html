@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${book.title} + ' - 도서 상세 페이지'">도서 상세 페이지</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<!-- 헤더 불러오기 -->
+<header th:replace="~{layout :: header}"></header>
+
+<div id="content-container">
+    <!-- 도서 상세 섹션 -->
+    <section id="book-detail">
+        <!-- 도서 썸네일 -->
+        <div class="book-thumbnail">
+            <img th:src="@{${book.thumbnailUrl}}" alt="도서 썸네일">
+        </div>
+
+        <!-- 도서 상세 정보 -->
+        <div class="book-info">
+            <h1 class="book-title" th:text="${book.title}">도서 제목</h1>
+            <p class="book-contributors">
+                <span th:each="contributor : ${book.contributors}" th:text="${contributor.name} + ' | '"></span>
+            </p>
+            <p class="book-publisher" th:text="'출판사: ' + ${book.publisher.name}">출판사 정보</p>
+            <p class="book-published-date" th:text="'출간일: ' + ${book.publishedAt}">출간일 정보</p>
+            <p class="book-price">
+                <span th:text="${book.salePrice} + '원'">가격</span>
+                <span class="discount" th:if="${book.discountRate > 0}" th:text="'(' + ${book.discountRate} + '% 할인)'">할인 정보</span>
+            </p>
+            <p class="book-description" th:text="${book.description}">도서 설명</p>
+        </div>
+
+        <!-- 구매 및 장바구니 섹션 -->
+        <div class="book-actions">
+            <!-- 수량 조절 버튼 -->
+            <div class="quantity-selector">
+                <button type="button" class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                <input type="text" id="quantity" value="1" class="quantity-input" readonly>
+                <button type="button" class="quantity-btn" onclick="increaseQuantity()">+</button>
+            </div>
+            <button class="cart-btn" onclick="addToCart()">장바구니</button>
+            <button class="buy-now-btn">바로 구매</button>
+        </div>
+    </section>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    // 수량 조절 스크립트
+    function decreaseQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        const currentQuantity = parseInt(quantityInput.value, 10);
+        if (currentQuantity > 1) {
+            quantityInput.value = currentQuantity - 1;
+        }
+    }
+
+    function increaseQuantity() {
+        const quantityInput = document.getElementById('quantity');
+        const currentQuantity = parseInt(quantityInput.value, 10);
+        quantityInput.value = currentQuantity + 1;
+    }
+
+    function addToCart() {
+        const quantity = document.getElementById('quantity').value;
+        alert('장바구니에 추가되었습니다. (수량: ' + quantity + ')');
+        // 실제 장바구니 추가 로직 구현 필요
+    }
+</script>
+
+</body>
+</html>

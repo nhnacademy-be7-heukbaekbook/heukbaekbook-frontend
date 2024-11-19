@@ -1,0 +1,33 @@
+<ul>
+    <li th:each="category, iterStat : ${categories}">
+        <div class="category-item" th:style="'margin-left: ' + (iterStat.index * 20) + 'px;'">
+            <!-- 하위 카테고리 토글 버튼 -->
+            <button type="button" onclick="toggleSubCategories(this)">+</button>
+            <!-- 카테고리 이름 -->
+            <a th:href="@{/books/category(categoryId=${category.id})}" th:text="${category.name}"></a>
+        </div>
+        <!-- 하위 카테고리를 재귀적으로 렌더링 -->
+        <div class="sub-categories" style="display: none;"
+             th:if="${category.subCategories != null and !category.subCategories.isEmpty()}">
+            <ul th:include="~{fragments/category :: categoryFragment(categories=${category.subCategories}, depth=${iterStat.index + 1})}"></ul>
+        </div>
+    </li>
+</ul>
+
+<!-- 카테고리 프래그먼트를 정의 -->
+<div th:fragment="categoryFragment(categories, depth)">
+    <ul>
+        <li th:each="category, iterStat : ${categories}">
+            <div class="category-item" th:style="|margin-left: ${depth * 20}px;|">
+                <!-- 하위 카테고리 토글 버튼 -->
+                <button type="button" onclick="toggleSubCategories(this)">+</button>
+                <!-- 카테고리 이름 -->
+                <a th:href="@{/books/category(categoryId=${category.id})}" th:text="${category.name}"></a>
+            </div>
+            <div class="sub-categories" style="display: none;"
+                 th:if="${category.subCategorySummaryResponses != null and !category.subCategorySummaryResponses.isEmpty()}">
+                <ul th:insert="~{fragments/category :: categoryFragment(categories=${category.subCategorySummaryResponses}, depth=${depth + 1})}"></ul>
+            </div>
+        </li>
+    </ul>
+</div>
