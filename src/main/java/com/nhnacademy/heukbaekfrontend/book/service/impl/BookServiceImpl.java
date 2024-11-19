@@ -48,7 +48,26 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request) {
-        return bookAdmin.registerBook(request);
+        String modifiedImageUrl = request.imageUrl() != null ?
+                request.imageUrl().replace("coversum", "cover500") : null;
+
+        BookCreateRequest modifiedRequest = new BookCreateRequest(
+                request.title(),
+                request.index(),
+                request.description(),
+                request.publication(),
+                request.isbn(),
+                modifiedImageUrl,
+                request.isPackable(),
+                request.stock(),
+                request.standardPrice(),
+                request.discountRate(),
+                request.publisher(),
+                request.categories(),
+                request.authors()
+        );
+
+        return bookAdmin.registerBook(modifiedRequest);
     }
 
     @Override
