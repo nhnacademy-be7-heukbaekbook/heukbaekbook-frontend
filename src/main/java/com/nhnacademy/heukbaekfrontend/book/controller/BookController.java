@@ -14,9 +14,7 @@ public class BookController {
     private final BookService bookService;
 
     @Autowired
-    public BookController(BookService bookService) {
-        this.bookService = bookService;
-    }
+    public BookController(BookService bookService) {this.bookService = bookService;}
 
     @GetMapping("/books/{book-id}")
     public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
