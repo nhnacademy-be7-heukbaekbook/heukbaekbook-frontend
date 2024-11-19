@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @FeignClient(value = "categoryAdmin", url = "http://localhost:8082")
 public interface CategoryAdmin {
 
@@ -29,4 +31,8 @@ public interface CategoryAdmin {
 
     @DeleteMapping("/api/admin/categories/{id}")
     ResponseEntity<CategoryDeleteResponse> deleteCategory(@PathVariable Long id);
+
+    @GetMapping("/api/admin/categories/list")
+    ResponseEntity<List<String>> getCategoryPaths();
+
 }

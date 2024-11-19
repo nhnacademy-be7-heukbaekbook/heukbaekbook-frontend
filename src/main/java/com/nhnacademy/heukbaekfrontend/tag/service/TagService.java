@@ -12,6 +12,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TagService {
 
@@ -39,5 +41,9 @@ public class TagService {
 
     public Page<TagDetailResponse> getTags(Pageable pageable) {
         return tagClient.getTags(pageable).getBody();
+    }
+
+    public List<String> getTagList() {
+        return tagClient.getTagList();
     }
 }
