@@ -54,7 +54,7 @@
                     <!-- 수량 변경 버튼 -->
                     <button type="button" class="update-quantity-btn" th:attr="data-book-id=${book.id}" onclick="applyQuantityChange(this)">변경</button>
                     <!--상품 금액 -->
-                    <p th:id="'total-price-' + ${book.id}" class="total-price" th:text="${book.totalPrice} + '원'">상품 금액</p>
+                    <p th:id="'total-price-' + ${book.id}" class="total-price" th:text="${book.formattedTotalPrice} + '원'">상품 금액</p>
                 </div>
                 <div class="book-actions">
                     <button class="buy-now-btn">주문하기</button>

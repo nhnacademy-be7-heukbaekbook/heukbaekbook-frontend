@@ -111,7 +111,7 @@ public class BookAdminController {
                 bookDetail.title(),
                 bookDetail.index(),
                 bookDetail.description(),
-                bookDetail.publication(),
+                bookDetail.publishedAt(),
                 bookDetail.isbn(),
                 bookDetail.thumbnailImageUrl(),
                 bookDetail.detailImageUrls(),

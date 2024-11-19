@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>주문서 작성</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 화면 전체 높이를 채우기 위해 설정 */
+            margin: 0;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 20px auto; /* 가운데 정렬 */
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .column form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        div {
+            margin-bottom: 10px; /* 전체 div 간격 */
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+        /*input[type="tel"] {*/
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: gray;
+        }
+
+        .sms-info {
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+
+        .table-header {
+            background-color: #f4f4f4; /* 헤더 배경색 */
+            color: #333; /* 헤더 텍스트 색 */
+            font-weight: bold; /* 텍스트 굵게 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: center; /* 가로 가운데 정렬 */
+            vertical-align: middle; /* 세로 가운데 정렬 */
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .book-image {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .name-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 200px;
+        }
+
+        .email-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 300px;
+        }
+
+        .phone-input-group {
+            display: flex; /* 가로로 정렬 */
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px; /* 요소 간 간격 */
+        }
+
+        .phone-input-group label {
+            margin-right: 10px; /* 레이블과 입력 필드 간 간격 */
+            font-weight: bold; /* 레이블 강조 */
+        }
+
+        .phone-input {
+            width: 60px; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center; /* 입력값 가운데 정렬 */
+            font-size: 14px; /* 입력 필드 글자 크기 */
+            line-height: 1.5; /* 높이 조정 */
+        }
+
+        .separator {
+            font-size: 16px; /* 하이픈 크기 */
+            font-weight: normal; /* 하이픈 굵기 */
+            color: #333; /* 하이픈 색상 */
+            line-height: 1; /* 텍스트 높이 초기화 */
+            position: relative; /* 위치 조정을 위한 상대 위치 */
+            top: -4px; /* 하이픈을 위로 약간 이동 */
+            right: 4px;
+        }
+
+        .payment-info-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.5fr;
+            background-color: #eaf3fc;
+            border: 1px solid #d3e2f1;
+            border-radius: 10px;
+            overflow: hidden;
+            align-items: stretch;
+        }
+
+        .payment-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #d3e2f1;
+            height: 100%;
+        }
+
+        .payment-box:last-child {
+            border-right: none;
+        }
+
+        .payment-box h3 {
+            font-size: 16px;
+            color: #555;
+            margin: 0;
+        }
+
+        .payment-box .amount {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .payment-box .currency {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* 최종 결제 금액 강조 */
+        .final-box {
+            background-color: #f8e9ef;
+            color: #8b1c3d;
+        }
+
+        .final-box .amount {
+            color: #8b1c3d;
+        }
+
+        /* 디테일 정보 */
+        .detail-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+
+        .detail-info .item {
+            margin-bottom: 5px;
+        }
+
+        .detail-info .item span {
+            font-weight: bold;
+        }
+
+        .payment-form {
+            display: flex;
+            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+            margin-top: 20px; /* 버튼과 위 내용 간의 간격 */
+        }
+
+        .payment-button {
+            padding: 30px 45px; /* 버튼 크기 */
+            background: #d9534f; /* 버튼 배경색 */
+            color: #fff; /* 텍스트 색상 */
+            font-size: 18px; /* 텍스트 크기 */
+            font-weight: bold; /* 텍스트 굵기 */
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 8px; /* 모서리를 둥글게 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+            transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+        }
+
+        .payment-button:hover {
+            background: #c9302c; /* 호버 시 버튼 색상 변경 */
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{layout :: header}"></header>
+
+
+<div class="container">
+    <!-- 상품 확인 -->
+    <div class="section">
+        <h2>상품확인</h2>
+        <table>
+            <colgroup>
+                <col style="width: 60%;"> <!-- 상품 정보 열 -->
+                <col style="width: 10%;"> <!-- 정가 열 -->
+                <col style="width: 10%;"> <!-- 할인가 열 -->
+                <col style="width: 10%;"> <!-- 수량 열 -->
+                <col style="width: 10%;"> <!-- 합계 열 -->
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>상품명</th>
+                <th>정가</th>
+                <th>할인가</th>
+                <th>수량</th>
+                <th>합계</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="book : ${books}">
+                <td style="display: flex; align-items: center; gap: 10px;">
+                    <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image" style="width: 75px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <span th:text="${book.title}" style="font-weight: bold;">도서 제목</span>
+                </td>
+                <td th:text="${book.price} + '원'">15,000원</td>
+                <td th:text="${book.salePrice} + '원'">13,500원</td>
+                <td th:text="${book.quantity}">1</td>
+                <td th:text="${book.formattedTotalPrice} + '원'">13,500원</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 배송 정보 -->
+    <h2>배송 주소</h2>
+    <div class="flex-container">
+        <!-- Left Column: 배송 정보 -->
+        <div class="column">
+            <form>
+                <div>
+                    <label>배송방법</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="delivery" checked> 일반택배</label>
+                        <label><input type="radio" name="delivery"> 해외배송</label>
+                        <label><input type="radio" name="delivery"> 편의점픽업</label>
+                    </div>
+                </div>
+
+                <div class="name-input-group">
+                    <label>이름</label>
+                    <label>
+                        <input type="text" placeholder="수령인 이름 입력">
+                    </label>
+                </div>
+
+                <div>
+                    <label>배송주소</label>
+                    <label for="postcode"></label>
+                    <input type="text" id="postcode" placeholder="우편번호" readonly>
+                    <button type="button" class="btn" id="find-address-btn">주소 찾기</button>
+                    <label for="roadAddress"></label>
+                    <input type="text" id="roadAddress" placeholder="도로명 주소" readonly>
+                    <label for="detailAddress"></label>
+                    <input type="text" id="detailAddress" placeholder="상세 주소">
+                </div>
+
+                <script>
+                    // "주소 찾기" 버튼 클릭 이벤트
+                    document.getElementById('find-address-btn').addEventListener('click', function () {
+                        new daum.Postcode({
+                            oncomplete: function(data) {
+                                // 검색 결과에서 필요한 데이터를 가져와서 출력
+                                document.getElementById('postcode').value = data.zonecode; // 우편번호
+                                document.getElementById('roadAddress').value = data.roadAddress; // 도로명 주소
+
+                                // 상세 주소 입력 필드로 포커스 이동
+                                document.getElementById('detailAddress').focus();
+                            }
+                        }).open(); // 팝업창 열기
+                    });
+                </script>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <label>
+                        <input type="tel" placeholder="010" class="phone-input" maxlength="3">
+                    </label>
+                    <span class="separator">-</span>
+                    <label>
+                        <input type="tel" placeholder="1234" class="phone-input" maxlength="4">
+                    </label>
+                    <span class="separator">-</span>
+                    <label>
+                        <input type="tel" placeholder="5678" class="phone-input" maxlength="5">
+                    </label>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Column: 주문 고객 -->
+        <div class="column">
+            <h3>주문 고객</h3>
+            <form>
+                <div class="radio-group">
+                    <label><input type="radio" name="customer" checked> 새로입력</label>
+                    <label><input type="radio" name="customer"> 배송정보와 동일</label>
+                </div>
+
+                <div class="name-input-group">
+                    <label>이름</label>
+                    <label>
+                        <input type="text" placeholder="주문자 이름 입력">
+                    </label>
+                </div>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <label>
+                        <input type="tel" placeholder="010" class="phone-input" maxlength="3">
+                    </label>
+                    <span class="separator">-</span>
+                    <label>
+                        <input type="tel" placeholder="1234" class="phone-input" maxlength="4">
+                    </label>
+                    <span class="separator">-</span>
+                    <label>
+                        <input type="tel" placeholder="5678" class="phone-input" maxlength="4">
+                    </label>
+                </div>
+                <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
+
+
+                <div class="email-input-group">
+                    <label>이메일</label>
+                    <label>
+                        <input type="email" placeholder="이메일 주소 입력">
+                    </label>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 결제 정보 -->
+    <div class="payment-info-container">
+        <h2>결제정보</h2>
+        <div class="payment-info">
+            <div class="payment-box">
+                <h3>총 상품금액</h3>
+                <div class="amount" th:text="${totalPrice} + '원'"></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>즉시할인</span>:
+                        <span th:text="${totalDiscountAmount} + '원'">총 할인금액</span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 추가금액</h3>
+                <div class="amount">0<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+<!--                        <span>배송비</span>: 2,500원-->
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 할인금액</h3>
+                <div class="amount">0<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>쿠폰</span>: 사용하지 않음
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box final-box">
+                <h3>최종 결제금액</h3>
+                <div class="amount" th:text="${totalPrice} + '원'"></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>기본적립 포인트</span>: 500
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <div class="section">
+        <form action="/order" method="post" class="payment-form">
+            <button type="submit" class="payment-button">결제하기</button>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

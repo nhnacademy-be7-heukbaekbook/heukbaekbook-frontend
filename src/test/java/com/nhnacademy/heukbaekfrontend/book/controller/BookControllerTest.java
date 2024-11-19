@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.book.controller;
 
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookDetailResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
+import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
@@ -35,6 +36,9 @@ class BookControllerTest {
     private CategoryService categoryService;
 
     @MockBean
+    private BookCategoryService bookCategoryService;
+
+    @MockBean
     private CookieUtil cookieUtil;
 
     @MockBean
@@ -43,7 +47,7 @@ class BookControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, categoryService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, categoryService, bookCategoryService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
