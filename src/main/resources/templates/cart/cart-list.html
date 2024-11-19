@@ -8,20 +8,8 @@
 </head>
 <body>
 
-<!-- 헤더 -->
-<header>
-    <a href="/">
-        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-    </a>
-    <nav>
-        <ul>
-            <li><a href="/categories">카테고리</a></li>
-            <li><a href="/cart">장바구니</a></li>
-            <li><a href="/login">로그인</a></li>
-            <li><a href="/login">마이페이지</a></li>
-        </ul>
-    </nav>
-</header>
+<!-- 헤더 불러오기 -->
+<header th:replace="~{layout :: header}"></header>
 
 <main>
     <section>
@@ -66,7 +54,7 @@
                     <!-- 수량 변경 버튼 -->
                     <button type="button" class="update-quantity-btn" th:attr="data-book-id=${book.id}" onclick="applyQuantityChange(this)">변경</button>
                     <!--상품 금액 -->
-                    <p th:id="'total-price-' + ${book.id}" class="total-price" th:text="${book.totalPrice} + '원'">상품 금액</p>
+                    <p th:id="'total-price-' + ${book.id}" class="total-price" th:text="${book.formattedTotalPrice} + '원'">상품 금액</p>
                 </div>
                 <div class="book-actions">
                     <button class="buy-now-btn">주문하기</button>

@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.category.controller;
 
+import com.nhnacademy.heukbaekfrontend.category.controller.admin.CategoryAdminController;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryCreateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryCreateResponse;
@@ -31,8 +32,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CategoryController.class)
-class CategoryControllerTest {
+@WebMvcTest(CategoryAdminController.class)
+class CategoryAdminControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -49,9 +50,9 @@ class CategoryControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryController(categoryService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService)).build();
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryController(categoryService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

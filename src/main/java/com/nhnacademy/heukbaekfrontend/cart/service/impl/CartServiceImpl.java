@@ -1,12 +1,14 @@
 package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookCartResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.client.CartClient;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
+import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,7 +20,6 @@ import java.text.ParseException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -32,11 +33,17 @@ public class CartServiceImpl implements CartService {
 
     private final CartClient cartClient;
 
-    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate, BookClient bookClient, CartClient cartClient) {
+    private final CommonService commonService;
+
+    public CartServiceImpl(RedisTemplate<String, Object> redisTemplate,
+                           BookClient bookClient,
+                           CartClient cartClient,
+                           CommonService commonService) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
         this.bookClient = bookClient;
         this.cartClient = cartClient;
+        this.commonService = commonService;
     }
 
 
@@ -47,20 +54,22 @@ public class CartServiceImpl implements CartService {
                 .map(Long::parseLong)
                 .toList();
 
-        List<BookCartResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+        List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
 
         return booksSummary.stream()
-                .map(bookCartResponse -> {
-                    Integer quantity = entries.get(bookCartResponse.id().toString());
+                .map(bookSummaryResponse -> {
+                    Integer quantity = entries.get(bookSummaryResponse.id().toString());
                     return new Book(
-                            bookCartResponse.id(),
-                            bookCartResponse.title(),
-                            bookCartResponse.price(),
-                            bookCartResponse.salePrice(),
-                            bookCartResponse.discountRate(),
-                            bookCartResponse.thumbnailUrl(),
+                            bookSummaryResponse.id(),
+                            bookSummaryResponse.title(),
+                            commonService.formatPrice(bookSummaryResponse.price()),
+                            commonService.formatPrice(bookSummaryResponse.salePrice()),
+                            bookSummaryResponse.discountRate(),
+                            bookSummaryResponse.price().subtract(bookSummaryResponse.salePrice()),
+                            bookSummaryResponse.thumbnailUrl(),
                             quantity,
-                            calculateTotalPrice(bookCartResponse.salePrice(), quantity)
+                            commonService.calculateTotalPriceAndFormat(bookSummaryResponse.salePrice(), quantity),
+                            commonService.calculateTotalPrice(bookSummaryResponse.salePrice(), quantity)
                     );
                 })
                 .toList();
@@ -116,20 +125,5 @@ public class CartServiceImpl implements CartService {
         }
 
         cartClient.synchronizeCartToDb(cartCreateRequests);
-    }
-
-    private String calculateTotalPrice(String salePriceStr, int quantity) {
-        DecimalFormat decimalFormat = new DecimalFormat("#,###");
-        decimalFormat.setParseBigDecimal(true);
-
-        BigDecimal salePrice ;
-        try {
-            salePrice = (BigDecimal) decimalFormat.parse(salePriceStr);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-        BigDecimal totalPrice = salePrice.multiply(BigDecimal.valueOf(quantity));
-
-        return decimalFormat.format(totalPrice);
     }
 }

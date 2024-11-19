@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>배송 정보</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .column form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        .button-group {
+            margin-top: 10px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: gray;
+        }
+
+        .sms-info {
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h3>배송 주소</h3>
+    <div class="flex-container">
+        <!-- Left Column: 배송 정보 -->
+        <div class="column">
+            <form>
+                <div>
+                    <label>배송방법</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="delivery" checked> 일반택배</label>
+                        <label><input type="radio" name="delivery"> 해외배송</label>
+                        <label><input type="radio" name="delivery"> 편의점픽업</label>
+                    </div>
+                </div>
+
+                <div>
+                    <label>이름</label>
+                    <input type="text" placeholder="수령인 이름 입력">
+                </div>
+
+                <div>
+                    <label>배송주소</label>
+                    <input type="text" placeholder="우편번호">
+                    <button type="button" class="btn">주소 찾기</button>
+                    <input type="text" placeholder="도로명 주소">
+                    <input type="text" placeholder="지번 주소">
+                    <input type="text" placeholder="상세 주소">
+                </div>
+
+                <div>
+                    <label>휴대폰</label>
+                    <input type="tel" placeholder="010">
+                    <input type="tel" placeholder="1234">
+                    <input type="tel" placeholder="5678">
+                </div>
+
+                <div>
+                    <label>일반전화</label>
+                    <input type="tel" placeholder="지역번호">
+                    <input type="tel" placeholder="번호">
+                    <input type="tel" placeholder="번호">
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Column: 주문 고객 -->
+        <div class="column">
+            <h3>주문 고객</h3>
+            <form>
+                <div class="radio-group">
+                    <label><input type="radio" name="customer" checked> 새로입력</label>
+                    <label><input type="radio" name="customer"> 배송정보와 동일</label>
+                </div>
+
+                <div>
+                    <label>이름</label>
+                    <input type="text" placeholder="주문자 이름 입력">
+                </div>
+
+                <div>
+                    <label>휴대폰</label>
+                    <input type="tel" placeholder="010">
+                    <input type="tel" placeholder="1234">
+                    <input type="tel" placeholder="5678">
+                    <p class="sms-info">이 번호로 주문진행과정이 SMS로 안내됩니다.</p>
+                </div>
+
+                <div>
+                    <label>일반전화</label>
+                    <input type="tel" placeholder="지역번호">
+                    <input type="tel" placeholder="번호">
+                    <input type="tel" placeholder="번호">
+                </div>
+
+                <div>
+                    <label>이메일</label>
+                    <input type="email" placeholder="이메일 주소 입력">
+                </div>
+
+                <div>
+                    <label>비밀번호</label>
+                    <input type="text" placeholder="4자리 이상 입력">
+                    <p class="hint">비밀번호는 숫자+영문을 조합하여 4자리 이상으로 입력하세요.</p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

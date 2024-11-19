@@ -27,4 +27,8 @@ public interface BookService {
     ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request);
 
     ResponseEntity<BookUpdateResponse> updateBook(Long bookId, BookUpdateRequest request);
+
+    Page<BookResponse> getBooksByCategoryId(Long categoryId, Pageable pageable);
+
+    BookViewResponse getBookDetailByBookId(Long bookId);
 }

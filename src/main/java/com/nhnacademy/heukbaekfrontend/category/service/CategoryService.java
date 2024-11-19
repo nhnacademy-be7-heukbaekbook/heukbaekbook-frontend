@@ -1,27 +1,27 @@
 package com.nhnacademy.heukbaekfrontend.category.service;
 
 import com.nhnacademy.heukbaekfrontend.category.client.CategoryAdmin;
+import com.nhnacademy.heukbaekfrontend.category.client.CategoryClient;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryCreateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryUpdateRequest;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryCreateResponse;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDeleteResponse;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDetailResponse;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nhnacademy.heukbaekfrontend.category.dto.response.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryAdmin categoryAdmin;
-
-    @Autowired
-    private CategoryService(CategoryAdmin categoryAdmin) {
-        this.categoryAdmin = categoryAdmin;
-    }
+    private final CategoryClient categoryClient;
 
     public Page<CategoryDetailResponse> getAllCategories(Pageable pageable) {
         return categoryAdmin.getCategories(pageable);
@@ -42,4 +42,13 @@ public class CategoryService {
     public ResponseEntity<CategoryDeleteResponse> deleteBook(Long categoryId) {
         return categoryAdmin.deleteCategory(categoryId);
     }
+
+    public List<CategorySummaryResponse> getTopCategories() {
+        return categoryClient.getTopCategories();
+    }
+
+    public List<String> getCategoryPaths() {
+        return categoryAdmin.getCategoryPaths().getBody();
+    }
+
 }

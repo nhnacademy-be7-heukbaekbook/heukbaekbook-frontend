@@ -111,7 +111,7 @@
 <body>
 
 <!-- 헤더 불러오기 -->
-<header th:replace="~{admin/layout :: header}"></header>
+<header th:replace="~{layout :: header}"></header>
 
 <!-- 도서 상세 정보 -->
 <section class="book-detail-container">
@@ -131,7 +131,7 @@
             </tr>
             <tr>
                 <th>출판일</th>
-                <td th:text="${book.publication}">출판일</td>
+                <td th:text="${book.publishedAt}">출판일</td>
             </tr>
             <tr>
                 <th>ISBN</th>
@@ -187,7 +187,7 @@
 </section>
 
 <!-- 푸터 불러오기 -->
-<footer th:replace="~{admin/layout :: footer}"></footer>
+<footer th:replace="~{layout :: footer}"></footer>
 
 </body>
 </html>

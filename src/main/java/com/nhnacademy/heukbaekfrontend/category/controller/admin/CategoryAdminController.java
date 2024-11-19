@@ -1,4 +1,4 @@
-package com.nhnacademy.heukbaekfrontend.category.controller;
+package com.nhnacademy.heukbaekfrontend.category.controller.admin;
 
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryCreateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryUpdateRequest;
@@ -23,12 +23,12 @@ import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
 @RequestMapping("/admin/categories")
-public class CategoryController {
+public class CategoryAdminController {
 
     private final CategoryService categoryService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService) {
+    public CategoryAdminController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
