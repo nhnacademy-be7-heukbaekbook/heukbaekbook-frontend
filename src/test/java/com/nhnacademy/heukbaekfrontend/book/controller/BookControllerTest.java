@@ -75,7 +75,7 @@ class BookControllerTest {
 
         mockMvc.perform(get("/books/{book-id}", bookId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/bookDetail"))
+                .andExpect(view().name("bookDetail"))
                 .andExpect(model().attributeExists("book"))
                 .andExpect(model().attribute("book", response));
     }
