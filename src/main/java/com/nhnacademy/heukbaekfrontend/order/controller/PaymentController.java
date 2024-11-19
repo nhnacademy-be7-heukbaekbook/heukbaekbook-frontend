@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping("/payment")
@@ -43,7 +44,13 @@ public class PaymentController {
         PaymentApprovalResponse response = paymentService.approvePayment(request);
         model.addAttribute("response", response);
         log.info("결제 승인 요청 결과: {}", response.toString());
-        return "redirect:/toss/result";
+        return "order/result";
+    }
+
+    @GetMapping("/result")
+    public String viewResult(Model model) {
+        model.addAttribute("response", new PaymentApprovalResponse("결제에 성공하였습니다."));
+        return "order/result";
     }
 
 }
