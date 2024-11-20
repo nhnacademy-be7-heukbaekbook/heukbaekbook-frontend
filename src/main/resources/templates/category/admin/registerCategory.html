@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 카테고리 등록</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .admin-page-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-container {
+            flex-grow: 1;
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 12px 20px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .form-container button:hover {
+            background-color: #333333;
+        }
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #7f8c8d;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<div class="admin-page-container">
+    <!-- Admin Sidebar -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- Form Section -->
+    <section id="content-area" class="form-container">
+        <h3 class="content-title">카테고리 등록</h3>
+        <p class="content-description">카테고리를 등록할 수 있습니다.</p>
+
+        <div th:if="${success}">
+            <p class="success-message">카테고리가 성공적으로 등록되었습니다.</p>
+        </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}"></p>
+        </div>
+        <form th:action="@{/admin/categories/register}" th:object="${categoryCreateRequest}" method="post">
+            <!-- 카테고리 이름 -->
+            <div class="form-group">
+                <label for="name">카테고리 이름</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="카테고리 이름을 입력하세요" required />
+                <div th:if="${#fields.hasErrors('name')}" class="error-message">
+                    <p th:errors="*{name}"></p>
+                </div>
+            </div>
+            <!-- 상위 카테고리 -->
+            <div class="form-group">
+                <label for="parentId">상위 카테고리</label>
+                <select th:field="*{parentId}" id="parentId">
+                    <option value="">없음</option>
+                    <option th:each="category : ${allCategories?.content}"
+                            th:value="${category.id}"
+                            th:text="${category.name}">
+                    </option>
+                </select>
+            </div>
+            <!-- 등록 버튼 -->
+            <button type="submit">등록</button>
+            <a th:href="@{/admin/categories}" class="back-button">목록으로 돌아가기</a>
+        </form>
+    </section>
+</div>
+
+<!-- Footer -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

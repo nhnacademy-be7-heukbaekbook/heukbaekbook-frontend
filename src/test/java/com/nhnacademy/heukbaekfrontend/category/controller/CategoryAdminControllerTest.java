@@ -64,7 +64,7 @@ class CategoryAdminControllerTest {
 
         mockMvc.perform(get("/admin/categories").param("page", "0").param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/viewAllCategories"))
+                .andExpect(view().name("category/admin/viewAllCategories"))
                 .andExpect(model().attributeExists("categories"));
     }
 
@@ -75,7 +75,7 @@ class CategoryAdminControllerTest {
 
         mockMvc.perform(get("/admin/categories/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerCategory"))
+                .andExpect(view().name("category/admin/registerCategory"))
                 .andExpect(model().attributeExists("categoryCreateRequest"))
                 .andExpect(model().attributeExists("allCategories"));
     }
@@ -89,7 +89,7 @@ class CategoryAdminControllerTest {
                         .param("parentId", "0")
                         .param("name", "New Category"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerCategory"))
+                .andExpect(view().name("category/admin/registerCategory"))
                 .andExpect(model().attributeExists("success"));
     }
 
@@ -103,7 +103,7 @@ class CategoryAdminControllerTest {
 
         mockMvc.perform(get("/admin/categories/{category-id}/update", categoryId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateCategory"))
+                .andExpect(view().name("category/admin/updateCategory"))
                 .andExpect(model().attributeExists("categoryUpdateRequest"))
                 .andExpect(model().attributeExists("allCategories"));
     }
