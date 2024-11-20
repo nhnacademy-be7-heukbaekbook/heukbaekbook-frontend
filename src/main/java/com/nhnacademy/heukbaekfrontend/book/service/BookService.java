@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.book.service;
 
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
+import com.nhnacademy.heukbaekfrontend.book.dto.request.BookSearchRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 
@@ -19,6 +20,8 @@ public interface BookService {
 
     List<BookSearchResponse> searchBooks(String title);
 
+    Page<BookResponse> searchElasticBooks(BookSearchRequest bookSearchRequest, Pageable pageable);
+
     ResponseEntity<BookDeleteResponse> deleteBook(Long bookId);
 
     ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request);
@@ -27,5 +30,5 @@ public interface BookService {
 
     Page<BookResponse> getBooksByCategoryId(Long categoryId, Pageable pageable);
 
-    BookResponse getBookDetailByBookId(Long bookId);
+    BookViewResponse getBookDetailByBookId(Long bookId);
 }

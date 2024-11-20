@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend;
 
+import com.nhnacademy.heukbaekfrontend.book.dto.request.BookSearchRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,4 +52,18 @@ public class HomeController {
 
         return modelAndView;
     }
+
+    @GetMapping("/search")
+    public ModelAndView searchBooks(HttpServletRequest request, BookSearchRequest bookSearchRequest, @PageableDefault(page = 0, size = 10) Pageable pageable ) {
+        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
+        boolean isLogin = accessToken != null;
+        log.info("isLogin: {}", isLogin);
+
+        Page<BookResponse> page = bookService.searchElasticBooks(bookSearchRequest, pageable);
+
+        ModelAndView modelAndView = new ModelAndView("home"); // 기존 home.html 사용
+        modelAndView.addObject("page", page).addObject("isLogin", isLogin);
+        return modelAndView;
+    }
+
 }

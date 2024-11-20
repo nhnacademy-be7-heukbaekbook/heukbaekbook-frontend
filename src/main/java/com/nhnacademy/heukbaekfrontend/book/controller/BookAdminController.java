@@ -4,9 +4,12 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
+import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
+import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,9 +28,13 @@ import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 public class BookAdminController {
 
     private final BookService bookService;
+    private final CategoryService categoryService;
+    private final TagService tagService;
 
-    public BookAdminController(BookService bookService) {
+    public BookAdminController(BookService bookService, CategoryService categoryService, TagService tagService) {
         this.bookService = bookService;
+        this.categoryService = categoryService;
+        this.tagService = tagService;
     }
 
     @Admin
@@ -54,13 +61,20 @@ public class BookAdminController {
     @Admin
     @GetMapping("/books")
     public String viewAllBooks(
-            @PageableDefault(page = 0, size = 10, sort = "title", direction = Sort.Direction.ASC) Pageable pageable,
-            Model model, HttpServletRequest request) {
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "title,asc") String sort,
+            Model model) {
+
+        String[] sortParams = sort.split(",");
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
+
         Page<BookDetailResponse> books = bookService.getAllBooks(pageable);
         model.addAttribute("books", books);
-        model.addAttribute("page", pageable.getPageNumber());
-        model.addAttribute("size", pageable.getPageSize());
-        model.addAttribute("sort", pageable.getSort().toString());
+        model.addAttribute("page", page);
+        model.addAttribute("size", size);
+        model.addAttribute("sort", sort);
+
         return "admin/viewAllBooks";
     }
 
@@ -91,12 +105,13 @@ public class BookAdminController {
     @GetMapping("/books/{book-id}")
     public String updateBookForm(@PathVariable(name = "book-id") Long bookId, Model model) {
         BookDetailResponse bookDetail = bookService.getBookById(bookId);
-
+        List<String> categories = categoryService.getCategoryPaths();
+        List<String> tags = tagService.getTagList();
         BookUpdateRequest bookUpdateRequest = new BookUpdateRequest(
                 bookDetail.title(),
                 bookDetail.index(),
                 bookDetail.description(),
-                bookDetail.publication(),
+                bookDetail.publishedAt(),
                 bookDetail.isbn(),
                 bookDetail.thumbnailImageUrl(),
                 bookDetail.detailImageUrls(),
@@ -113,6 +128,8 @@ public class BookAdminController {
 
         model.addAttribute("bookUpdateRequest", bookUpdateRequest);
         model.addAttribute("bookId", bookId);
+        model.addAttribute("categoryPaths", categories);
+        model.addAttribute("availableTags", tags);
         return "admin/updateBook";
     }
 
@@ -122,9 +139,12 @@ public class BookAdminController {
                              @ModelAttribute BookUpdateRequest request,
                              Model model) {
         ResponseEntity<BookUpdateResponse> response = bookService.updateBook(bookId, request);
-
+        List<String> categories = categoryService.getCategoryPaths();
+        List<String> tags = tagService.getTagList();
         if (response.getStatusCode().is2xxSuccessful()) {
             model.addAttribute("success", true);
+            model.addAttribute("categoryPaths", categories);
+            model.addAttribute("availableTags", tags);
         } else {
             model.addAttribute("error", "도서 수정에 실패했습니다.");
             model.addAttribute("bookUpdateRequest", request);

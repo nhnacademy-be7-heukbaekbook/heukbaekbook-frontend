@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.book.service.impl;
 import com.nhnacademy.heukbaekfrontend.book.client.BookAdmin;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookCreateRequest;
+import com.nhnacademy.heukbaekfrontend.book.dto.request.BookSearchRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
@@ -41,6 +42,10 @@ public class BookServiceImpl implements BookService {
         return bookAdmin.searchBooks(title);
     }
 
+    public Page<BookResponse> searchElasticBooks(BookSearchRequest bookSearchRequest, Pageable pageable) {
+        return bookClient.searchBooks(bookSearchRequest, pageable);
+    }
+
     @Override
     public ResponseEntity<BookDeleteResponse> deleteBook(Long bookId) {
         return bookAdmin.deleteBook(bookId);
@@ -48,7 +53,26 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public ResponseEntity<BookCreateResponse> registerBook(BookCreateRequest request) {
-        return bookAdmin.registerBook(request);
+        String modifiedImageUrl = request.imageUrl() != null ?
+                request.imageUrl().replace("coversum", "cover500") : null;
+
+        BookCreateRequest modifiedRequest = new BookCreateRequest(
+                request.title(),
+                request.index(),
+                request.description(),
+                request.publishedAt(),
+                request.isbn(),
+                modifiedImageUrl,
+                request.isPackable(),
+                request.stock(),
+                request.standardPrice(),
+                request.discountRate(),
+                request.publisher(),
+                request.categories(),
+                request.authors()
+        );
+
+        return bookAdmin.registerBook(modifiedRequest);
     }
 
     @Override
@@ -62,7 +86,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public BookResponse getBookDetailByBookId(Long bookId) {
+    public BookViewResponse getBookDetailByBookId(Long bookId) {
         return bookClient.getBookDetailByBookId(bookId);
     }
 }

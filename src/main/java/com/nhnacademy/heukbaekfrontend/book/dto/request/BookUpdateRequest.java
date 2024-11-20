@@ -15,7 +15,7 @@ public class BookUpdateRequest {
     String title;
     String index;
     String description;
-    String publication;
+    String publishedAt;
     String isbn;
     String thumbnailImageUrl;
     List<String> detailImageUrls;
