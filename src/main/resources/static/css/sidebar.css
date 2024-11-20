@@ -1,5 +1,5 @@
 /* 사이드바 공통 스타일 */
-#sidebar {
+#sidebar, #admin-sidebar {
     width: 200px;
     padding: 0 15px 15px 15px;
 }
