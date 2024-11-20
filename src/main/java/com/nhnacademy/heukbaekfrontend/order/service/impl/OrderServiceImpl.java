@@ -6,8 +6,11 @@ import com.nhnacademy.heukbaekfrontend.book.dto.response.BookOrderResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import com.nhnacademy.heukbaekfrontend.order.client.OrderClient;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,6 +24,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final CommonService commonService;
 
+    private final OrderClient orderClient;
+
     @Override
     public List<Book> getBookOrderResponses(Long bookId, int quantity) {
         List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(List.of(bookId));
@@ -28,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
                 .map(bookSummaryResponse -> new Book(
                         bookSummaryResponse.id(),
                         bookSummaryResponse.title(),
+                        bookSummaryResponse.isPackable(),
                         commonService.formatPrice(bookSummaryResponse.price()),
                         commonService.formatPrice(bookSummaryResponse.salePrice()),
                         bookSummaryResponse.discountRate(),
@@ -39,5 +45,10 @@ public class OrderServiceImpl implements OrderService {
 
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public ResponseEntity<Long> createOrder(OrderCreateRequest orderCreateRequest) {
+        return orderClient.createOrder(orderCreateRequest);
     }
 }
