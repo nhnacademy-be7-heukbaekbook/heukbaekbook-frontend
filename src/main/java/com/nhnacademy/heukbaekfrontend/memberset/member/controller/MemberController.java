@@ -30,7 +30,7 @@ public class MemberController {
     private final MemberService memberService;
     private final LogoutService logoutService;
 
-    private static final String MEMBER_RESPONSE = "memberResponse";
+    public static final String MEMBER_RESPONSE = "memberResponse";
 
     @Member
     @GetMapping

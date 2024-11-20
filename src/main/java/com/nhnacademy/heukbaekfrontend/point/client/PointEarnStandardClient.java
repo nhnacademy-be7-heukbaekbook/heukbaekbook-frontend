@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "point-earn-standard-client", url = "http://localhost:8082/api/admin/points/earn-standards")
+@FeignClient(name = "pointEarnStandardClient", url = "http://localhost:8082/api/admin/points/earn-standards")
 public interface PointEarnStandardClient {
     @GetMapping("/event/{eventCode}")
     ResponseEntity<List<PointEarnStandardResponse>> getValidStandardsByEvent(@PathVariable String eventCode);
