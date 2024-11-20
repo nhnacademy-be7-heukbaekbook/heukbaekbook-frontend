@@ -17,8 +17,8 @@ public class PointEarnStandardServiceImpl implements PointEarnStandardService {
     private final PointEarnStandardClient pointEarnStandardClient;
 
     @Override
-    public List<PointEarnStandardResponse> getPointEarnStandards() {
-        ResponseEntity<List<PointEarnStandardResponse>> pointEarnStandards = pointEarnStandardClient.getPointEarnStandards();
+    public List<PointEarnStandardResponse> getValidStandardsByEvent(String eventCode) {
+        ResponseEntity<List<PointEarnStandardResponse>> pointEarnStandards = pointEarnStandardClient.getValidStandardsByEvent(eventCode);
 
         return pointEarnStandards.getBody();
     }

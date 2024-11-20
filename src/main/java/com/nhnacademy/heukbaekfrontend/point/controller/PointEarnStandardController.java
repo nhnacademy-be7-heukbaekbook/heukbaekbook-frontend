@@ -1,15 +1,20 @@
 package com.nhnacademy.heukbaekfrontend.point.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
+import com.nhnacademy.heukbaekfrontend.point.dto.EventCode;
 import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnStandardRequest;
 import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnStandardResponse;
-import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnTriggerEvent;
+import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnType;
 import com.nhnacademy.heukbaekfrontend.point.service.PointEarnStandardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,9 +26,16 @@ public class PointEarnStandardController {
 
     @Admin
     @GetMapping
-    public String getPointEarnStandardList(Model model) {
-        model.addAttribute("triggerEvents", PointEarnTriggerEvent.values());
-        model.addAttribute("pointEarnStandards", pointEarnStandardService.getPointEarnStandards());
+    public String getPointEarnStandard(Model model) {
+        model.addAttribute("triggerEvents", EventCode.values());
+        model.addAttribute("pointEarnTypes", PointEarnType.values());
+
+        Map<EventCode, List<PointEarnStandardResponse>> standardsByEvent = new EnumMap<>(EventCode.class);
+        for (EventCode event : EventCode.values()) {
+            standardsByEvent.put(event, pointEarnStandardService.getValidStandardsByEvent(String.valueOf(event)));
+        }
+        model.addAttribute("standardsByEvent", standardsByEvent);
+
         return "point/admin/point-earn-standard";
     }
 

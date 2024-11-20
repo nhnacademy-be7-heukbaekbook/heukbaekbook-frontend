@@ -521,6 +521,7 @@ footer nav a:hover {
     transition: background-color 0.3s ease;
     text-align: center; /* 텍스트 가운데 정렬 */
     margin-bottom: 8px;
+    text-decoration: none;
 }
 
 .select-all-container {

@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.interceptor;
 
+import com.nhnacademy.heukbaekfrontend.common.annotation.Member;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

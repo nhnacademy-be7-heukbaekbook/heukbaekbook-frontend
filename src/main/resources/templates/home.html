@@ -21,7 +21,7 @@
     <section id="all-books">
         <!-- 검색 창 -->
         <section id="search-bar">
-            <form th:action="@{/search}" method="get">
+            <form th:action="@{/search}" method="get" onsubmit="return handleEmptyKeyword();">
                 <select name="searchCondition" id="searchCondition" th:value="${param.searchCondition}">
                     <option value="ALL">통합 검색</option>
                     <option value="TITLE">제목</option>
@@ -29,8 +29,9 @@
                     <option value="DESCRIPTION">설명</option>
                 </select>
                 <label>
-                    <input type="text" name="keyword" placeholder="도서 검색" th:value="${param.keyword}">
+                    <input type="text" name="keyword" placeholder="도서 검색" th:value="${param.keyword}" id="keyword">
                 </label>
+                <input type="hidden" name="categoryId" th:value="${param.categoryId}" id="categoryId">
                 <button type="submit">검색</button>
             </form>
         </section>
@@ -86,7 +87,7 @@
                             <button type="button" class="quantity-btn" th:onclick="'increaseQuantity(' + ${book.id} + ')'">+</button>
                         </div>
                         <button class="cart-btn" th:onclick="'addToCart(' + ${book.id} + ')'">장바구니</button>
-                        <button class="buy-now-btn">바로구매</button>
+                        <button class="buy-now-btn" th:onclick="'redirectToOrderPage(' + ${book.id} + ')'">바로구매</button>
                     </div>
                 </div>
             </div>
@@ -103,6 +104,10 @@
 
 <script
         th:src="@{/js/button.js}">
+</script>
+
+<script
+        th:src="@{/js/order-button.js}">
 </script>
 
 </body>

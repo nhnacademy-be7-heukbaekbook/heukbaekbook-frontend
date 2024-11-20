@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record PointEarnStandardRequest(
         @NotNull
@@ -15,10 +16,19 @@ public record PointEarnStandardRequest(
         @NotNull
         BigDecimal point,
 
+        @NotNull
+        PointEarnType pointEarnType,
+
+        @NotNull
         PointEarnStandardStatus status,
 
         @NotNull
-        PointEarnTriggerEvent triggerEvent
+        LocalDateTime pointEarnStart,
+
+        LocalDateTime pointEarnEnd,
+
+        @NotNull
+        Long pointEarnEventId
 ) {
         public PointEarnStandardRequest {
                 if (status == null) {
@@ -26,4 +36,3 @@ public record PointEarnStandardRequest(
                 }
         }
 }
-
