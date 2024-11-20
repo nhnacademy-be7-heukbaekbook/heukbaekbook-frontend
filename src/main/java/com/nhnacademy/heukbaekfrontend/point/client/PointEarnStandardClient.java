@@ -8,16 +8,16 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "point-earn-standard-client", url = "http://localhost:8082/api/admin/points/earn-standards")
+@FeignClient(name = "pointEarnStandardClient", url = "http://localhost:8082/api/admin/points/earn-standards")
 public interface PointEarnStandardClient {
-    @GetMapping
-    ResponseEntity<List<PointEarnStandardResponse>> getPointEarnStandards();
+    @GetMapping("/event/{eventCode}")
+    ResponseEntity<List<PointEarnStandardResponse>> getValidStandardsByEvent(@PathVariable String eventCode);
 
     @PostMapping
     ResponseEntity<PointEarnStandardResponse> createPointEarnStandard(@RequestBody PointEarnStandardRequest pointEarnStandardRequest);
 
     @DeleteMapping("/{id}")
-    ResponseEntity<String> deletePointEarnStandard(@PathVariable Long id);
+    ResponseEntity<Void> deletePointEarnStandard(@PathVariable Long id);
 
     @PutMapping("/{id}")
     ResponseEntity<PointEarnStandardResponse> updatePointEarnStandard(@PathVariable Long id, @RequestBody PointEarnStandardRequest pointEarnStandardRequest);
