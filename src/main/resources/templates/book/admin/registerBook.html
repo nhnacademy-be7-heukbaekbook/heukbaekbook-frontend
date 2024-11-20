@@ -8,24 +8,11 @@
     <link rel="stylesheet" href="/css/sidebar.css">
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
     <style>
-        body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f4f6f8;
-            margin: 0;
-            padding: 0;
-        }
         .admin-page-container {
             display: flex;
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-        }
-        .form-container {
-            flex-grow: 1;
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
         }
         .form-container h2 {
             text-align: center;
@@ -113,8 +100,10 @@
     <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
 
     <!-- Form Section -->
-    <section class="form-container">
-        <h2>도서 등록</h2>
+    <section id="content-area">
+        <h3 class="content-title">도서 등록</h3>
+        <p class="content-description">도서를 등록할 수 있습니다.</p>
+
         <div th:if="${success}">
             <p class="success-message">도서가 성공적으로 등록되었습니다.</p>
         </div>
