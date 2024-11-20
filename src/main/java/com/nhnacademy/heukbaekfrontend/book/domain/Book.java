@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public record Book(Long id,
                    String title,
+                   boolean isPackable,
                    String price,
                    String salePrice,
                    double discountRate,

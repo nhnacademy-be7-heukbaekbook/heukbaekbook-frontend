@@ -59,18 +59,21 @@ public class CartServiceImpl implements CartService {
         return booksSummary.stream()
                 .map(bookSummaryResponse -> {
                     Integer quantity = entries.get(bookSummaryResponse.id().toString());
-                    return new Book(
-                            bookSummaryResponse.id(),
-                            bookSummaryResponse.title(),
-                            commonService.formatPrice(bookSummaryResponse.price()),
-                            commonService.formatPrice(bookSummaryResponse.salePrice()),
-                            bookSummaryResponse.discountRate(),
-                            bookSummaryResponse.price().subtract(bookSummaryResponse.salePrice()),
-                            bookSummaryResponse.thumbnailUrl(),
-                            quantity,
-                            commonService.calculateTotalPriceAndFormat(bookSummaryResponse.salePrice(), quantity),
-                            commonService.calculateTotalPrice(bookSummaryResponse.salePrice(), quantity)
-                    );
+                    return createBook(bookSummaryResponse, quantity);
+                })
+                .toList();
+    }
+
+    @Override
+    public List<Book> getBooksByBookIdsFromCart(String sessionId, List<Long> bookIds) {
+        Map<String, Integer> entries = hashOperations.entries(sessionId);
+
+        List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+
+        return booksSummary.stream()
+                .map(bookSummaryResponse -> {
+                    Integer quantity = entries.get(bookSummaryResponse.id().toString());
+                    return createBook(bookSummaryResponse, quantity);
                 })
                 .toList();
     }
@@ -125,5 +128,21 @@ public class CartServiceImpl implements CartService {
         }
 
         cartClient.synchronizeCartToDb(cartCreateRequests);
+    }
+
+    private Book createBook(BookSummaryResponse bookSummaryResponse, int quantity) {
+        return new Book(
+                bookSummaryResponse.id(),
+                bookSummaryResponse.title(),
+                bookSummaryResponse.isPackable(),
+                commonService.formatPrice(bookSummaryResponse.price()),
+                commonService.formatPrice(bookSummaryResponse.salePrice()),
+                bookSummaryResponse.discountRate(),
+                bookSummaryResponse.price().subtract(bookSummaryResponse.salePrice()),
+                bookSummaryResponse.thumbnailUrl(),
+                quantity,
+                commonService.calculateTotalPriceAndFormat(bookSummaryResponse.salePrice(), quantity),
+                commonService.calculateTotalPrice(bookSummaryResponse.salePrice(), quantity)
+        );
     }
 }
