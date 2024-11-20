@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 상세 정보</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 전체 컨테이너 */
+        .book-detail-container {
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        /* 이미지 섹션 */
+        .book-image {
+            flex: 1 1 250px;
+            text-align: center;
+        }
+
+        .book-image img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 정보 섹션 */
+        .book-info {
+            flex: 2 1 600px;
+        }
+
+        .book-info h2 {
+            font-size: 2em;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .info-table th {
+            text-align: left;
+            font-weight: 600;
+            padding: 10px;
+            color: #555;
+            width: 150px;
+            background: #f7f7f7;
+        }
+
+        .info-table td {
+            padding: 10px;
+            color: #333;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* 콘텐츠 섹션 */
+        .content {
+            margin-bottom: 30px;
+        }
+
+        .content h3 {
+            font-size: 1.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .content div {
+            padding: 15px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* 버튼 스타일 */
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background-color: #2980b9;
+            color: #fff;
+            font-size: 1em;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .back-button:hover {
+            background-color: #1f618d;
+            transform: scale(1.02);
+        }
+
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .book-detail-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .book-image {
+                margin-bottom: 20px;
+            }
+
+            .book-info {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<div class="admin-page-container">
+
+    <!-- 사이드바 -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h3 class="content-title">도서 상세 정보</h3>
+        <p class="content-description">등록된 도서의 상세정보를 확인할 수 있습니다.</p>
+
+        <!-- 도서 상세 정보 -->
+        <section class="book-detail-container">
+            <div class="book-image">
+                <img th:src="${book.thumbnailImageUrl}" alt="도서 이미지">
+            </div>
+            <div class="book-info">
+                <h2 th:text="${book.title}">도서 제목</h2>
+                <table class="info-table">
+                    <tr>
+                        <th>저자</th>
+                        <td th:text="${#strings.arrayJoin(book.authors, ', ')}">저자 목록</td>
+                    </tr>
+                    <tr>
+                        <th>출판사</th>
+                        <td th:text="${book.publisher}">출판사 이름</td>
+                    </tr>
+                    <tr>
+                        <th>출판일</th>
+                        <td th:text="${book.publishedAt}">출판일</td>
+                    </tr>
+                    <tr>
+                        <th>ISBN</th>
+                        <td th:text="${book.isbn}">ISBN 번호</td>
+                    </tr>
+                    <tr>
+                        <th>정가</th>
+                        <td><span th:text="${book.standardPrice}">0</span>원</td>
+                    </tr>
+                    <tr>
+                        <th>할인율</th>
+                        <td><span th:text="${book.discountRate}">0</span>%</td>
+                    </tr>
+                    <tr>
+                        <th>재고</th>
+                        <td><span th:text="${book.stock}">0</span>권</td>
+                    </tr>
+                    <tr>
+                        <th>카테고리</th>
+                        <td th:text="${#strings.arrayJoin(book.categories, ', ')}">카테고리 목록</td>
+                    </tr>
+                    <tr>
+                        <th>태그</th>
+                        <td th:text="${#strings.arrayJoin(book.tags, ', ')}">태그 목록</td>
+                    </tr>
+                    <tr>
+                        <th>도서 상태</th>
+                        <td>
+                            <span th:switch="${book.bookStatus}">
+                                <span th:case="'IN_STOCK'">재고 있음</span>
+                                <span th:case="'OUT_OF_STOCK'">품절</span>
+                                <span th:case="'DISCONTINUED'">절판</span>
+                                <span th:case="'DELETED'">삭제됨</span>
+                                <span th:case="*">알 수 없음</span>
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>포장 가능</th>
+                        <td th:text="${book.isPackable} ? '가능' : '불가능'">포장 가능 여부</td>
+                    </tr>
+                </table>
+                <div class="content">
+                    <h3>목차</h3>
+                    <div th:utext="${book.index}">목차 내용</div>
+                </div>
+                <div class="content">
+                    <h3>설명</h3>
+                    <div th:utext="${book.description}">설명 내용</div>
+                </div>
+                <a class="back-button" onclick="history.back()">목록으로 돌아가기</a>
+            </div>
+        </section>
+    </section>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

@@ -51,36 +51,4 @@ class BookControllerTest {
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
-
-    @Test
-    void testViewBook() throws Exception {
-        Long bookId = 1L;
-        BookDetailResponse response = new BookDetailResponse(
-                bookId,
-                "Spring Boot in Action",
-                "001",
-                "Detailed description of Spring Boot",
-                "2023-11-01",
-                "123456789",
-                "http://example.com/thumbnail.jpg",
-                List.of("http://example.com/detail1.jpg", "http://example.com/detail2.jpg"),
-                true,
-                10,
-                20000,
-                0.1f,
-                "AVAILABLE",
-                "Publisher Name",
-                List.of("Category1", "Category2"),
-                List.of("Author1", "Author2"),
-                List.of("Tag1", "Tag2")
-        );
-
-        when(bookService.getBookById(anyLong())).thenReturn(response);
-
-        mockMvc.perform(get("/books/{book-id}", bookId))
-                .andExpect(status().isOk())
-                .andExpect(view().name("bookDetail"))
-                .andExpect(model().attributeExists("book"))
-                .andExpect(model().attribute("book", response));
-    }
 }

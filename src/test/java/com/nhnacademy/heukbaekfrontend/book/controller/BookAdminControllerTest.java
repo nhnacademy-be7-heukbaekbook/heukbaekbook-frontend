@@ -26,8 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -65,7 +64,7 @@ class BookAdminControllerTest {
     void testShowRegisterBookForm() throws Exception {
         mockMvc.perform(get("/admin/books/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerBook"))
+                .andExpect(view().name("book/admin/registerBook"))
                 .andExpect(model().attributeExists("bookCreateRequest"));
     }
 
@@ -96,9 +95,9 @@ class BookAdminControllerTest {
         BookDetailResponse response = new BookDetailResponse(bookId, "title", "index", "description", "publishedAt", "isbn", "thumbnailImageUrl", List.of(), false, 10, 100, 0.1f, "AVAILABLE", "publisher", List.of("category"), List.of("author"), List.of());
         when(bookService.getBookById(bookId)).thenReturn(response);
 
-        mockMvc.perform(get("/admin/books/{book-id}", bookId))
+        mockMvc.perform(get("/admin/books/{book-id}/edit", bookId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateBook"))
+                .andExpect(view().name("book/admin/updateBook"))
                 .andExpect(model().attributeExists("bookUpdateRequest"))
                 .andExpect(model().attributeExists("bookId"));
     }
@@ -121,7 +120,7 @@ class BookAdminControllerTest {
                         .param("discountRate", String.valueOf(request.getDiscountRate()))
                         .param("publisher", request.getPublisher()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateBook"))
+                .andExpect(view().name("book/admin/updateBook"))
                 .andExpect(model().attributeExists("success"));
     }
 
@@ -147,7 +146,7 @@ class BookAdminControllerTest {
         mockMvc.perform(post("/admin/aladin")
                         .param("title", title))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/searchBookFromAladin"))
+                .andExpect(view().name("book/admin/searchBookFromAladin"))
                 .andExpect(model().attributeExists("responses"))
                 .andExpect(model().attribute("responses", searchResults));
     }
@@ -176,8 +175,40 @@ class BookAdminControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/viewAllBooks"))
+                .andExpect(view().name("book/admin/viewAllBooks"))
                 .andExpect(model().attributeExists("books"))
                 .andExpect(model().attribute("books", books));
+    }
+
+    @Test
+    void testViewBook() throws Exception {
+        Long bookId = 1L;
+        BookDetailResponse response = new BookDetailResponse(
+                bookId,
+                "Spring Boot in Action",
+                "001",
+                "Detailed description of Spring Boot",
+                "2023-11-01",
+                "123456789",
+                "http://example.com/thumbnail.jpg",
+                List.of("http://example.com/detail1.jpg", "http://example.com/detail2.jpg"),
+                true,
+                10,
+                20000,
+                0.1f,
+                "AVAILABLE",
+                "Publisher Name",
+                List.of("Category1", "Category2"),
+                List.of("Author1", "Author2"),
+                List.of("Tag1", "Tag2")
+        );
+
+        when(bookService.getBookById(anyLong())).thenReturn(response);
+
+        mockMvc.perform(get("/admin/books/{book-id}", bookId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("book/admin/bookDetail"))
+                .andExpect(model().attributeExists("book"))
+                .andExpect(model().attribute("book", response));
     }
 }

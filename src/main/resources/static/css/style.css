@@ -480,7 +480,7 @@ footer {
 
 /* style.css */
 
-.mypage-container, .admin-page-container {
+.mypage-container {
     width: 60%;
     display: flex;
     max-width: 1200px;
@@ -489,7 +489,7 @@ footer {
 }
 
 .admin-page-container {
-    width: 75%;
+    width: 80%;
     display: flex;
     max-width: 1200px;
     margin: 0 auto; /* 중앙 정렬 및 여백 */

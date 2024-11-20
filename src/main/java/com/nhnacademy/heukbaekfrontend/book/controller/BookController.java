@@ -34,13 +34,6 @@ public class BookController {
 
     private final BookCategoryService bookCategoryService;
 
-    @GetMapping("/{book-id}")
-    public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
-        BookDetailResponse bookDetail = bookService.getBookById(bookId);
-        model.addAttribute("book", bookDetail);
-        return "bookDetail";
-    }
-
     @GetMapping("/category")
     public ModelAndView viewBooksByCategory(@RequestParam Long categoryId,
                                             Pageable pageable) {

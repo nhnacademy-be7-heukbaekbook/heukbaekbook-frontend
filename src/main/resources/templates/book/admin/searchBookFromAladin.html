@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>흑백문고 - 도서 검색</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 테이블 기본 스타일 */
+        .search-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-table thead th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .search-table tbody td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        /* 행 교차 색상 */
+        .search-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        .search-table tbody tr:nth-child(even) {
+            background-color: #fff;
+        }
+
+        /* 행 호버 효과 */
+        .search-table tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        /* 썸네일 이미지 */
+        .book-thumbnail {
+            width: 60px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* 검색 폼 스타일 */
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-container form {
+            display: flex;
+            width: 60%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .search-container input[type="text"] {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1em;
+        }
+
+        .search-container button {
+            padding: 12px 24px;
+            border: none;
+            background-color: #000;
+            color: #fff;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-container button:hover {
+            background-color: #333;
+        }
+
+        /* 버튼 스타일 */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .action-buttons .button {
+            padding: 8px 12px;
+            font-size: 0.85em;
+            border-radius: 4px;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-buttons .button.register {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .action-buttons .button.register:hover {
+            background-color: #777;
+            transform: scale(1.01);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-page-container">
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <section id="content-area">
+        <h3 class="content-title">도서 검색</h3>
+        <p class="content-description">검색 결과를 확인하고 도서를 등록할 수 있습니다.</p>
+
+        <!-- 검색 폼 -->
+        <section class="search-container">
+            <form th:action="@{/admin/aladin}" method="POST">
+                <input type="text" id="query" name="title" placeholder="책 제목을 입력해주세요." required>
+                <button type="submit">검색</button>
+            </form>
+        </section>
+
+        <!-- 검색 결과 -->
+        <section class="results-section" th:if="${responses != null}">
+            <table class="search-table">
+                <thead>
+                <tr>
+                    <th>이미지</th>
+                    <th>제목</th>
+                    <th>저자</th>
+                    <th>카테고리</th>
+                    <th>출판사</th>
+                    <th>정가</th>
+                    <th>할인가</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${responses.isEmpty()}">
+                    <td colspan="8" class="no-results">제목과 일치하는 도서를 찾을 수 없습니다.</td>
+                </tr>
+                <tr th:each="result : ${responses}">
+                    <td><img th:src="@{${result.cover}}" alt="표지 이미지" class="book-thumbnail"></td>
+                    <td th:text="${result.title}">제목</td>
+                    <td th:text="${result.author}">저자</td>
+                    <td th:text="${result.category}">카테고리</td>
+                    <td th:text="${result.publisher}">출판사</td>
+                    <td th:text="${result.standardPrice}">정가</td>
+                    <td th:text="${result.salesPrice}">할인가</td>
+                    <td>
+                        <div class="action-buttons">
+                            <form th:action="@{/admin/aladin/register}" method="POST">
+                                <input type="hidden" name="title" th:value="${result.title}" />
+                                <button type="submit" class="button register">등록</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </section>
+</main>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>
