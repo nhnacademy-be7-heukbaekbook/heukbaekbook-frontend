@@ -37,15 +37,13 @@ public class MemberAddressServiceImpl implements MemberAddressService {
     }
 
     @Override
-    public boolean deleteMemberAddress(Long addressId) {
-        ResponseEntity<Void> responseEntity = memberAddressClient.deleteMemberAddress(addressId);
-        return responseEntity.getStatusCode().is2xxSuccessful();
+    public void deleteMemberAddress(Long addressId) {
+        memberAddressClient.deleteMemberAddress(addressId);
     }
 
     @Override
     public ResponseEntity<Long> countMemberAddresses() {
         return memberAddressClient.countMemberAddresses();
-
     }
 
 }

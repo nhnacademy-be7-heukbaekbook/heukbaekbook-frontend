@@ -15,7 +15,7 @@ public interface MemberAddressService {
 
     Optional<MemberAddressResponse> updateMemberAddress(Long addressId, MemberAddressRequest memberAddressRequest);
 
-    boolean deleteMemberAddress(Long addressId);
+    void deleteMemberAddress(Long addressId);
 
     ResponseEntity<Long> countMemberAddresses();
 }
