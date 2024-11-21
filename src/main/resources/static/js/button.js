@@ -45,3 +45,38 @@ function addToCart(bookId) {
             alert("장바구니에 추가하는 데 실패했습니다.");
         });
 }
+
+function maintainCategorySearch() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryId = urlParams.get('categoryId');
+
+    if (categoryId) {
+        document.querySelector('input[name="categoryId"]').value = categoryId;
+    }
+}
+
+// 페이지 로드 시 실행하여 검색 창에 categoryId를 유지
+window.onload = maintainCategorySearch;
+
+
+function handleEmptyKeyword() {
+    const keywordInput = document.getElementById("keyword").value.trim();
+    const categoryId = document.getElementById("categoryId").value;
+
+    if (!keywordInput && categoryId) {
+        const sortCondition = new URLSearchParams(window.location.search).get("sortCondition") || "POPULARITY";
+        window.location.href = `/search?searchCondition=ALL&keyword=&categoryId=${categoryId}&sortCondition=${sortCondition}`;
+        return false;
+    }
+    return true;
+}
+
+function sortBy(criteria) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const keyword = urlParams.get("keyword") || "";
+    const searchCondition = urlParams.get("searchCondition") || "ALL";
+    const categoryId = urlParams.get("categoryId") || "";
+
+    const searchUrl = `/search?searchCondition=${searchCondition}&keyword=${keyword}&categoryId=${categoryId}&sortCondition=${criteria}`;
+    window.location.href = searchUrl;
+}

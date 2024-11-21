@@ -13,7 +13,7 @@ public record BookCreateRequest(
         Boolean isPackable,
         @Min(0) int stock,
         @Min(0) int standardPrice,
-        @DecimalMin(value = "0.0")float discountRate,
+        @DecimalMin(value = "0.0") float discountRate,
         String publisher,
         String categories,
         String authors

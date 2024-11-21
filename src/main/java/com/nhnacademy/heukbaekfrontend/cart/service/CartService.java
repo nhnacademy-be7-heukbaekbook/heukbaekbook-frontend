@@ -10,6 +10,8 @@ public interface CartService {
 
     List<Book> getBooksFromCart(String sessionId);
 
+    List<Book> getBooksByBookIdsFromCart(String sessionId, List<Long> bookIds);
+
     CartCreateResponse createBookToCart(String sessionId, Long bookId, int quantity);
 
     void updateBookQuantityFromCart(String sessionId, Long bookId, int quantity);

@@ -60,9 +60,11 @@ public class HomeController {
         log.info("isLogin: {}", isLogin);
 
         Page<BookResponse> page = bookService.searchElasticBooks(bookSearchRequest, pageable);
+        List<CategorySummaryResponse> categories = categoryService.getTopCategories();
+
 
         ModelAndView modelAndView = new ModelAndView("home"); // 기존 home.html 사용
-        modelAndView.addObject("page", page).addObject("isLogin", isLogin);
+        modelAndView.addObject("page", page).addObject("isLogin", isLogin).addObject("categories", categories);;
         return modelAndView;
     }
 

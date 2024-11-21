@@ -6,17 +6,26 @@ import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.actuator.HasFeatures;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+
+import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,14 +39,20 @@ public class OrderController {
 
     private final CommonService commonService;
 
-    @GetMapping
-    public ModelAndView getOrderForm(@RequestParam(required = false) Long bookId,
-                                     @RequestParam(required = false) Integer quantity,
-                                     HttpSession session) {
-        String sessionId = session.getId();
-        log.info("bookId = {}, quantity = {}", bookId, quantity);
+    private final CookieUtil cookieUtil;
 
-        List<Book> books = fetchBooks(sessionId, bookId, quantity);
+    private final MemberService memberService;
+
+    @GetMapping
+    public ModelAndView getOrderForm(@RequestParam List<Long> bookIds,
+                                     @RequestParam(required = false) Integer quantity,
+                                     HttpSession session,
+                                     HttpServletRequest request) {
+        String sessionId = session.getId();
+
+        log.info("bookIds = {}, quantity = {}, sessionId : {}", bookIds, quantity, sessionId);
+
+        List<Book> books = fetchBooks(sessionId, bookIds, quantity);
         String totalPrice = commonService.calculateAllTotalPriceAndFormat(books);
         String totalDiscountAmount = commonService.calculateAllTotalDiscountAndFormat(books);
 
@@ -47,10 +62,18 @@ public class OrderController {
                 .addObject("totalDiscountAmount", totalDiscountAmount);
     }
 
-    private List<Book> fetchBooks(String sessionId, Long bookId, Integer quantity) {
-        if (bookId == null && quantity == null) {
-            return cartService.getBooksFromCart(sessionId); // 장바구니에서 책 가져오기
+    private List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
+        if (quantity == null) {
+            return cartService.getBooksByBookIdsFromCart(sessionId, bookIds); // 장바구니에서 체크 표시한 책 가져오기
         }
-        return orderService.getBookOrderResponses(bookId, quantity); // 주문 요청에서 책 가져오기
+        return orderService.getBookOrderResponses(bookIds.getFirst(), quantity); // 주문 요청에서 책 가져오기
+    }
+
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity<Long> createOrder(@RequestBody OrderCreateRequest orderCreateRequest) {
+        log.info("orderCreateRequest = {}", orderCreateRequest);
+
+        return orderService.createOrder(orderCreateRequest);
     }
 }
