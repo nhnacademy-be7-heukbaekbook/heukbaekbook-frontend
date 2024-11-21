@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequiredArgsConstructor
 @RequestMapping("/admin/coupons/policy")
 public class CouponPolicyController {
-    private final String REDIRECT_PATH = "coupon/admin/coupon-policy";
+    private final String REDIRECT_PATH = "redirect:/admin/coupons/policy";
 
     private final CouponPolicyService couponPolicyService;
 
@@ -34,7 +34,7 @@ public class CouponPolicyController {
 
     @Admin
     @GetMapping
-    public String getCouponPolicy(Model model, Pageable pageable) {
+    public String getCouponPolicyPage() {
         return "coupon/admin/coupon-policy";
     }
 

@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @FeignClient(name = "couponPolicyClient", url = "http://localhost:8082/api/admin/coupons/policy")
 public interface CouponPolicyClient {
 
@@ -16,6 +18,9 @@ public interface CouponPolicyClient {
             @RequestParam("size") int size,
             @RequestParam(value = "sort", required = false) String sort
     );
+
+    @GetMapping("/list")
+    ResponseEntity<List<CouponPolicyResponse>> getCouponPolicyList();
 
     @PostMapping
     ResponseEntity<CouponPolicyResponse> createCouponPolicy(@RequestBody CouponPolicyRequest couponPolicyRequest);

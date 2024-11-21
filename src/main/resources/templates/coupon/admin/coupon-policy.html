@@ -341,19 +341,25 @@
             const minimumPurchaseAmount = button.getAttribute("data-minimum-purchase-amount");
             const maximumPurchaseAmount = button.getAttribute("data-maximum-purchase-amount");
 
+
             const modal = document.getElementById("editModal");
             const form = document.getElementById("editForm");
 
             form.action = "/admin/coupons/policy/" + id;
+            const editDiscountTypeSelect = document.getElementById("edit-discountType");
+            const editMaximumPurchaseAmountInput = document.getElementById("edit-maximumPurchaseAmount");
+
 
             document.getElementById("edit-id").value = id;
-            document.getElementById("edit-discountType").value = discountType;
+            editDiscountTypeSelect.value = discountType;
             document.getElementById("edit-discountAmount").value = discountAmount;
             document.getElementById("edit-minimumPurchaseAmount").value = minimumPurchaseAmount;
             document.getElementById("edit-maximumPurchaseAmount").value = maximumPurchaseAmount;
 
+            handleDiscountTypeChange(discountType, editMaximumPurchaseAmountInput)
             modal.style.display = "block";
         }
+
 
         function closeModal() {
             const modal = document.getElementById("editModal");
@@ -366,6 +372,46 @@
                 modal.style.display = "none";
             }
         }
+        document.addEventListener("DOMContentLoaded", function () {
+            const discountTypeSelect = document.getElementById("discountType");
+            const maximumPurchaseAmountInput = document.getElementById("maximumPurchaseAmount");
+
+            // 할인 유형 변경 시 동작
+            discountTypeSelect.addEventListener("change", function () {
+                handleDiscountTypeChange(discountTypeSelect.value, maximumPurchaseAmountInput);
+            });
+
+            // 페이지 로드 시 기본 설정
+            handleDiscountTypeChange(discountTypeSelect.value, maximumPurchaseAmountInput);
+
+            // 수정 모달에서도 동일한 로직 적용
+            const editDiscountTypeSelect = document.getElementById("edit-discountType");
+            const editMaximumPurchaseAmountInput = document.getElementById("edit-maximumPurchaseAmount");
+
+            editDiscountTypeSelect.addEventListener("change", function () {
+                handleDiscountTypeChange(editDiscountTypeSelect.value, editMaximumPurchaseAmountInput);
+            });
+        });
+
+        // 할인 유형 변경에 따라 최대 할인 금액 필드 속성 업데이트
+        function handleDiscountTypeChange(discountType, maximumPurchaseAmountInput) {
+            if (discountType === "PERCENTAGE") {
+                maximumPurchaseAmountInput.required = true;
+                maximumPurchaseAmountInput.readOnly = false;
+                maximumPurchaseAmountInput.placeholder = "최대 할인 금액 입력";
+            } else if (discountType === "FIXED") {
+                maximumPurchaseAmountInput.required = false;
+                maximumPurchaseAmountInput.readOnly = true;
+                maximumPurchaseAmountInput.placeholder = "--고정 할인 금액--";
+                maximumPurchaseAmountInput.value = ""; // 고정 할인일 경우 값을 비워둠
+            } else {
+                // 기본 상태
+                maximumPurchaseAmountInput.required = false;
+                maximumPurchaseAmountInput.readOnly = false;
+                maximumPurchaseAmountInput.placeholder = "최대 할인 금액 입력";
+            }
+        }
+
     </script>
 </main>
 <footer th:replace="~{admin/layout :: footer}"></footer>

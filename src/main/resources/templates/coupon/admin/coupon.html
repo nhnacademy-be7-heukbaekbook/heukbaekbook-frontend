@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿠폰 관리 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .form-container, .list-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header, footer {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        main {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1600px;
+            min-width: 50%;
+        }
+
+        .contents {
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 10px;
+
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #main-header {
+            text-align: left;
+            padding: 20px;
+        }
+
+        .register-input {
+            width: 96%;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            width: 97%;
+        }
+
+        select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #777;
+        }
+
+        table {
+            width: 100%;
+            background-color: #fff;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            min-width: 50px;
+        }
+        #couponDescription{
+            width: 99%;
+        }
+        .action-button.modify {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.modify:hover {
+            background-color: #777;
+        }
+
+        .action-button.delete {
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.delete:hover {
+            background-color: #c9302c;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-top: 10px;
+        }
+
+        .modal-content input, .modal-content select {
+            margin-bottom: 15px;
+            width: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            width: auto;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-page-container">
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 쿠폰 등록 -->
+    <section class="contents">
+        <h3 id="main-header">쿠폰 관리</h3>
+
+        <section class="form-container">
+            <h3>쿠폰 등록</h3>
+            <form th:action="@{/admin/coupons}" method="post">
+                <label for="policyId">정책</label>
+                <select id="policyId" name="policyId" required>
+                    <option th:each="policy : ${couponPolicyList}"
+                            th:value="${policy.id}"
+                            th:text="${policy.discountType.name().equals('PERCENTAGE') ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
+                </select>
+
+                <label for="couponName">쿠폰 이름</label>
+                <input type="text" id="couponName" name="couponName" placeholder="쿠폰 이름 (최대 100자)" maxlength="100"
+                       required>
+
+                <label for="couponDescription">쿠폰 설명</label>
+                <textarea id="couponDescription" name="couponDescription" placeholder="쿠폰 설명 (최대 500자)" maxlength="500"
+                          required></textarea>
+
+                <label for="availableDuration">유효 기간 (일)</label>
+                <input type="number" id="availableDuration" name="availableDuration" placeholder="유효 기간" required>
+
+                <label for="couponTimeStart">시작일</label>
+                <input type="datetime-local" id="couponTimeStart" name="couponTimeStart" required>
+
+                <label for="couponTimeEnd">종료일</label>
+                <input type="datetime-local" id="couponTimeEnd" name="couponTimeEnd">
+
+                <button type="submit">등록</button>
+            </form>
+        </section>
+
+
+        <!-- 쿠폰 리스트 -->
+        <section>
+            <!-- 일반 쿠폰 -->
+            <div class="list-container">
+                <h3>일반 쿠폰</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>정책</th>
+                        <th>시작일</th>
+                        <th>종료일</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="coupon : ${normalCoupons}">
+                        <td th:text="${coupon.couponName}"></td>
+                        <td th:text="${coupon.couponPolicyResponse().discountType().name() == 'PERCENTAGE'
+                        ? coupon.couponPolicyResponse().discountAmount() + '%'
+                        : coupon.couponPolicyResponse().discountAmount() + '원'}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeStart, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeEnd, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${coupon.couponStatus}"></td>
+                        <td>
+                            <button type="button" class="action-button modify"
+                                    th:data-id="${coupon.couponId}"
+                                    th:data-coupon-name="${coupon.couponName}"
+                                    th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-coupon-time-start="${coupon.couponTimeStart}"
+                                    th:data-coupon-time-end="${coupon.couponTimeEnd}"
+                                    th:data-coupon-policy-discount="${coupon.couponPolicyResponse().id()}"
+                                    onclick="openEditModal(this)">
+                                수정
+                            </button>
+
+                            <!-- 삭제 버튼 -->
+                            <form th:action="@{/admin/coupons/{id}(id=${coupon.couponId})}" method="post"
+                                  style="display:inline;">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(normalCoupons)}">
+                        <td colspan="7">등록된 쿠폰이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="list-container">
+                <h3>도서 쿠폰</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>도서명</th>
+                        <th>정책</th>
+                        <th>시작일</th>
+                        <th>종료일</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="coupon : ${bookCoupons}">
+                        <td th:text="${coupon.couponName}"></td>
+                        <td th:text="${coupon.title}"></td>
+                        <td th:text="${coupon.discountType() == 'PERCENTAGE'
+                ? coupon.discountAmount() + '%'
+                : coupon.discountAmount() + '원'}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeStart, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeEnd, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${coupon.couponStatus}"></td>
+                        <td>
+                            <!-- 수정 버튼 -->
+                            <button type="button" class="action-button modify"
+                                    th:data-id="${coupon.bookCouponId}"
+                                    th:data-coupon-name="${coupon.couponName}"
+                                    th:data-title="${coupon.title}"
+                                    th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-coupon-time-start="${coupon.couponTimeStart}"
+                                    th:data-coupon-time-end="${coupon.couponTimeEnd}"
+                                    th:data-coupon-policy-discount="${coupon.discountType() == 'PERCENTAGE'
+                ? coupon.discountAmount() + '%'
+                : coupon.discountAmount() + '원'}"
+                                    onclick="openEditModal(this)">
+                                수정
+                            </button>
+
+                            <!-- 삭제 버튼 -->
+                            <form th:action="@{/admin/coupons/book/{id}(id=${coupon.bookCouponId})}" method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(bookCoupons)}">
+                        <td colspan="7">등록된 쿠폰이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="list-container">
+                <h3>카테고리 쿠폰</h3>
+                <table>
+                    <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>카테고리명</th>
+                        <th>정책</th>
+                        <th>시작일</th>
+                        <th>종료일</th>
+                        <th>상태</th>
+                        <th>관리</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="coupon : ${categoryCoupons}">
+                        <td th:text="${coupon.couponName}"></td>
+                        <td th:text="${coupon.name}"></td>
+                        <td th:text="${coupon.discountType() == 'PERCENTAGE'
+                ? coupon.discountAmount() + '%'
+                : coupon.discountAmount() + '원'}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeStart, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${#temporals.format(coupon.couponTimeEnd, 'yyyy-MM-dd HH:mm')}"></td>
+                        <td th:text="${coupon.couponStatus}"></td>
+                        <td>
+                            <!-- 수정 버튼 -->
+                            <button type="button" class="action-button modify"
+                                    th:data-id="${coupon.categoryCouponId}"
+                                    th:data-coupon-name="${coupon.couponName}"
+                                    th:data-category-name="${coupon.name}"
+                                    th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-coupon-time-start="${coupon.couponTimeStart}"
+                                    th:data-coupon-time-end="${coupon.couponTimeEnd}"
+                                    th:data-coupon-policy-discount="${coupon.discountType() == 'PERCENTAGE'
+                ? coupon.discountAmount() + '%'
+                : coupon.discountAmount() + '원'}"
+                                    onclick="openEditModal(this)">
+                                수정
+                            </button>
+                            <!-- 삭제 버튼 -->
+                            <form th:action="@{/admin/coupons/category/{id}(id=${coupon.categoryCouponId})}"
+                                  method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(categoryCoupons)}">
+                        <td colspan="7">등록된 쿠폰이 없습니다.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- 수정 모달 -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <h3>쿠폰 수정</h3>
+                <form id="editForm" method="post">
+                    <input type="hidden" name="_method" value="put">
+                    <input type="hidden" id="edit-id" name="id">
+
+                    <label for="edit-policyId">정책</label>
+                    <select id="edit-policyId" name="policyId" required>
+                        <option th:each="policy : ${couponPolicyList}"
+                                th:value="${policy.id}"
+                                th:text="${policy.discountType == 'PERCENTAGE' ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
+                    </select>
+
+                    <label for="edit-couponName">쿠폰 이름</label>
+                    <input type="text" id="edit-couponName" name="couponName" required>
+
+                    <label for="edit-couponDescription">쿠폰 설명</label>
+                    <textarea id="edit-couponDescription" name="couponDescription" required></textarea>
+
+                    <label for="edit-availableDuration">유효 기간 (일)</label>
+                    <input type="number" id="edit-availableDuration" name="availableDuration" required>
+
+                    <label for="edit-couponTimeStart">시작일</label>
+                    <input type="datetime-local" id="edit-couponTimeStart" name="couponTimeStart" required>
+
+                    <label for="edit-couponTimeEnd">종료일</label>
+                    <input type="datetime-local" id="edit-couponTimeEnd" name="couponTimeEnd">
+
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="closeModal()">취소</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script>
+        function confirmDeletion() {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                event.target.closest("form").submit();
+            }
+        }
+
+        function closeModal() {
+            const modal = document.getElementById("editModal");
+            modal.style.display = "none";
+        }
+
+        function openEditModal(button) {
+            const modal = document.getElementById("editModal");
+            modal.style.display = "block";
+
+            // 각 필드 데이터 설정
+            document.getElementById("edit-id").value = button.getAttribute("data-id");
+            document.getElementById("edit-policyId").value = button.getAttribute("data-coupon-policy-discount");
+            document.getElementById("edit-couponName").value = button.getAttribute("data-coupon-name");
+            document.getElementById("edit-couponDescription").value = button.getAttribute("data-coupon-description");
+            document.getElementById("edit-availableDuration").value = button.getAttribute("data-available-duration");
+            document.getElementById("edit-couponTimeStart").value = button.getAttribute("data-coupon-time-start");
+            document.getElementById("edit-couponTimeEnd").value = button.getAttribute("data-coupon-time-end");
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById("editModal");
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</main>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>

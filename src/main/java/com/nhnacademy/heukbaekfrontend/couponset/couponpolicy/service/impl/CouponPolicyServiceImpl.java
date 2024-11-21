@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,6 +26,11 @@ public class CouponPolicyServiceImpl implements CouponPolicyService {
                 pageable.getPageSize(),
                 "discountAmount,asc");
         return couponPolicies.getBody();
+    }
+
+    @Override
+    public List<CouponPolicyResponse> getCouponPolicyList() {
+        return couponPolicyClient.getCouponPolicyList().getBody();
     }
 
     @Override
