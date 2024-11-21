@@ -11,36 +11,33 @@
     <style>
         /* 공통 스타일 */
         body {
+            font-family: 'Noto Sans KR', sans-serif;
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* 화면 전체 높이를 채우기 위해 설정 */
+            min-height: 100vh;
             margin: 0;
         }
 
         .container {
-            flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
             max-width: 1000px;
             margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
+            background: #fff;
             border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 1;
         }
 
         .flex-container {
             display: flex;
             gap: 20px;
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
         }
 
         .column {
             flex: 1;
             padding: 10px;
+            min-width: 300px;
         }
 
         .column form {
@@ -50,7 +47,7 @@
         }
 
         div {
-            margin-bottom: 10px; /* 전체 div 간격 */
+            margin-bottom: 10px;
         }
 
         label {
@@ -59,42 +56,16 @@
             display: block;
         }
 
-        .address-container {
-            display: flex; /* 요소를 가로로 배치 */
-            align-items: center; /* 세로 가운데 정렬 */
-            margin-bottom: 8px; /* 필드 간격 */
-        }
-        #postcode {
-            width: 120px; /* 우편번호 필드 너비 */
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .btn {
-            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
-            padding: 6px 12px;
-            border: 1px solid #ddd;
-            background-color: #007bff;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        #roadAddress, #detailAddress {
-            width: 100%; /* 입력 필드 너비 */
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 8px;
-        }
-
         input[type="text"],
-        input[type="email"] {
-            /*input[type="tel"] {*/
+        input[type="email"],
+        input[type="tel"],
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            /*margin-bottom: 2px;*/
+            margin-bottom: 10px;
+            box-sizing: border-box;
         }
 
         .radio-group {
@@ -107,8 +78,23 @@
             margin-right: 5px;
         }
 
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
         .btn:hover {
             background-color: #0056b3;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: gray;
         }
 
         .sms-info {
@@ -117,10 +103,10 @@
         }
 
         .table-header {
-            background-color: #f4f4f4; /* 헤더 배경색 */
-            color: #333; /* 헤더 텍스트 색 */
-            font-weight: bold; /* 텍스트 굵게 */
-            text-align: center; /* 텍스트 가운데 정렬 */
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: bold;
+            text-align: center;
         }
 
         table {
@@ -129,8 +115,8 @@
             margin-bottom: 20px;
         }
         th, td {
-            text-align: center; /* 가로 가운데 정렬 */
-            vertical-align: middle; /* 세로 가운데 정렬 */
+            text-align: center;
+            vertical-align: middle;
             padding: 10px;
             border: 1px solid #ddd;
         }
@@ -143,48 +129,49 @@
             border-radius: 5px;
         }
 
-        .name-input-group {
-            align-items: center; /* 모든 요소 수직 중앙 정렬 */
-            gap: 8px;
-            width: 200px;
-        }
-
+        .name-input-group,
         .email-input-group {
-            align-items: center; /* 모든 요소 수직 중앙 정렬 */
-            gap: 8px;
-            width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
         }
 
         .phone-input-group {
-            display: flex; /* 가로로 정렬 */
-            align-items: center; /* 모든 요소 수직 중앙 정렬 */
-            gap: 8px; /* 요소 간 간격 */
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .phone-input-group label {
-            font-weight: bold; /* 레이블 강조 */
+            margin-right: 10px;
+            font-weight: bold;
         }
 
         .phone-input {
-            width: 60px; /* 입력 필드 너비 */
+            width: 60px;
             padding: 6px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            text-align: center; /* 입력값 가운데 정렬 */
-            font-size: 14px; /* 입력 필드 글자 크기 */
+            text-align: center;
+            font-size: 14px;
             line-height: 1.5;
-            position: relative; /* 위치 조정 활성화 */
-            top: -4px;
         }
 
         .separator {
-            font-size: 16px; /* 하이픈 크기 */
-            font-weight: normal; /* 하이픈 굵기 */
-            color: #333; /* 하이픈 색상 */
-            line-height: 1; /* 텍스트 높이 초기화 */
-            position: relative; /* 위치 조정을 위한 상대 위치 */
-            top: -4px; /* 하이픈을 위로 약간 이동 */
-            left: 4px;
+            font-size: 16px;
+            color: #333;
+            position: relative;
+            top: -4px;
+            right: 4px;
+        }
+
+        .payment-info-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
         .payment-info {
@@ -229,7 +216,6 @@
             color: #555;
         }
 
-        /* 최종 결제 금액 강조 */
         .final-box {
             background-color: #f8e9ef;
             color: #8b1c3d;
@@ -239,7 +225,6 @@
             color: #8b1c3d;
         }
 
-        /* 디테일 정보 */
         .detail-info {
             margin-top: 10px;
             font-size: 14px;
@@ -257,25 +242,25 @@
 
         .payment-form {
             display: flex;
-            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
-            margin-top: 20px; /* 버튼과 위 내용 간의 간격 */
+            justify-content: flex-end;
+            margin-top: 20px;
         }
 
         .payment-button {
-            padding: 30px 45px; /* 버튼 크기 */
-            background: #d9534f; /* 버튼 배경색 */
-            color: #fff; /* 텍스트 색상 */
-            font-size: 18px; /* 텍스트 크기 */
-            font-weight: bold; /* 텍스트 굵기 */
-            border: none; /* 기본 테두리 제거 */
-            border-radius: 8px; /* 모서리를 둥글게 */
-            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
-            transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+            padding: 15px 30px;
+            background: #d9534f;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
         }
 
         .payment-button:hover {
-            background: #c9302c; /* 호버 시 버튼 색상 변경 */
+            background: #c9302c;
         }
 
         /* 모바일 반응형 */
@@ -286,60 +271,6 @@
             .payment-info {
                 grid-template-columns: 1fr;
             }
-        }
-
-        h2 {
-            text-align: left; /* 텍스트를 왼쪽으로 정렬 */
-        }
-
-        .common-container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .delivery-header {
-            display: flex; /* 플렉스 레이아웃 설정 */
-            align-items: center; /* 세로 가운데 정렬 */
-            gap: 8px; /* 제목과 부제목 간 간격 */
-        }
-
-        .delivery-title {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        .delivery-subtitle {
-            font-size: 14px;
-            color: #666;
-        }
-        .delivery-options {
-            display: flex;
-            gap: 10px; /* 버튼 간격 */
-        }
-
-        .delivery-button {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background-color: #fff;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-            transition: all 0.3s ease;
-        }
-        .delivery-button:hover {
-            background-color: #f0f0f0;
-        }
-        .delivery-button.active {
-            background-color: #4285F4;
-            color: #fff;
-            border-color: #4285F4;
         }
     </style>
 </head>
@@ -362,13 +293,12 @@
 </header>
 
 <div class="container">
-    <h2>상품 확인</h2>
     <!-- 상품 확인 -->
     <div class="section">
+        <h2>상품 확인</h2>
         <table>
             <colgroup>
-                <col style="width: 5%;"> <!-- 포장 여부 열 -->
-                <col style="width: 55%;"> <!-- 상품 정보 열 -->
+                <col style="width: 60%;"> <!-- 상품 정보 열 -->
                 <col style="width: 10%;"> <!-- 정가 열 -->
                 <col style="width: 10%;"> <!-- 할인가 열 -->
                 <col style="width: 10%;"> <!-- 수량 열 -->
@@ -376,28 +306,16 @@
             </colgroup>
             <thead>
             <tr class="table-header">
-                <th>포장 여부</th>
                 <th>상품명</th>
                 <th>정가</th>
                 <th>할인가</th>
                 <th>수량</th>
-                <th>포장지 선택</th>
                 <th>합계</th>
             </tr>
             </thead>
             <tbody>
             <!-- 여러 책을 반복해서 표시 -->
             <tr th:each="book : ${books}">
-                <td>
-                    <!-- 포장 여부 체크박스 -->
-                    <label>
-                        <input type="checkbox"
-                               th:id="'wrapCheck_' + ${book.id}"
-                               th:name="|book[${book.id}].isWrapped|"
-                               th:disabled="!${book.isPackable}"
-                               onclick="toggleWrappingOption(this)">
-                    </label>
-                </td>
                 <td style="display: flex; align-items: center; gap: 10px;">
                     <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image" style="width: 75px; height: 100px; object-fit: cover; border-radius: 5px;">
                     <span th:text="${book.title}" style="font-weight: bold;">도서 제목</span>
@@ -405,47 +323,17 @@
                 <td th:text="${book.price} + '원'">15,000원</td>
                 <td th:text="${book.salePrice} + '원'">13,500원</td>
                 <td th:text="${book.quantity}">1</td>
-                <td>
-                    <!-- 포장지 선택 -->
-                    <label>
-                        <select th:id="'wrapOption_' + ${book.id}"
-                                th:name="|book[${book.id}].wrappingOption|"
-                                th:disabled="true" disabled>
-                            <option value="" th:text="'포장지 선택'"></option>
-                            <option th:each="option : ${wrappingOptions}"
-                                    th:value="${option.id}"
-                                    th:text="${option.name}">
-                            </option>
-                        </select>
-                    </label>
-                </td>
                 <td th:text="${book.formattedTotalPrice} + '원'">13,500원</td>
             </tr>
             </tbody>
         </table>
     </div>
 
-    <script>
-        /**
-         * 토글 함수: 포장 여부에 따라 포장지 선택 활성화/비활성화
-         */
-        function toggleWrappingOption(checkbox) {
-            const bookId = checkbox.id.split('_')[1]; // 체크박스 ID에서 bookId 추출
-            const wrapOption = document.getElementById(`wrapOption_${bookId}`);
-            if (checkbox.checked) {
-                wrapOption.removeAttribute('disabled');
-            } else {
-                wrapOption.setAttribute('disabled', true);
-                wrapOption.value = ""; // 선택 초기화
-            }
-        }
-    </script>
-
     <!-- 배송 및 주문자 정보 -->
-    <h2>배송 주소</h2>
     <div class="flex-container">
         <!-- 배송 정보 -->
         <div class="column">
+            <h2>배송 주소</h2>
             <form id="order-form">
                 <div>
                     <label>배송방법</label>
@@ -463,10 +351,8 @@
 
                 <div>
                     <label>배송주소</label>
-                    <div class="address-container">
-                        <label for="postcode"></label><input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly required>
-                        <button type="button" class="btn" id="find-address-btn">주소 찾기</button>
-                    </div>
+                    <input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly required>
+                    <button type="button" class="btn" id="find-address-btn">주소 찾기</button>
                     <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly required>
                     <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" required>
                 </div>
@@ -489,18 +375,18 @@
 
                 <div class="phone-input-group">
                     <label>휴대폰</label>
-                    <label for="recipientPhone1"></label><input type="tel" id="recipientPhone1" name="recipientPhone1" placeholder="010" class="phone-input" maxlength="3" required>
+                    <input type="tel" id="recipientPhone1" name="recipientPhone1" placeholder="010" class="phone-input" maxlength="3" required>
                     <span class="separator">-</span>
-                    <label for="recipientPhone2"></label><input type="tel" id="recipientPhone2" name="recipientPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
+                    <input type="tel" id="recipientPhone2" name="recipientPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
                     <span class="separator">-</span>
-                    <label for="recipientPhone3"></label><input type="tel" id="recipientPhone3" name="recipientPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
+                    <input type="tel" id="recipientPhone3" name="recipientPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
                 </div>
             </form>
         </div>
 
         <!-- 주문 고객 정보 -->
         <div class="column">
-            <h3>주문 고객</h3>
+            <h2>주문 고객</h2>
             <form id="customer-form">
                 <div class="radio-group">
                     <label><input type="radio" name="customerOption" value="새로입력" checked> 새로입력</label>
@@ -514,11 +400,11 @@
 
                 <div class="phone-input-group">
                     <label>휴대폰</label>
-                    <label for="customerPhone1"></label><input type="tel" id="customerPhone1" name="customerPhone1" placeholder="010" class="phone-input" maxlength="3" required>
+                    <input type="tel" id="customerPhone1" name="customerPhone1" placeholder="010" class="phone-input" maxlength="3" required>
                     <span class="separator">-</span>
-                    <label for="customerPhone2"></label><input type="tel" id="customerPhone2" name="customerPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
+                    <input type="tel" id="customerPhone2" name="customerPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
                     <span class="separator">-</span>
-                    <label for="customerPhone3"></label><input type="tel" id="customerPhone3" name="customerPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
+                    <input type="tel" id="customerPhone3" name="customerPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
                 </div>
                 <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
 
@@ -530,58 +416,9 @@
         </div>
     </div>
 
-    <div class="common-container">
-        <div class="delivery-header">
-            <div class="delivery-title">배송일 선택</div>
-            <div class="delivery-subtitle">(도착 예상일)</div>
-        </div>
-        <div class="delivery-options" id="delivery-options"></div>
-    </div>
-
-    <script>
-        // 날짜 계산 함수
-        function generateDates() {
-            const optionsContainer = document.getElementById('delivery-options');
-
-            if (!optionsContainer) {
-                console.error("Element with ID 'delivery-options' not found!");
-                return;
-            }
-            const today = new Date(); // 현재 날짜
-            const dayNames = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 배열
-
-            // 버튼 생성 (오늘 + 4일)
-            for (let i = 1; i <= 5; i++) {
-                const date = new Date();
-                date.setDate(today.getDate() + i); // i일 후 날짜 계산
-
-                const dayName = dayNames[date.getDay()]; // 요일 이름 가져오기
-                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // "MM/DD" 형식
-
-                // 버튼 생성
-                const button = document.createElement('button');
-                button.className = `delivery-button ${i === 1 ? 'active' : ''}`; // 첫 번째 버튼은 기본 선택
-                button.textContent = `${i === 1 ? '내일' : dayName} (${formattedDate})`;
-                button.onclick = () => selectDelivery(button);
-
-                // 버튼을 컨테이너에 추가
-                optionsContainer.appendChild(button);
-            }
-        }
-
-        // 버튼 선택 함수
-        function selectDelivery(button) {
-            const buttons = document.querySelectorAll('.delivery-button');
-            buttons.forEach(btn => btn.classList.remove('active')); // 모든 버튼의 active 클래스 제거
-            button.classList.add('active'); // 클릭된 버튼에 active 클래스 추가
-        }
-
-        generateDates();
-    </script>
-
     <!-- 결제 정보 -->
-    <h2>결제 정보</h2>
-    <div class="common-container">
+    <div class="payment-info-container">
+        <h2>결제 정보</h2>
         <div class="payment-info">
             <div class="payment-box">
                 <h3>총 상품금액</h3>
@@ -615,7 +452,7 @@
             <div class="payment-box final-box">
                 <h3>최종 결제금액</h3>
                 <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
-                <div class="amount" id="amount" th:attr="data-final-price=${totalPrice}" th:text="${totalPrice} + '원'">25,200원</div>
+                <div class="amount" th:attr="data-final-price=${totalPrice}" th:text="${totalPrice} + '원'">25,200원</div>
                 <div class="detail-info">
                     <div class="item">
                         <span>기본적립 포인트</span>: 500
@@ -640,7 +477,14 @@
 </div>
 
 <!-- 푸터 불러오기 -->
-<footer th:replace="~{layout :: footer}"></footer>
+<footer>
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
+</footer>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
@@ -727,68 +571,15 @@
                 return;
             }
 
-            const customerPhoneNumber = `${customerPhone1.value.trim()}${customerPhone2.value.trim()}${customerPhone3.value.trim()}`;
-
-            // 주문서 데이터를 생성
-            const orderCreateRequest = {
-                totalPrice: finalPriceText,
-                customerEmail: customerEmail,
-                customerName: customerName,
-                customerPhone: customerPhoneNumber,
-                tossOrderId: orderId,
-                orderBookRequests: Array.from(document.querySelectorAll("tbody tr")).map(row => {
-                    const checkbox = row.querySelector("input[type='checkbox']");
-                    if (!checkbox) {
-                        console.error("Checkbox not found in row:", row);
-                        return null;
-                    }
-
-                    const bookId = checkbox.id.split('_')[1]; // ID에서 bookId 추출
-                    console.log("bookId:", bookId);
-
-                    const isWrapped = checkbox.checked; // 체크 여부
-                    const wrappingOption = row.querySelector(`select#wrapOption_${bookId}`)?.value || null; // 선택된 옵션 가져오기
-
-                    return {
-                        bookId: bookId,
-                        isWrapped: isWrapped,
-                        wrappingOption: wrappingOption
-                    };
-                })
-            };
-
-            console.log("orderRequest : ", orderCreateRequest);
-
-            // 주문서를 서버에 POST 요청
-            try {
-                const response = await fetch("/order", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(orderCreateRequest)
-                });
-
-                if (response.ok) {
-                    console.log("Order successfully sent to server.");
-                    // 결제 요청 실행
-                    await widgets.requestPayment({
-                        orderId: orderId,
-                        orderName: orderName,
-                        successUrl: window.location.origin + "/payment/success",
-                        failUrl: window.location.origin + "/payment/fail",
-                        customerEmail: customerEmail,
-                        customerName: customerName,
-                        customerMobilePhone: customerPhone
-                    });
-                } else {
-                    console.error("Failed to send order to server:", response.status);
-                    alert("주문서 전송에 실패했습니다. 다시 시도해주세요.");
-                }
-            } catch (error) {
-                console.error("Error sending order to server:", error);
-                alert("서버와의 통신에 실패했습니다. 다시 시도해주세요.");
-            }
+            await widgets.requestPayment({
+                orderId: orderId, // 랜덤으로 생성된 orderId
+                orderName: orderName, // 주문명
+                successUrl: window.location.origin + "/payment/success", // 결제 성공 시 리디렉션될 URL
+                failUrl: window.location.origin + "/payment/fail", // 결제 실패 시 리디렉션될 URL
+                customerEmail: customerEmail, // 입력받은 이메일
+                customerName: customerName, // 입력받은 고객명
+                customerMobilePhone: customerPhone, // 입력받은 전화번호
+            });
         });
 
         // orderId 생성 함수

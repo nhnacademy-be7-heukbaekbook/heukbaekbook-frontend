@@ -42,6 +42,7 @@ public class BookServiceImpl implements BookService {
         return bookAdmin.searchBooks(title);
     }
 
+    @Override
     public Page<BookResponse> searchElasticBooks(BookSearchRequest bookSearchRequest, Pageable pageable) {
         return bookClient.searchBooks(bookSearchRequest, pageable);
     }
