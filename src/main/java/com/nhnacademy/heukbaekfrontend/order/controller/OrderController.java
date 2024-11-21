@@ -10,6 +10,7 @@ import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderFormRequest;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -35,38 +36,19 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    private final CartService cartService;
-
-    private final CommonService commonService;
-
-    private final CookieUtil cookieUtil;
-
-    private final MemberService memberService;
-
     @GetMapping
     public ModelAndView getOrderForm(@RequestParam List<Long> bookIds,
                                      @RequestParam(required = false) Integer quantity,
-                                     HttpSession session,
-                                     HttpServletRequest request) {
+                                     HttpSession session) {
         String sessionId = session.getId();
 
         log.info("bookIds = {}, quantity = {}, sessionId : {}", bookIds, quantity, sessionId);
 
-        List<Book> books = fetchBooks(sessionId, bookIds, quantity);
-        String totalPrice = commonService.calculateAllTotalPriceAndFormat(books);
-        String totalDiscountAmount = commonService.calculateAllTotalDiscountAndFormat(books);
+        OrderFormRequest orderFormRequest = orderService.createOrderFormRequest(sessionId, bookIds, quantity);
+        log.info("orderFormRequest = {}", orderFormRequest);
 
         return new ModelAndView("order/orderForm")
-                .addObject("books", books)
-                .addObject("totalPrice", totalPrice)
-                .addObject("totalDiscountAmount", totalDiscountAmount);
-    }
-
-    private List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
-        if (quantity == null) {
-            return cartService.getBooksByBookIdsFromCart(sessionId, bookIds); // 장바구니에서 체크 표시한 책 가져오기
-        }
-        return orderService.getBookOrderResponses(bookIds.getFirst(), quantity); // 주문 요청에서 책 가져오기
+                .addObject("orderFormRequest", orderFormRequest);
     }
 
     @PostMapping
