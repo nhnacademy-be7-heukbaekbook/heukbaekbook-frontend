@@ -56,7 +56,7 @@ class PublisherControllerTest {
     void testRegisterPublisherForm() throws Exception {
         mockMvc.perform(get("/admin/publishers/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerPublisher"))
+                .andExpect(view().name("contributor/admin/registerPublisher"))
                 .andExpect(model().attributeExists("publisherCreateRequest"));
     }
 
@@ -69,7 +69,7 @@ class PublisherControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("name", "New Publisher"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerPublisher"))
+                .andExpect(view().name("contributor/admin/registerPublisher"))
                 .andExpect(model().attributeExists("success"));
     }
 
@@ -84,7 +84,7 @@ class PublisherControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/viewAllPublisher"))
+                .andExpect(view().name("contributor/admin/viewAllPublisher"))
                 .andExpect(model().attributeExists("publishers"));
     }
 
@@ -95,7 +95,7 @@ class PublisherControllerTest {
 
         mockMvc.perform(get("/admin/publishers/{publisher-id}/update", 1L))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updatePublisher"))
+                .andExpect(view().name("contributor/admin/updatePublisher"))
                 .andExpect(model().attributeExists("publisherUpdateRequest"))
                 .andExpect(model().attributeExists("publisherId"));
     }
@@ -109,7 +109,7 @@ class PublisherControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("name", "Updated Publisher"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updatePublisher"))
+                .andExpect(view().name("contributor/admin/updatePublisher"))
                 .andExpect(model().attributeExists("success"));
     }
 

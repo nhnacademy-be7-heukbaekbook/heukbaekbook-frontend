@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>흑백문고 - 카테고리 목록</title>
+    <title>흑백문고 - 출판사 목록</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <style>
         /* 테이블 스타일 */
-        .category-table {
+        .publisher-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
@@ -17,7 +17,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
-        .category-table thead th {
+        .publisher-table thead th {
             background-color: #f5f5f5;
             color: #333;
             font-weight: bold;
@@ -26,7 +26,7 @@
             border-bottom: 2px solid #ddd;
         }
 
-        .category-table tbody td {
+        .publisher-table tbody td {
             padding: 12px;
             text-align: center;
             border-bottom: 1px solid #eee;
@@ -34,16 +34,16 @@
         }
 
         /* 행 교차 색상 */
-        .category-table tbody tr:nth-child(odd) {
+        .publisher-table tbody tr:nth-child(odd) {
             background-color: #f9f9f9;
         }
 
-        .category-table tbody tr:nth-child(even) {
+        .publisher-table tbody tr:nth-child(even) {
             background-color: #fff;
         }
 
         /* 행 호버 효과 */
-        .category-table tbody tr:hover {
+        .publisher-table tbody tr:hover {
             background-color: #f1f1f1;
             cursor: pointer;
         }
@@ -94,7 +94,7 @@
         }
 
         /* 상단 버튼 스타일 */
-        .add-category-button, .back-to-home-button {
+        .add-publisher-button {
             display: inline-block;
             padding: 10px 20px;
             background-color: #2980b9;
@@ -107,7 +107,7 @@
             cursor: pointer;
         }
 
-        .add-category-button:hover, .back-to-home-button:hover {
+        .add-publisher-button:hover {
             background-color: #333;
         }
     </style>
@@ -123,38 +123,37 @@
 
     <!-- 오른쪽 콘텐츠 영역 -->
     <section id="content-area">
-        <h3 class="content-title">카테고리 목록</h3>
-        <p class="content-description">등록된 카테고리 목록입니다.</p>
+        <h3 class="content-title">출판사 목록</h3>
+        <p class="content-description">등록된 출판사 목록입니다.</p>
 
+        <!-- "출판사 추가하기" 버튼 -->
         <div style="text-align: right; margin-bottom: 20px;">
-            <a th:href="@{/admin/categories/register}" class="add-category-button">카테고리 추가하기</a>
+            <a th:href="@{/admin/publishers/register}" class="add-publisher-button">출판사 추가하기</a>
         </div>
 
-        <!-- 카테고리 목록 테이블 -->
-        <section class="results-section" th:if="${categories != null}">
-            <table class="category-table">
+        <!-- 출판사 목록 테이블 -->
+        <section class="results-section" th:if="${publishers != null}">
+            <table class="publisher-table">
                 <thead>
                 <tr>
-                    <th>카테고리 ID</th>
-                    <th>카테고리 이름</th>
-                    <th>상위 카테고리</th>
+                    <th>출판사 ID</th>
+                    <th>출판사 이름</th>
                     <th>관리</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:if="${categories.isEmpty()}">
-                    <td colspan="4" class="no-results">등록된 카테고리가 없습니다.</td>
+                <tr th:if="${publishers.isEmpty()}">
+                    <td colspan="3" class="no-results">등록된 출판사가 없습니다.</td>
                 </tr>
-                <tr th:each="category : ${categories.content}">
-                    <td th:text="${category.id}">카테고리 ID</td>
-                    <td th:text="${category.name}">카테고리 이름</td>
-                    <td th:text="${category.parentId != null ? category.parentId : '없음'}">상위 카테고리</td>
+                <tr th:each="publisher : ${publishers.content}">
+                    <td th:text="${publisher.id}">출판사 ID</td>
+                    <td th:text="${publisher.name}">출판사 이름</td>
                     <td>
                         <div class="action-buttons">
                             <!-- 수정 버튼 -->
-                            <a th:href="@{/admin/categories/{categoryId}/update(categoryId=${category.id})}" class="button edit">수정</a>
+                            <a th:href="@{/admin/publishers/{publisherId}/update(publisherId=${publisher.id})}" class="button edit">수정</a>
                             <!-- 삭제 버튼 -->
-                            <form th:action="@{/admin/categories/{categoryId}(categoryId=${category.id})}" method="post" class="delete-form">
+                            <form th:action="@{/admin/publishers/{publisherId}(publisherId=${publisher.id})}" method="post" class="delete-form">
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <button type="submit" class="button delete">삭제</button>
                             </form>
@@ -165,7 +164,7 @@
             </table>
 
             <!-- 페이지네이션 -->
-            <div th:replace="~{fragments/pagination :: pagination(${categories})}"></div>
+            <div th:replace="~{fragments/pagination :: pagination(${publishers})}"></div>
         </section>
     </section>
 </div>
@@ -180,7 +179,7 @@
         deleteForms.forEach(function (form) {
             form.addEventListener("submit", function (event) {
                 event.preventDefault();
-                if (confirm("정말로 이 카테고리를 삭제하시겠습니까?")) {
+                if (confirm("정말로 이 출판사를 삭제하시겠습니까?")) {
                     form.submit();
                 }
             });

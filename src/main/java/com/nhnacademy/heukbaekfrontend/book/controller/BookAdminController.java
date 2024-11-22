@@ -55,7 +55,7 @@ public class BookAdminController {
     @PostMapping("/aladin/register")
     public String selectBookForRegistration(@ModelAttribute BookCreateRequest request, Model model) {
         model.addAttribute("bookCreateRequest", request);
-        return "admin/registerBook";
+        return "book/admin/registerBook";
     }
 
     @Admin
@@ -106,7 +106,7 @@ public class BookAdminController {
             model.addAttribute("error", "도서 등록에 실패했습니다.");
             model.addAttribute("bookCreateRequest", request);
         }
-        return "admin/registerBook";
+        return "book/admin/registerBook";
     }
 
     @Admin

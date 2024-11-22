@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <style>
-        /* 테이블 기본 스타일 */
+        /* 테이블 스타일 */
         .search-table {
             width: 100%;
             border-collapse: collapse;
@@ -15,6 +15,7 @@
             background-color: #fff;
             font-size: 0.9em;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            table-layout: fixed;
         }
 
         .search-table thead th {
@@ -31,29 +32,25 @@
             text-align: center;
             border-bottom: 1px solid #eee;
             vertical-align: middle;
-        }
-
-        /* 행 교차 색상 */
-        .search-table tbody tr:nth-child(odd) {
-            background-color: #f9f9f9;
-        }
-
-        .search-table tbody tr:nth-child(even) {
-            background-color: #fff;
-        }
-
-        /* 행 호버 효과 */
-        .search-table tbody tr:hover {
-            background-color: #f1f1f1;
-            cursor: pointer;
+            word-wrap: break-word;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         /* 썸네일 이미지 */
         .book-thumbnail {
-            width: 60px;
-            height: 90px;
+            width: 80px;
+            height: 120px;
             object-fit: cover;
             border-radius: 4px;
+        }
+
+        /* 긴 텍스트 처리 */
+        .long-text {
+            max-height: 3.6em;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         /* 검색 폼 스타일 */
@@ -93,48 +90,90 @@
         }
 
         /* 버튼 스타일 */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-        }
-
-        .action-buttons .button {
+        .register-button {
             padding: 8px 12px;
             font-size: 0.85em;
-            border-radius: 4px;
-            text-decoration: none;
+            background-color: #555;
+            color: #fff;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
 
-        .action-buttons .button.register {
-            background-color: #555;
-            color: #fff;
-        }
-
-        .action-buttons .button.register:hover {
+        .register-button:hover {
             background-color: #777;
             transform: scale(1.01);
         }
 
+        /* 결과 없을 때 */
         .no-results {
             text-align: center;
             padding: 20px;
             color: #555;
+            font-size: 1em;
+        }
+
+        /* 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 50%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #000;
+            text-decoration: none;
         }
     </style>
 </head>
 <body>
 
-<!-- 헤더 불러오기 -->
+<!-- 헤더 -->
 <header th:replace="~{admin/layout :: header}"></header>
 
-<!-- 메인 콘텐츠 -->
 <main class="admin-page-container">
+    <!-- 사이드바 -->
     <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
 
+    <!-- 콘텐츠 영역 -->
     <section id="content-area">
         <h3 class="content-title">알라딘 도서 등록</h3>
         <p class="content-description">검색 결과를 확인하고 도서를 등록할 수 있습니다.</p>
@@ -152,35 +191,53 @@
             <table class="search-table">
                 <thead>
                 <tr>
-                    <th>이미지</th>
+                    <th>표지</th>
                     <th>제목</th>
-                    <th>저자</th>
+                    <th>설명</th>
+                    <th>기여자</th>
                     <th>카테고리</th>
                     <th>출판사</th>
+                    <th>출판일</th>
+                    <th>ISBN</th>
                     <th>정가</th>
                     <th>할인가</th>
-                    <th>관리</th>
+                    <th>등록하기</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr th:if="${responses.isEmpty()}">
-                    <td colspan="8" class="no-results">제목과 일치하는 도서를 찾을 수 없습니다.</td>
+                    <td colspan="11" class="no-results">제목과 일치하는 도서를 찾을 수 없습니다.</td>
                 </tr>
-                <tr th:each="result : ${responses}">
-                    <td><img th:src="@{${result.cover}}" alt="표지 이미지" class="book-thumbnail"></td>
-                    <td th:text="${result.title}">제목</td>
-                    <td th:text="${result.author}">저자</td>
-                    <td th:text="${result.category}">카테고리</td>
-                    <td th:text="${result.publisher}">출판사</td>
+                <tr th:each="result : ${responses}" class="search-row" onclick="showModal(this)">
+                    <td>
+                        <img th:src="@{${result.cover}}" alt="표지 이미지" class="book-thumbnail">
+                    </td>
+                    <td th:text="${result.title}" class="long-text">제목</td>
+                    <td th:text="${result.description}" class="long-text">설명</td>
+                    <td th:text="${result.author}" class="long-text">기여자</td>
+                    <td th:text="${result.category}" class="long-text">카테고리</td>
+                    <td th:text="${result.publisher}" class="long-text">출판사</td>
+                    <td th:text="${result.pubDate}">출판일</td>
+                    <td th:text="${result.isbn}">ISBN</td>
                     <td th:text="${result.standardPrice}">정가</td>
                     <td th:text="${result.salesPrice}">할인가</td>
                     <td>
-                        <div class="action-buttons">
-                            <form th:action="@{/admin/aladin/register}" method="POST">
-                                <input type="hidden" name="title" th:value="${result.title}" />
-                                <button type="submit" class="button register">등록</button>
-                            </form>
-                        </div>
+                        <form th:action="@{/admin/aladin/register}" method="POST">
+                            <input type="hidden" name="title" th:value="${result.title}" />
+                            <input type="hidden" name="description" th:value="${result.description}" />
+                            <input type="hidden" name="publishedAt" th:value="${result.pubDate}" />
+                            <input type="hidden" name="isbn" th:value="${result.isbn}" />
+                            <input type="hidden" name="imageUrl" th:value="${result.cover}" />
+                            <input type="hidden" name="isPackable" value=false>
+                            <input type="hidden" name="stock" th:value="0" />
+                            <input type="hidden" name="standardPrice" th:value="${result.standardPrice}" />
+                            <input type="hidden" name="discountRate"
+                                   th:value="${((result.standardPrice - result.salesPrice) / result.standardPrice) * 100.0}" />
+                            <input type="hidden" name="publisher" th:value="${result.publisher}" />
+                            <input type="hidden" name="categories" th:value="${result.category}" />
+                            <input type="hidden" name="authors" th:value="${result.author}" />
+                            <button type="submit" class="register-button">등록하기</button>
+                        </form>
                     </td>
                 </tr>
                 </tbody>
@@ -189,7 +246,52 @@
     </section>
 </main>
 
-<!-- 푸터 불러오기 -->
+<!-- 모달 -->
+<div id="book-modal" class="modal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <div class="modal-header">도서 상세 정보</div>
+        <div class="modal-body">
+            <img id="modal-thumbnail" src="" alt="표지 이미지" class="book-thumbnail">
+            <p><strong>제목:</strong> <span id="modal-title"></span></p>
+            <p><strong>설명:</strong> <span id="modal-description"></span></p>
+            <p><strong>기여자:</strong> <span id="modal-author"></span></p>
+            <p><strong>카테고리:</strong> <span id="modal-category"></span></p>
+            <p><strong>출판사:</strong> <span id="modal-publisher"></span></p>
+            <p><strong>출판일:</strong> <span id="modal-pubDate"></span></p>
+            <p><strong>ISBN:</strong> <span id="modal-isbn"></span></p>
+            <p><strong>정가:</strong> <span id="modal-standardPrice"></span></p>
+            <p><strong>할인가:</strong> <span id="modal-salesPrice"></span></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showModal(row) {
+        const modal = document.getElementById("book-modal");
+
+        // 데이터 매핑 (row의 순서대로 cell 값을 가져옵니다)
+        const cells = row.cells;
+        document.getElementById("modal-thumbnail").src = row.querySelector("img").src;
+        document.getElementById("modal-title").textContent = cells[1].textContent.trim();
+        document.getElementById("modal-description").textContent = cells[2].textContent.trim();
+        document.getElementById("modal-author").textContent = cells[3].textContent.trim();
+        document.getElementById("modal-category").textContent = cells[4].textContent.trim();
+        document.getElementById("modal-publisher").textContent = cells[5].textContent.trim();
+        document.getElementById("modal-pubDate").textContent = cells[6].textContent.trim();
+        document.getElementById("modal-isbn").textContent = cells[7].textContent.trim();
+        document.getElementById("modal-standardPrice").textContent = cells[8].textContent.trim();
+        document.getElementById("modal-salesPrice").textContent = cells[9].textContent.trim();
+
+        // 모달 표시
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        document.getElementById("book-modal").style.display = "none";
+    }
+</script>
+
 <footer th:replace="~{admin/layout :: footer}"></footer>
 
 </body>

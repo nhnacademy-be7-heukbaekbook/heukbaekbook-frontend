@@ -34,7 +34,7 @@ public class PublisherController {
     @GetMapping("/register")
     public String registerPublisher(Model model) {
         model.addAttribute("publisherCreateRequest", new PublisherCreateRequest(""));
-        return "admin/registerPublisher";
+        return "contributor/admin/registerPublisher";
     }
 
     @Admin
@@ -48,7 +48,7 @@ public class PublisherController {
             model.addAttribute("error", "출판사 등록에 실패했습니다.");
             model.addAttribute("publisherCreateRequest", request);
         }
-        return "admin/registerPublisher";
+        return "contributor/admin/registerPublisher";
     }
 
     @Admin
@@ -62,7 +62,7 @@ public class PublisherController {
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("sort", pageable.getSort().toString());
-        return "admin/viewAllPublisher";
+        return "contributor/admin/viewAllPublisher";
     }
 
     @Admin
@@ -77,7 +77,7 @@ public class PublisherController {
 
         model.addAttribute("publisherUpdateRequest", request);
         model.addAttribute("publisherId", publisherId);
-        return "admin/updatePublisher";
+        return "contributor/admin/updatePublisher";
     }
 
     @Admin
@@ -92,7 +92,7 @@ public class PublisherController {
             model.addAttribute("error", "출판사 수정에 실패했습니다.");
             model.addAttribute("publisherUpdateRequest", request);
         }
-        return "admin/updatePublisher";
+        return "contributor/admin/updatePublisher";
     }
 
     @Admin

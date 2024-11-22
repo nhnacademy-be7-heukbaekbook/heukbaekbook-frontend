@@ -168,6 +168,31 @@
                 <input type="checkbox" th:field="*{packable}" id="isPackable" />
             </div>
             <div class="form-group">
+                <label for="stock">재고</label>
+                <input type="number" th:field="*{stock}" id="stock" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="standardPrice">정가</label>
+                <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="discountRate">할인율(%)</label>
+                <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="bookStatus">도서 상태</label>
+                <select th:field="*{bookStatus}" id="bookStatus">
+                    <option value="IN_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'IN_STOCK'}">재고 있음</option>
+                    <option value="OUT_OF_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'OUT_OF_STOCK'}">품절</option>
+                    <option value="DISCONTINUED" th:selected="${bookUpdateRequest.bookStatus == 'DISCONTINUED'}">절판됨</option>
+                    <option value="DELETED" th:selected="${bookUpdateRequest.bookStatus == 'DELETED'}">삭제됨</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="publisher">출판사</label>
+                <input type="text" th:field="*{publisher}" id="publisher" />
+            </div>
+            <div class="form-group">
                 <label for="categories">카테고리</label>
                 <div id="categories-container">
                     <div class="dynamic-field" th:each="category, iterStat : *{categories}">
@@ -191,6 +216,12 @@
                 </div>
                 <button type="button" id="add-tag-button" class="form-button">태그 추가</button>
             </div>
+
+            <div class="form-group">
+                <label for="authors">저자</label>
+                <input type="text" th:field="*{authors}" id="authors"/>
+            </div>
+
             <button type="submit" class="form-button">수정하기</button>
             <a th:href="@{/admin/books}" class="form-button back-button">목록으로 돌아가기</a>
         </form>

@@ -85,7 +85,7 @@ class BookAdminControllerTest {
                         .param("discountRate", String.valueOf(request.discountRate()))
                         .param("publisher", request.publisher()))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerBook"))
+                .andExpect(view().name("book/admin/registerBook"))
                 .andExpect(model().attributeExists("success"));
     }
 
@@ -158,7 +158,7 @@ class BookAdminControllerTest {
         mockMvc.perform(post("/admin/aladin/register")
                         .flashAttr("bookCreateRequest", request))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerBook"))
+                .andExpect(view().name("book/admin/registerBook"))
                 .andExpect(model().attributeExists("bookCreateRequest"))
                 .andExpect(model().attribute("bookCreateRequest", request));
     }

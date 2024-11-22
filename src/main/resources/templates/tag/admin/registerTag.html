@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 태그 등록</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .content-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 폼 스타일 */
+        .form-container {
+            flex-grow: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            color: #2c3e50;
+        }
+
+        .form-container p {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #7f8c8d;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1em;
+            color: #2c3e50;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            border-color: #000000;
+            outline: none;
+        }
+
+        .form-container button {
+            width: 100%;
+            padding: 12px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .form-container button:hover {
+            background-color: #333333;
+        }
+
+        .form-container .back-button {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            padding: 12px;
+            background-color: #7f8c8d;
+            color: #ffffff;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-container .back-button:hover {
+            background-color: #95a5a6;
+        }
+
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        /* 레이아웃 */
+        .admin-page-container {
+            display: flex;
+        }
+
+        #content-area {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+
+            .form-container h3 {
+                font-size: 1.5em;
+            }
+
+            .form-container button, .form-container .back-button {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+
+<main class="admin-page-container">
+    <!-- 사이드바 -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 폼 섹션 -->
+    <section id="content-area">
+        <h3 class="content-title">태그 등록</h3>
+        <p class="content-description">태그를 등록할 수 있습니다.</p>
+
+        <div class="form-container">
+
+            <div th:if="${success}">
+                <p class="success-message">태그가 성공적으로 등록되었습니다.</p>
+            </div>
+            <div th:if="${error}">
+                <p class="error-message" th:text="${error}"></p>
+            </div>
+            <form th:action="@{/admin/tags}" th:object="${tagCreateRequest}" method="post">
+                <!-- 태그 이름 필드 -->
+                <div class="form-group">
+                    <label for="name">태그 이름</label>
+                    <input type="text" th:field="*{name}" id="name" placeholder="태그 이름을 입력하세요" required />
+                    <!-- Validation Error Message -->
+                    <div th:if="${#fields.hasErrors('name')}" class="error-message">
+                        <p th:errors="*{name}">태그 이름 오류</p>
+                    </div>
+                </div>
+
+                <!-- 등록 버튼 -->
+                <button type="submit">등록하기</button>
+                <!-- 목록으로 돌아가기 버튼 -->
+                <a th:href="@{/admin/tags}" class="back-button">목록으로 돌아가기</a>
+            </form>
+        </div>
+    </section>
+</main>
+
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>

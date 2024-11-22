@@ -98,7 +98,7 @@ public class CategoryAdminController {
             model.addAttribute("error", "카테고리 수정에 실패했습니다.");
             model.addAttribute("CategoryUpdateRequest", request);
         }
-        return "admin/updateCategory";
+        return "category/admin/updateCategory";
     }
 
     @Admin

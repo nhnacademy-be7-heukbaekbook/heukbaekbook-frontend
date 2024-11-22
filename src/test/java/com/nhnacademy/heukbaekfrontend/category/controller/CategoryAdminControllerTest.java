@@ -118,7 +118,7 @@ class CategoryAdminControllerTest {
                         .param("parentId", "0")
                         .param("name", "Updated Category"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateCategory"))
+                .andExpect(view().name("category/admin/updateCategory"))
                 .andExpect(model().attributeExists("success"));
     }
 

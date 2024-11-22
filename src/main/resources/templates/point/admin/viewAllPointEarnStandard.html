@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>포인트 규정 목록 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 테이블 스타일 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        thead th {
+            background-color: #f5f5f5;
+            color: #333;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 2px solid #ddd;
+        }
+
+        tbody td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+            vertical-align: middle;
+        }
+
+        /* 행 교차 색상 */
+        tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #fff;
+        }
+
+        /* 행 호버 효과 */
+        tbody tr:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        /* 버튼 스타일 */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 8px 10px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            text-decoration: none;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-button:hover {
+            background-color: #333;
+            transform: scale(1.01);
+        }
+
+        /* 추가 버튼 스타일 */
+        .add-standard-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1em;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .add-standard-button:hover {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+<div class="admin-page-container">
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+    <section id="content-area">
+        <h3 class="content-title">포인트 적립 규정 목록</h3>
+        <p class="content-description">포인트 적립 규정 목록입니다.</p>
+
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a th:href="@{/admin/point-earn-standard}" class="add-standard-button">포인트 적립 규정 추가하기</a>
+        </div>
+
+        <section th:each="entry : ${standardsByEvent}" class="list-container">
+            <h3 th:text="'포인트 규정 - ' + ${entry.key.displayName}"></h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>규정 ID</th>
+                    <th>이름</th>
+                    <th>포인트</th>
+                    <th>포인트 유형</th>
+                    <th>적립 시작일</th>
+                    <th>적립 종료일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="standard : ${entry.value}">
+                    <td th:text="${standard.id}"></td>
+                    <td th:text="${standard.name}"></td>
+                    <td th:text="${standard.point}"></td>
+                    <td th:text="${standard.pointEarnType}"></td>
+                    <td th:text="${standard.pointEarnStart != null ? #temporals.format(standard.pointEarnStart, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                    <td th:text="${standard.pointEarnEnd != null ? #temporals.format(standard.pointEarnEnd, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                    <td>
+                        <div class="action-buttons">
+                            <a th:href="@{/admin/point-earn-standard/{id}/edit(id=${standard.id})}" class="action-button modify">수정</a>
+                            <form th:action="@{/admin/point-earn-standard/{id}(id=${standard.id})}" method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="delete">
+                                <button type="button" class="action-button delete" th:onclick="|confirm('정말 삭제하시겠습니까?') ? this.closest('form').submit() : false|">삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(entry.value)}">
+                    <td colspan="7">등록된 규정이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+            <br />
+        </section>
+    </section>
+</div>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>

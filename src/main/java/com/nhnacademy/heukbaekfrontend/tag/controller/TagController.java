@@ -36,7 +36,7 @@ public class TagController {
     @GetMapping("/register")
     public String registerTag(Model model) {
         model.addAttribute("tagCreateRequest", new TagCreateRequest(""));
-        return "admin/registerTag";
+        return "tag/admin/registerTag";
     }
 
     @Admin
@@ -50,7 +50,7 @@ public class TagController {
             model.addAttribute("error", "태그 등록에 실패했습니다.");
             model.addAttribute("tagCreateRequest", request);
         }
-        return "admin/registerTag";
+        return "tag/admin/registerTag";
     }
 
     @Admin
@@ -64,7 +64,7 @@ public class TagController {
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("sort", pageable.getSort().toString());
-        return "admin/viewAllTags";
+        return "tag/admin/viewAllTags";
     }
 
     @Admin
@@ -79,7 +79,7 @@ public class TagController {
 
         model.addAttribute("tagUpdateRequest", request);
         model.addAttribute("tagId", tagId);
-        return "admin/updateTag";
+        return "tag/admin/updateTag";
     }
 
     @Admin
@@ -94,7 +94,7 @@ public class TagController {
             model.addAttribute("error", "태그 수정에 실패했습니다.");
             model.addAttribute("tagUpdateRequest", request);
         }
-        return "admin/updateTag";
+        return "tag/admin/updateTag";
     }
 
     @Admin

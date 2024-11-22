@@ -2,8 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>흑백문고 - 카테고리 등록</title>
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <title>흑백문고 - 출판사 수정</title>
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <style>
@@ -35,8 +34,7 @@
             font-weight: bold;
             color: #34495e;
         }
-        .form-group input[type="text"],
-        .form-group select {
+        .form-group input[type="text"] {
             width: 100%;
             padding: 12px;
             border: 1px solid #bdc3c7;
@@ -45,8 +43,7 @@
             font-size: 1em;
             color: #2c3e50;
         }
-        .form-group input[type="text"]:focus,
-        .form-group select:focus {
+        .form-group input[type="text"]:focus {
             border-color: #000000;
             outline: none;
         }
@@ -98,49 +95,39 @@
 <!-- Header -->
 <header th:replace="~{admin/layout :: header}"></header>
 
-<main class="admin-page-container">
+<div class="admin-page-container">
     <!-- Admin Sidebar -->
     <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
 
     <!-- Form Section -->
-    <section id="content-area">
-        <h3 class="content-title">카테고리 등록</h3>
-        <p class="content-description">카테고리를 등록할 수 있습니다.</p>
+    <section id="content-area" class="form-container">
+        <h3 class="content-title">출판사 수정</h3>
+        <p class="content-description">출판사를 수정할 수 있습니다.</p>
 
-        <div class="form-container">
-            <div th:if="${success}">
-                <p class="success-message">카테고리가 성공적으로 등록되었습니다.</p>
-            </div>
-            <div th:if="${error}">
-                <p class="error-message" th:text="${error}"></p>
-            </div>
-            <form th:action="@{/admin/categories/register}" th:object="${categoryCreateRequest}" method="post">
-                <!-- 카테고리 이름 -->
-                <div class="form-group">
-                    <label for="name">카테고리 이름</label>
-                    <input type="text" th:field="*{name}" id="name" placeholder="카테고리 이름을 입력하세요" required />
-                    <div th:if="${#fields.hasErrors('name')}" class="error-message">
-                        <p th:errors="*{name}"></p>
-                    </div>
-                </div>
-                <!-- 상위 카테고리 -->
-                <div class="form-group">
-                    <label for="parentId">상위 카테고리</label>
-                    <select th:field="*{parentId}" id="parentId">
-                        <option value="">없음</option>
-                        <option th:each="category : ${allCategories?.content}"
-                                th:value="${category.id}"
-                                th:text="${category.name}">
-                        </option>
-                    </select>
-                </div>
-                <!-- 등록 버튼 -->
-                <button type="submit">등록</button>
-                <a th:href="@{/admin/categories}" class="back-button">목록으로 돌아가기</a>
-            </form>
+        <div th:if="${success}">
+            <p class="success-message">출판사가 성공적으로 수정되었습니다.</p>
         </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}"></p>
+        </div>
+        <form th:action="@{/admin/publishers/{publisher-id}(publisher-id=${publisherId})}"
+              th:object="${publisherUpdateRequest}"
+              method="post">
+            <input type="hidden" name="_method" value="PUT"/>
+            <!-- 출판사 이름 -->
+            <div class="form-group">
+                <label for="name">출판사 이름</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="출판사 이름을 입력하세요" required />
+                <div th:if="${#fields.hasErrors('name')}" class="error-message">
+                    <p th:errors="*{name}"></p>
+                </div>
+            </div>
+            <!-- 수정 버튼 -->
+            <button type="submit">수정하기</button>
+            <a th:href="@{/admin/publishers}" class="back-button">목록으로 돌아가기</a>
+        </form>
     </section>
-</main>
+</div>
 
 <!-- Footer -->
 <footer th:replace="~{admin/layout :: footer}"></footer>
