@@ -50,7 +50,8 @@ public class MemberAddressController {
                                    BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
-            return "redirect:/members/mypage/addresses";
+            redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
+            return REDIRECT_MY_PAGE_ADDRESS;
         }
         memberAddressService.addMemberAddress(memberAddressRequest);
 
@@ -59,7 +60,7 @@ public class MemberAddressController {
 
     @Member
     @PutMapping("/{addressId}")
-    public String updateMemberAddress(@PathVariable Long addressId, @ModelAttribute MemberAddressRequest memberAddressRequest) {
+    public String updateMemberAddress(@PathVariable Long addressId, @Valid @ModelAttribute MemberAddressRequest memberAddressRequest) {
         memberAddressService.updateMemberAddress(addressId, memberAddressRequest);
         return REDIRECT_MY_PAGE_ADDRESS;
     }
