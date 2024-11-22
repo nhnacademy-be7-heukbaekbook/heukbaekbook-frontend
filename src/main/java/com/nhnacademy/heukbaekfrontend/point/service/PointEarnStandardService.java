@@ -13,5 +13,6 @@ public interface PointEarnStandardService {
 
     void deletePointEarnStandard(Long id);
 
-    PointEarnStandardResponse updatePointEarnStandard(Long id, PointEarnStandardRequest pointEarnStandardRequest);
+    PointEarnStandardResponse
+    updatePointEarnStandard(Long id, PointEarnStandardRequest pointEarnStandardRequest);
 }

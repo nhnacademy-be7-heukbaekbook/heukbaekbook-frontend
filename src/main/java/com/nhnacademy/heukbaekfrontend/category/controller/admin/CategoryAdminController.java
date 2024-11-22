@@ -40,7 +40,7 @@ public class CategoryAdminController {
     ) {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
         model.addAttribute("categories", categories);
-        return "admin/viewAllCategories";
+        return "category/admin/viewAllCategories";
     }
 
     @Admin
@@ -49,7 +49,7 @@ public class CategoryAdminController {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
         model.addAttribute("categoryCreateRequest", new CategoryCreateRequest(0L, ""));
         model.addAttribute("allCategories", categories);
-        return "admin/registerCategory";
+        return "category/admin/registerCategory";
     }
 
     @Admin
@@ -63,7 +63,7 @@ public class CategoryAdminController {
             model.addAttribute("error", "도서 등록에 실패했습니다.");
             model.addAttribute("bookCreateRequest", request);
         }
-        return "admin/registerCategory";
+        return "category/admin/registerCategory";
     }
 
     @Admin
@@ -81,7 +81,7 @@ public class CategoryAdminController {
         model.addAttribute("categoryUpdateRequest", request);
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("allCategories", allCategories);
-        return "admin/updateCategory";
+        return "category/admin/updateCategory";
     }
 
 
@@ -98,7 +98,7 @@ public class CategoryAdminController {
             model.addAttribute("error", "카테고리 수정에 실패했습니다.");
             model.addAttribute("CategoryUpdateRequest", request);
         }
-        return "admin/updateCategory";
+        return "category/admin/updateCategory";
     }
 
     @Admin

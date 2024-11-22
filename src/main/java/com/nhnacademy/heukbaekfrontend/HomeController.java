@@ -64,7 +64,10 @@ public class HomeController {
 
 
         ModelAndView modelAndView = new ModelAndView("home"); // 기존 home.html 사용
-        modelAndView.addObject("page", page).addObject("isLogin", isLogin).addObject("categories", categories);;
+        modelAndView
+                .addObject("page", page)
+                .addObject("isLogin", isLogin)
+                .addObject("categories", categories);;
         return modelAndView;
     }
 

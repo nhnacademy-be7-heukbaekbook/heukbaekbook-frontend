@@ -40,7 +40,7 @@ public class BookAdminController {
     @Admin
     @GetMapping("/aladin")
     public String searchBooks() {
-        return "admin/searchBookFromAladin";
+        return "book/admin/searchBookFromAladin";
     }
 
     @Admin
@@ -48,14 +48,14 @@ public class BookAdminController {
     public String searchBooks(@RequestParam("title") String title, Model model) {
         List<BookSearchResponse> books = bookService.searchBooks(title);
         model.addAttribute("responses", books);
-        return "admin/searchBookFromAladin";
+        return "book/admin/searchBookFromAladin";
     }
 
     @Admin
     @PostMapping("/aladin/register")
     public String selectBookForRegistration(@ModelAttribute BookCreateRequest request, Model model) {
         model.addAttribute("bookCreateRequest", request);
-        return "admin/registerBook";
+        return "book/admin/registerBook";
     }
 
     @Admin
@@ -75,7 +75,15 @@ public class BookAdminController {
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
 
-        return "admin/viewAllBooks";
+        return "book/admin/viewAllBooks";
+    }
+
+    @Admin
+    @GetMapping("/books/{book-id}")
+    public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
+        BookDetailResponse bookDetail = bookService.getBookById(bookId);
+        model.addAttribute("book", bookDetail);
+        return "book/admin/bookDetail";
     }
 
     @Admin
@@ -84,7 +92,7 @@ public class BookAdminController {
         model.addAttribute("bookCreateRequest", new BookCreateRequest(
                 "", "", "", "", "", "", false, 0, 0, 0.0f, "", "", ""
         ));
-        return "admin/registerBook";
+        return "book/admin/registerBook";
     }
 
     @Admin
@@ -98,11 +106,11 @@ public class BookAdminController {
             model.addAttribute("error", "도서 등록에 실패했습니다.");
             model.addAttribute("bookCreateRequest", request);
         }
-        return "admin/registerBook";
+        return "book/admin/registerBook";
     }
 
     @Admin
-    @GetMapping("/books/{book-id}")
+    @GetMapping("/books/{book-id}/edit")
     public String updateBookForm(@PathVariable(name = "book-id") Long bookId, Model model) {
         BookDetailResponse bookDetail = bookService.getBookById(bookId);
         List<String> categories = categoryService.getCategoryPaths();
@@ -130,7 +138,7 @@ public class BookAdminController {
         model.addAttribute("bookId", bookId);
         model.addAttribute("categoryPaths", categories);
         model.addAttribute("availableTags", tags);
-        return "admin/updateBook";
+        return "book/admin/updateBook";
     }
 
     @Admin
@@ -149,7 +157,7 @@ public class BookAdminController {
             model.addAttribute("error", "도서 수정에 실패했습니다.");
             model.addAttribute("bookUpdateRequest", request);
         }
-        return "admin/updateBook";
+        return "book/admin/updateBook";
     }
 
     @Admin

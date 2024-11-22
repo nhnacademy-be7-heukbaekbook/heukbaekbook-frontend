@@ -66,9 +66,11 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<Book> getBooksByBookIdsFromCart(String sessionId, List<Long> bookIds) {
+        log.info("sessionId : {}, bookIds : {}", sessionId, bookIds);
         Map<String, Integer> entries = hashOperations.entries(sessionId);
 
         List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+        log.info("booksSummary: {}", booksSummary);
 
         return booksSummary.stream()
                 .map(bookSummaryResponse -> {

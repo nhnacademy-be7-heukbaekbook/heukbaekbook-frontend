@@ -34,7 +34,7 @@ public class ContributorController {
     @GetMapping("/register")
     public String registerContributor(Model model) {
         model.addAttribute("contributorCreateRequest", new ContributorCreateRequest("", ""));
-        return "admin/registerContributor";
+        return "contributor/admin/registerContributor";
     }
 
     @Admin
@@ -48,7 +48,7 @@ public class ContributorController {
             model.addAttribute("error", "기여자 등록에 실패했습니다.");
             model.addAttribute("contributorCreateRequest", request);
         }
-        return "admin/registerContributor";
+        return "contributor/admin/registerContributor";
     }
 
     @Admin
@@ -62,7 +62,7 @@ public class ContributorController {
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("size", pageable.getPageSize());
         model.addAttribute("sort", pageable.getSort().toString());
-        return "admin/viewAllContributor";
+        return "contributor/admin/viewAllContributor";
     }
 
     @Admin
@@ -78,7 +78,7 @@ public class ContributorController {
 
         model.addAttribute("contributorUpdateRequest", request);
         model.addAttribute("contributorId", contributorId);
-        return "admin/updateContributor";
+        return "contributor/admin/updateContributor";
     }
 
     @Admin
@@ -93,7 +93,7 @@ public class ContributorController {
             model.addAttribute("error", "기여자 수정에 실패했습니다.");
             model.addAttribute("contributorUpdateRequest", request);
         }
-        return "admin/updateContributor";
+        return "contributor/admin/updateContributor";
     }
 
     @Admin

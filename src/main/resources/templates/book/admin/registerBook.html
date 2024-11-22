@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 등록</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <style>
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus {
+            border-color: #000;
+            outline: none;
+        }
+        .form-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .form-button:hover {
+            background-color: #333333;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 24px;
+            background-color: #2980b9;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #1f618d;
+        }
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+
+<!-- Header -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<main class="admin-page-container">
+    <!-- Admin Sidebar -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- Form Section -->
+    <section id="content-area">
+        <h3 class="content-title">도서 등록</h3>
+        <p class="content-description">도서를 등록할 수 있습니다.</p>
+
+        <div th:if="${success}">
+            <p class="success-message">도서가 성공적으로 등록되었습니다.</p>
+        </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}">에러 메시지</p>
+        </div>
+        <form th:action="@{/admin/books/register}" th:object="${bookCreateRequest}" method="POST">
+            <!-- 제목 -->
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" th:field="*{title}" id="title" required />
+            </div>
+            <!-- 목차 -->
+            <div class="form-group">
+                <label for="index">목차</label>
+                <textarea th:field="*{index}" id="index" style="display:none;"></textarea>
+                <div id="indexEditor"></div>
+            </div>
+            <!-- 설명 -->
+            <div class="form-group">
+                <label for="description">설명</label>
+                <textarea th:field="*{description}" id="description" style="display:none;"></textarea>
+                <div id="descriptionEditor"></div>
+            </div>
+            <!-- 출판일 -->
+            <div class="form-group">
+                <label for="publishedAt">출판일</label>
+                <input type="text" th:field="*{publishedAt}" id="publishedAt" />
+            </div>
+            <!-- ISBN -->
+            <div class="form-group">
+                <label for="isbn">ISBN</label>
+                <input type="text" th:field="*{isbn}" id="isbn" />
+            </div>
+            <!-- 이미지 URL -->
+            <div class="form-group">
+                <label for="imageUrl">이미지 URL</label>
+                <input type="text" th:field="*{imageUrl}" id="imageUrl" />
+            </div>
+            <!-- 포장 가능 여부 -->
+            <div class="form-group">
+                <label>
+                    포장 가능 여부
+                    <input type="hidden" name="_isPackable" value="false">
+                    <input type="checkbox" th:field="*{isPackable}" id="isPackable" value="true"/>
+                </label>
+            </div>
+            <!-- 재고 -->
+            <div class="form-group">
+                <label for="stock">재고</label>
+                <input type="number" th:field="*{stock}" id="stock" min="0" />
+            </div>
+            <!-- 정가 -->
+            <div class="form-group">
+                <label for="standardPrice">정가</label>
+                <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+            </div>
+            <!-- 할인율 -->
+            <div class="form-group">
+                <label for="discountRate">할인율(%)</label>
+                <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+            </div>
+            <!-- 출판사 -->
+            <div class="form-group">
+                <label for="publisher">출판사</label>
+                <input type="text" th:field="*{publisher}" id="publisher" />
+            </div>
+            <!-- 카테고리 -->
+            <div class="form-group">
+                <label for="categories">카테고리</label>
+                <input type="text" th:field="*{categories}" id="categories" />
+            </div>
+            <!-- 저자 -->
+            <div class="form-group">
+                <label for="authors">저자</label>
+                <input type="text" th:field="*{authors}" id="authors"/>
+            </div>
+            <!-- 제출 버튼 -->
+            <button type="submit" class="form-button">등록</button>
+            <a th:href="@{/admin/books}" class="back-button">목록으로 돌아가기</a>
+        </form>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+<script>
+    // Toast UI Editor 초기화
+    const indexEditor = new toastui.Editor({
+        el: document.querySelector('#indexEditor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: document.getElementById('index').value,
+        events: {
+            change: function() {
+                document.getElementById('index').value = indexEditor.getHTML();
+            }
+        }
+    });
+
+    const descriptionEditor = new toastui.Editor({
+        el: document.querySelector('#descriptionEditor'),
+        height: '300px',
+        initialEditType: 'wysiwyg',
+        previewStyle: 'vertical',
+        initialValue: document.getElementById('description').value,
+        events: {
+            change: function() {
+                document.getElementById('description').value = descriptionEditor.getHTML();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

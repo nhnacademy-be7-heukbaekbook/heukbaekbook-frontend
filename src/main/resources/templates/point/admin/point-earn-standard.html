@@ -5,37 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>포인트 규정 관리 - 흑백문고</title>
     <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
     <style>
-        body {
-            background-color: #f4f4f4;
-            color: #333;
-            font-family: 'Noto Sans KR', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-
-        header, footer {
+        .header, .footer {
             background-color: #000;
             color: #fff;
             padding: 10px 20px;
         }
 
-        main {
+        .admin-page-container {
+            display: flex;
+            width: 100%;
+        }
+
+        .main-content {
+            flex-grow: 1;
             padding: 20px;
             background-color: #fff;
             border-radius: 10px;
-            margin: 20px auto;
-            max-width: 1600px;
-            min-width: 50%;
+            margin: 20px;
+            max-width: calc(100% - 250px);
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h2, h3 {
-            text-align: center;
-            color: #000;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
         }
 
         .form-container, .list-container {
@@ -44,16 +34,6 @@
             border-radius: 10px;
             margin-bottom: 50px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .success-message {
-            background-color: #d4edda;
-            color: #155724;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: bold;
         }
 
         label {
@@ -113,7 +93,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: background-color 0.3s;
             margin: 0 5px;
             display: inline-block;
             width: 60px;
@@ -131,7 +110,6 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 0.8rem;
-            transition: background-color 0.3s;
             margin: 0 5px;
             display: inline-block;
             width: 60px;
@@ -160,7 +138,7 @@
             border: 1px solid #888;
             border-radius: 10px;
             width: 50%;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
 
         .close-button {
@@ -202,172 +180,180 @@
     </style>
 </head>
 <body>
-<header th:replace="~{admin/layout :: header}"></header>
-<main>
-    <h2>포인트 규정 관리</h2>
+<div class="header" th:replace="~{admin/layout :: header}"></div>
 
-    <!-- 포인트 규정 등록 -->
-    <section class="form-container">
-        <h3>포인트 규정 등록</h3>
-        <form th:action="@{/admin/point-earn-standard}" method="post">
-            <label for="name">규정 이름</label>
-            <input type="text" id="name" name="name" placeholder="규정 이름" required>
+<div class="admin-page-container">
+    <!-- 사이드바 -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
 
-            <label for="point">포인트</label>
-            <input type="number" id="point" name="point" placeholder="포인트" min="0" required>
+    <!-- 메인 콘텐츠 -->
+    <section id="content-area">
+        <h3 class="content-title">포인트 적립 규정 관리</h3>
+        <p class="content-description">포인트 적립 기준을 관리합니다.</p>
 
-            <label for="triggerEvent">포인트 적립 적용 시점</label>
-            <select id="triggerEvent" name="pointEarnEventId" required>
-                <option th:each="event : ${triggerEvents}" th:value="${event.id}" th:text="${event.displayName}"></option>
-            </select>
+        <!-- 등록 섹션 -->
+        <section class="form-container">
+            <h3>포인트 규정 등록</h3>
+            <form th:action="@{/admin/point-earn-standard}" method="post">
+                <label for="name">규정 이름</label>
+                <input type="text" id="name" name="name" placeholder="규정 이름" required>
 
-            <label for="pointEarnType">포인트 적립 유형</label>
-            <select id="pointEarnType" name="pointEarnType" required>
-                <option th:each="type : ${pointEarnTypes}" th:value="${type}" th:text="${type}"></option>
-            </select>
+                <label for="point">포인트</label>
+                <input type="number" id="point" name="point" placeholder="포인트" min="0" required>
 
-            <label for="pointEarnStart">적립 시작일</label>
-            <input type="datetime-local" id="pointEarnStart" name="pointEarnStart" required>
-
-            <label for="pointEarnEnd">적립 종료일</label>
-            <input type="datetime-local" id="pointEarnEnd" name="pointEarnEnd">
-
-            <button type="submit">등록</button>
-        </form>
-    </section>
-
-    <!-- EventCode 별 포인트 규정 리스트 -->
-    <section th:each="entry : ${standardsByEvent}" class="list-container">
-        <h3 th:text="'포인트 규정 - ' + ${entry.key.displayName}"></h3>
-        <table>
-            <thead>
-            <tr>
-                <th>규정 ID</th>
-                <th>이름</th>
-                <th>포인트</th>
-                <th>포인트 유형</th>
-                <th>적립 시작일</th>
-                <th>적립 종료일</th>
-                <th>관리</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr th:each="standard : ${entry.value}">
-                <td th:text="${standard.id}"></td>
-                <td th:text="${standard.name}"></td>
-                <td th:text="${standard.point}"></td>
-                <td th:text="${standard.pointEarnType}"></td>
-                <td th:text="${standard.pointEarnStart != null ? #temporals.format(standard.pointEarnStart, 'yyyy-MM-dd HH:mm') : '-'}"></td>
-                <td th:text="${standard.pointEarnEnd != null ? #temporals.format(standard.pointEarnEnd, 'yyyy-MM-dd HH:mm') : '-'}"></td>
-                <td>
-                    <button type="button" class="action-button modify"
-                            th:data-id="${standard.id}"
-                            th:data-name="${standard.name}"
-                            th:data-point="${standard.point}"
-                            th:data-point-type="${standard.pointEarnType}"
-                            th:data-point-earn-event-id="${standard.eventCode.id}"
-                            th:data-start="${standard.pointEarnStart}"
-                            th:data-end="${standard.pointEarnEnd}"
-                            onclick="openEditModal(this)">
-                        수정
-                    </button>
-                    <form th:action="@{/admin/point-earn-standard/{id}(id=${standard.id})}"
-                          th:id="'deleteForm-' + ${standard.id}" method="post" style="display:inline;">
-                        <input type="hidden" name="_method" value="delete">
-                        <button type="button" class="action-button delete" th:onclick="|confirmDeletion(${standard.id})|">삭제</button>
-                    </form>
-                </td>
-            </tr>
-            <tr th:if="${#lists.isEmpty(entry.value)}">
-                <td colspan="7">등록된 규정이 없습니다.</td>
-            </tr>
-            </tbody>
-        </table>
-    </section>
-
-    <!-- 수정 모달 -->
-    <div id="editModal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeModal()">&times;</span>
-            <h3>포인트 규정 수정</h3>
-            <form id="editForm" method="post">
-                <input type="hidden" name="_method" value="put">
-                <input type="hidden" id="edit-id" name="id">
-
-                <label for="edit-name">규정 이름</label>
-                <input type="text" id="edit-name" name="name" placeholder="규정 이름" required>
-
-                <label for="edit-point">포인트</label>
-                <input type="number" id="edit-point" name="point" placeholder="포인트" min="0" required>
-
-                <label for="edit-triggerEvent">포인트 적립 적용 시점</label>
-                <select id="edit-triggerEvent" name="pointEarnEventId" required>
+                <label for="triggerEvent">포인트 적립 적용 시점</label>
+                <select id="triggerEvent" name="pointEarnEventId" required>
                     <option th:each="event : ${triggerEvents}" th:value="${event.id}" th:text="${event.displayName}"></option>
                 </select>
 
-                <label for="edit-pointEarnType">포인트 적립 유형</label>
-                <select id="edit-pointEarnType" name="pointEarnType" required>
+                <label for="pointEarnType">포인트 적립 유형</label>
+                <select id="pointEarnType" name="pointEarnType" required>
                     <option th:each="type : ${pointEarnTypes}" th:value="${type}" th:text="${type}"></option>
                 </select>
 
-                <label for="edit-start">적립 시작일</label>
-                <input type="datetime-local" id="edit-start" name="pointEarnStart" required>
+                <label for="pointEarnStart">적립 시작일</label>
+                <input type="datetime-local" id="pointEarnStart" name="pointEarnStart" required>
 
-                <label for="edit-end">적립 종료일</label>
-                <input type="datetime-local" id="edit-end" name="pointEarnEnd">
+                <label for="pointEarnEnd">적립 종료일</label>
+                <input type="datetime-local" id="pointEarnEnd" name="pointEarnEnd">
 
-                <button type="submit">저장</button>
-                <button type="button" onclick="closeModal()">취소</button>
+                <button type="submit">등록</button>
             </form>
-        </div>
+        </section>
+
+        <!-- 리스트 섹션 -->
+        <section th:each="entry : ${standardsByEvent}" class="list-container">
+            <h3 th:text="'포인트 규정 - ' + ${entry.key.displayName}"></h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>규정 ID</th>
+                    <th>이름</th>
+                    <th>포인트</th>
+                    <th>포인트 유형</th>
+                    <th>적립 시작일</th>
+                    <th>적립 종료일</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="standard : ${entry.value}">
+                    <td th:text="${standard.id}"></td>
+                    <td th:text="${standard.name}"></td>
+                    <td th:text="${standard.point}"></td>
+                    <td th:text="${standard.pointEarnType}"></td>
+                    <td th:text="${standard.pointEarnStart != null ? #temporals.format(standard.pointEarnStart, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                    <td th:text="${standard.pointEarnEnd != null ? #temporals.format(standard.pointEarnEnd, 'yyyy-MM-dd HH:mm') : '-'}"></td>
+                    <td>
+                        <button type="button" class="action-button modify"
+                                th:data-id="${standard.id}"
+                                th:data-name="${standard.name}"
+                                th:data-point="${standard.point}"
+                                th:data-point-type="${standard.pointEarnType}"
+                                th:data-point-earn-event-id="${standard.eventCode.id}"
+                                th:data-start="${standard.pointEarnStart}"
+                                th:data-end="${standard.pointEarnEnd}"
+                                onclick="openEditModal(this)">
+                            수정
+                        </button>
+                        <form th:action="@{/admin/point-earn-standard/{id}(id=${standard.id})}"
+                              th:id="'deleteForm-' + ${standard.id}" method="post" style="display:inline;">
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="button" class="action-button delete" th:onclick="|confirmDeletion(${standard.id})|">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(entry.value)}">
+                    <td colspan="7">등록된 규정이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </section>
+</div>
+
+<!-- 수정 모달 -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h3>포인트 규정 수정</h3>
+        <form id="editForm" method="post">
+            <input type="hidden" name="_method" value="put">
+            <input type="hidden" id="edit-id" name="id">
+
+            <label for="edit-name">규정 이름</label>
+            <input type="text" id="edit-name" name="name" placeholder="규정 이름" required>
+
+            <label for="edit-point">포인트</label>
+            <input type="number" id="edit-point" name="point" placeholder="포인트" min="0" required>
+
+            <label for="edit-triggerEvent">포인트 적립 적용 시점</label>
+            <select id="edit-triggerEvent" name="pointEarnEventId" required>
+                <option th:each="event : ${triggerEvents}" th:value="${event.id}" th:text="${event.displayName}"></option>
+            </select>
+
+            <label for="edit-pointEarnType">포인트 적립 유형</label>
+            <select id="edit-pointEarnType" name="pointEarnType" required>
+                <option th:each="type : ${pointEarnTypes}" th:value="${type}" th:text="${type}"></option>
+            </select>
+
+            <label for="edit-start">적립 시작일</label>
+            <input type="datetime-local" id="edit-start" name="pointEarnStart" required>
+
+            <label for="edit-end">적립 종료일</label>
+            <input type="datetime-local" id="edit-end" name="pointEarnEnd">
+
+            <button type="submit">저장</button>
+            <button type="button" onclick="closeModal()">취소</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        function confirmDeletion(id) {
-            if (confirm("정말 삭제하시겠습니까?")) {
-                document.getElementById("deleteForm-" + id).submit();
-            }
+<div class="footer" th:replace="~{admin/layout :: footer}"></div>
+
+<script>
+    function confirmDeletion(id) {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            document.getElementById("deleteForm-" + id).submit();
         }
+    }
 
-        function openEditModal(button) {
-            const id = button.getAttribute("data-id");
-            const name = button.getAttribute("data-name");
-            const point = button.getAttribute("data-point");
-            const pointType = button.getAttribute("data-point-type");
-            const pointEarnEventId = button.getAttribute("data-point-earn-event-id");
-            const start = button.getAttribute("data-start");
-            const end = button.getAttribute("data-end");
+    function openEditModal(button) {
+        const id = button.getAttribute("data-id");
+        const name = button.getAttribute("data-name");
+        const point = button.getAttribute("data-point");
+        const pointType = button.getAttribute("data-point-type");
+        const pointEarnEventId = button.getAttribute("data-point-earn-event-id");
+        const start = button.getAttribute("data-start");
+        const end = button.getAttribute("data-end");
 
-            const modal = document.getElementById("editModal");
-            const form = document.getElementById("editForm");
+        const modal = document.getElementById("editModal");
+        const form = document.getElementById("editForm");
 
-            form.action = "/admin/point-earn-standard/" + id;
+        form.action = "/admin/point-earn-standard/" + id;
 
-            document.getElementById("edit-id").value = id;
-            document.getElementById("edit-name").value = name;
-            document.getElementById("edit-point").value = point;
-            document.getElementById("edit-triggerEvent").value = pointEarnEventId;
-            document.getElementById("edit-pointEarnType").value = pointType;
-            document.getElementById("edit-start").value = start ? new Date(start).toISOString().slice(0, 16) : '';
-            document.getElementById("edit-end").value = end ? new Date(end).toISOString().slice(0, 16) : '';
+        document.getElementById("edit-id").value = id;
+        document.getElementById("edit-name").value = name;
+        document.getElementById("edit-point").value = point;
+        document.getElementById("edit-triggerEvent").value = pointEarnEventId;
+        document.getElementById("edit-pointEarnType").value = pointType;
+        document.getElementById("edit-start").value = start ? new Date(start).toISOString().slice(0, 16) : '';
+        document.getElementById("edit-end").value = end ? new Date(end).toISOString().slice(0, 16) : '';
 
-            modal.style.display = "block";
-        }
+        modal.style.display = "block";
+    }
 
+    function closeModal() {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "none";
+    }
 
-        function closeModal() {
-            const modal = document.getElementById("editModal");
+    window.onclick = function(event) {
+        const modal = document.getElementById("editModal");
+        if (event.target === modal) {
             modal.style.display = "none";
         }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById("editModal");
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
-</main>
-<footer th:replace="~{admin/layout :: footer}"></footer>
+    }
+</script>
 </body>
 </html>
