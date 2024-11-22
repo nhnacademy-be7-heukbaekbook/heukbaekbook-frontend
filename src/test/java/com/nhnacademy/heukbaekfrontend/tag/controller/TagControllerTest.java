@@ -56,7 +56,7 @@ class TagControllerTest {
     void testRegisterTagForm() throws Exception {
         mockMvc.perform(get("/admin/tags/register"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerTag"))
+                .andExpect(view().name("tag/admin/registerTag"))
                 .andExpect(model().attributeExists("tagCreateRequest"));
     }
 
@@ -69,7 +69,7 @@ class TagControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("name", "New Tag"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/registerTag"))
+                .andExpect(view().name("tag/admin/registerTag"))
                 .andExpect(model().attributeExists("success"));
     }
 
@@ -84,7 +84,7 @@ class TagControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/viewAllTags"))
+                .andExpect(view().name("tag/admin/viewAllTags"))
                 .andExpect(model().attributeExists("tags"));
     }
 
@@ -95,7 +95,7 @@ class TagControllerTest {
 
         mockMvc.perform(get("/admin/tags/{tag-id}/update", 1L))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateTag"))
+                .andExpect(view().name("tag/admin/updateTag"))
                 .andExpect(model().attributeExists("tagUpdateRequest"))
                 .andExpect(model().attributeExists("tagId"));
     }
@@ -109,7 +109,7 @@ class TagControllerTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .param("name", "Updated Tag"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("admin/updateTag"))
+                .andExpect(view().name("tag/admin/updateTag"))
                 .andExpect(model().attributeExists("success"));
     }
 

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 수정</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Toast UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .admin-page-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1em;
+            color: #2c3e50;
+        }
+
+        /* 버튼 스타일 */
+        .form-button, .remove-button, .back-button {
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        /* 주요 버튼 (예: 수정하기, 추가 버튼) */
+        .form-button {
+            background-color: #000;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .form-button:hover {
+            background-color: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        /* 삭제 버튼 */
+        .remove-button {
+            background-color: #e74c3c;
+            color: #fff;
+            box-shadow: 0 4px 6px rgba(231, 76, 60, 0.1);
+        }
+        .remove-button:hover {
+            background-color: #c0392b;
+            transform: scale(1.05);
+            box-shadow: 0 6px 10px rgba(192, 57, 43, 0.2);
+        }
+        /* 돌아가기 버튼 */
+        .back-button {
+            background-color: #bdc3c7;
+            color: #2c3e50;
+            box-shadow: 0 4px 6px rgba(189, 195, 199, 0.1);
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(149, 165, 166, 0.2);
+        }
+
+        .dynamic-field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dynamic-field select, .dynamic-field input {
+            flex: 1;
+            margin-right: 10px;
+        }
+    </style>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Toast UI Editor JS -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+<div class="admin-page-container">
+    <!-- Admin Sidebar -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- Form Section -->
+    <section id="content-area">
+        <h3 class="content-title">도서 수정</h3>
+        <p class="content-description">도서를 수정할 수 있습니다.</p>
+
+        <div th:if="${success}">
+            <p class="success-message">도서가 성공적으로 수정되었습니다.</p>
+        </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}">에러 메시지</p>
+        </div>
+        <form th:action="@{/admin/books/{book-id}(book-id=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+            <input type="hidden" name="_method" value="PUT"/>
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" th:field="*{title}" id="title" required />
+            </div>
+            <div class="form-group">
+                <label for="index">목차</label>
+                <textarea th:field="*{index}" id="index" style="display: none;"></textarea>
+                <div id="indexEditor"></div>
+            </div>
+            <div class="form-group">
+                <label for="description">설명</label>
+                <textarea th:field="*{description}" id="description" style="display: none;"></textarea>
+                <div id="descriptionEditor"></div>
+            </div>
+            <div class="form-group">
+                <label for="publishedAt">출판일</label>
+                <input type="date" th:field="*{publishedAt}" id="publishedAt" required />
+            </div>
+            <div class="form-group">
+                <label for="isbn">ISBN</label>
+                <input type="text" th:field="*{isbn}" id="isbn" readonly />
+            </div>
+            <div class="form-group">
+                <label for="thumbnailImageUrl">썸네일 이미지</label>
+                <input type="text" th:field="*{thumbnailImageUrl}" id="thumbnailImageUrl" />
+            </div>
+            <div class="form-group">
+                <label>상세 이미지 URL</label>
+                <div id="imageUrls-container">
+                    <div th:each="imageUrl, iterStat : *{detailImageUrls}" class="dynamic-field">
+                        <input type="text" th:field="*{detailImageUrls[__${iterStat.index}__]}" />
+                        <button type="button" class="remove-button" onclick="removeImageUrl(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-imageUrl-button" class="form-button">이미지 URL 추가</button>
+            </div>
+            <div class="form-group">
+                <label>포장 가능 여부</label>
+                <input type="checkbox" th:field="*{packable}" id="isPackable" />
+            </div>
+            <div class="form-group">
+                <label for="stock">재고</label>
+                <input type="number" th:field="*{stock}" id="stock" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="standardPrice">정가</label>
+                <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="discountRate">할인율(%)</label>
+                <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="bookStatus">도서 상태</label>
+                <select th:field="*{bookStatus}" id="bookStatus">
+                    <option value="IN_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'IN_STOCK'}">재고 있음</option>
+                    <option value="OUT_OF_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'OUT_OF_STOCK'}">품절</option>
+                    <option value="DISCONTINUED" th:selected="${bookUpdateRequest.bookStatus == 'DISCONTINUED'}">절판됨</option>
+                    <option value="DELETED" th:selected="${bookUpdateRequest.bookStatus == 'DELETED'}">삭제됨</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="publisher">출판사</label>
+                <input type="text" th:field="*{publisher}" id="publisher" />
+            </div>
+            <div class="form-group">
+                <label for="categories">카테고리</label>
+                <div id="categories-container">
+                    <div class="dynamic-field" th:each="category, iterStat : *{categories}">
+                        <select id="categories" th:field="*{categories[__${iterStat.index}__]}" required>
+                            <option th:each="path : ${categoryPaths}" th:value="${path}" th:text="${path}"></option>
+                        </select>
+                        <button type="button" class="remove-button" onclick="removeCategory(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-category-button" class="form-button">카테고리 추가</button>
+            </div>
+            <div class="form-group">
+                <label>태그</label>
+                <div id="tags-container">
+                    <div class="dynamic-field" th:each="tag, iterStat : *{tags}">
+                        <select th:field="*{tags[__${iterStat.index}__]}" required>
+                            <option th:each="availableTag : ${availableTags}" th:value="${availableTag}" th:text="${availableTag}"></option>
+                        </select>
+                        <button type="button" class="remove-button" onclick="removeTag(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-tag-button" class="form-button">태그 추가</button>
+            </div>
+
+            <div class="form-group">
+                <label for="authors">저자</label>
+                <input type="text" th:field="*{authors}" id="authors"/>
+            </div>
+
+            <button type="submit" class="form-button">수정하기</button>
+            <a th:href="@{/admin/books}" class="form-button back-button">목록으로 돌아가기</a>
+        </form>
+    </section>
+</div>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+<script th:inline="javascript">
+    var categoryPaths = [[${categoryPaths}]];
+    var availableTags = [[${availableTags}]];
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        flatpickr("#publishedAt", { dateFormat: "Y-m-d", maxDate: "today" });
+
+        const indexEditor = new toastui.Editor({
+            el: document.querySelector('#indexEditor'),
+            height: '300px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.getElementById('index').value,
+            events: {
+                change: function() {
+                    document.getElementById('index').value = indexEditor.getHTML();
+                }
+            }
+        });
+
+        const descriptionEditor = new toastui.Editor({
+            el: document.querySelector('#descriptionEditor'),
+            height: '300px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.getElementById('description').value,
+            events: {
+                change: function() {
+                    document.getElementById('description').value = descriptionEditor.getHTML();
+                }
+            }
+        });
+
+        document.getElementById('add-imageUrl-button').addEventListener('click', function() {
+            const container = document.getElementById('imageUrls-container');
+            const index = container.children.length;
+            const div = document.createElement('div');
+            div.className = 'dynamic-field';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.name = `detailImageUrls[${index}]`;
+            const removeButton = document.createElement('button');
+            removeButton.type = 'button';
+            removeButton.innerText = '삭제';
+            removeButton.className = 'remove-button';
+            removeButton.onclick = function() { div.remove(); };
+            div.appendChild(input);
+            div.appendChild(removeButton);
+            container.appendChild(div);
+        });
+    });
+</script>
+</body>
+</html>
