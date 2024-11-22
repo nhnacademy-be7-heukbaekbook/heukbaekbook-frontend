@@ -109,6 +109,11 @@ nav ul li a {
 }
 
 /* 검색 창 스타일 */
+#search-bar {
+    max-width: 600px; /* 검색창 및 정렬바의 고정 너비 */
+    margin: 0 auto; /* 가운데 정렬 */
+}
+
 #search-bar form {
     display: flex;
     justify-content: center;
@@ -130,6 +135,34 @@ nav ul li a {
     border-radius: 0 5px 5px 0;
     cursor: pointer;
 }
+
+/* 정렬 바 스타일 */
+.sort-bar {
+    max-width: 600px; /* 검색창과 동일한 너비 */
+    margin: 10px auto; /* 가운데 정렬 */
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.sort-option {
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+.sort-option:hover {
+    text-decoration: underline;
+    color: #000;
+}
+
+.sort-option.active {
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+}
+
 
 /* 섹션 제목 스타일 */
 h2 {
@@ -439,6 +472,7 @@ footer nav a:hover {
     transition: background-color 0.3s ease;
     text-align: center; /* 텍스트 가운데 정렬 */
     margin-bottom: 8px;
+    text-decoration: none;
 }
 
 .select-all-container {

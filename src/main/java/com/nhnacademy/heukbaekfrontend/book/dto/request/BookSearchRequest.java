@@ -2,21 +2,24 @@ package com.nhnacademy.heukbaekfrontend.book.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.data.domain.Pageable;
 
 public record BookSearchRequest(
         String keyword,
         String searchCondition,
-        String sortCondition
+        String sortCondition,
+        Long categoryId
 ) {
     @JsonCreator
     public BookSearchRequest(
             @JsonProperty("keyword") String keyword,
             @JsonProperty("searchCondition") String searchCondition,
-            @JsonProperty("sortCondition") String sortCondition) {
+            @JsonProperty("sortCondition") String sortCondition,
+            @JsonProperty("categoryId") Long categoryId
+    ) {
         this.keyword = keyword != null ? keyword : "";
-        this.searchCondition = searchCondition != null ? searchCondition : "TITLE";
+        this.searchCondition = searchCondition != null ? searchCondition : "ALL";
         this.sortCondition = sortCondition != null ? sortCondition : "POPULARITY";
+        this.categoryId = categoryId;
     }
 }
 

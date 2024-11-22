@@ -40,7 +40,7 @@ public class CommonService {
     public String calculateAllTotalPriceAndFormat(List<Book> books) {
         BigDecimal allTotalPrice = BigDecimal.ZERO;
         for (Book book : books) {
-            allTotalPrice = allTotalPrice.add(calculateTotalPrice(book.totalPrice(), book.quantity()));
+            allTotalPrice = allTotalPrice.add(book.totalPrice());
         }
         return formatPrice(allTotalPrice);
     }
