@@ -268,9 +268,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="policy : ${couponPolicies.content}">
-                    <td th:text="${policy.discountType.name()}"></td>
-                    <td th:text="${policy.discountAmount}"></td>
+                <tr th:each="policy : ${couponPolicies}">
+                    <td th:text="${policy.discountType}"></td>
+                    <td th:text="${policy.discountType.name().equals('PERCENTAGE') ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></td>
                     <td th:text="${policy.minimumPurchaseAmount}"></td>
                     <td th:text="${policy.maximumPurchaseAmount != null ? policy.maximumPurchaseAmount : '-'}"></td>
                     <td>

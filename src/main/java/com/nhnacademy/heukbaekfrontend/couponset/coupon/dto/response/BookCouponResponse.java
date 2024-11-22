@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record BookCouponResponse(
-        Long bookCouponId,
+        Long couponId,
         String couponName,
         String couponDescription,
         LocalDateTime couponCreatedAt,
@@ -16,6 +16,7 @@ public record BookCouponResponse(
         LocalDateTime couponTimeStart,
         LocalDateTime couponTimeEnd,
 
+        Long policyId,
         DiscountType discountType,
         BigDecimal discountAmount,
         BigDecimal minimumPurchaseAmount,

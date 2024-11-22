@@ -136,6 +136,8 @@
             min-width: 50px;
         }
         #couponDescription{
+            margin-bottom: 30px;
+            min-height: 60px;
             width: 99%;
         }
         .action-button.modify {
@@ -250,7 +252,7 @@
         <section class="form-container">
             <h3>쿠폰 등록</h3>
             <form th:action="@{/admin/coupons}" method="post">
-                <label for="policyId">정책</label>
+                <label for="policyId">쿠폰 정책</label>
                 <select id="policyId" name="policyId" required>
                     <option th:each="policy : ${couponPolicyList}"
                             th:value="${policy.id}"
@@ -308,7 +310,9 @@
                             <button type="button" class="action-button modify"
                                     th:data-id="${coupon.couponId}"
                                     th:data-coupon-name="${coupon.couponName}"
+                                    th:data-coupon-description="${coupon.couponDescription()}"
                                     th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-available-duration="${coupon.availableDuration()}"
                                     th:data-coupon-time-start="${coupon.couponTimeStart}"
                                     th:data-coupon-time-end="${coupon.couponTimeEnd}"
                                     th:data-coupon-policy-discount="${coupon.couponPolicyResponse().id()}"
@@ -325,7 +329,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(normalCoupons)}">
+                    <tr th:if="${normalCoupons.getContent().isEmpty()}">
                         <td colspan="7">등록된 쿠폰이 없습니다.</td>
                     </tr>
                     </tbody>
@@ -350,7 +354,7 @@
                     <tr th:each="coupon : ${bookCoupons}">
                         <td th:text="${coupon.couponName}"></td>
                         <td th:text="${coupon.title}"></td>
-                        <td th:text="${coupon.discountType() == 'PERCENTAGE'
+                        <td th:text="${coupon.discountType().name() == 'PERCENTAGE'
                 ? coupon.discountAmount() + '%'
                 : coupon.discountAmount() + '원'}"></td>
                         <td th:text="${#temporals.format(coupon.couponTimeStart, 'yyyy-MM-dd HH:mm')}"></td>
@@ -359,28 +363,29 @@
                         <td>
                             <!-- 수정 버튼 -->
                             <button type="button" class="action-button modify"
-                                    th:data-id="${coupon.bookCouponId}"
+                                    th:data-id="${coupon.couponId()}"
                                     th:data-coupon-name="${coupon.couponName}"
-                                    th:data-title="${coupon.title}"
-                                    th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-book-title="${coupon.title}"
+                                    th:data-coupon-description="${coupon.couponDescription()}"
+                                    th:data-available-duration="${coupon.availableDuration()}"
                                     th:data-coupon-time-start="${coupon.couponTimeStart}"
                                     th:data-coupon-time-end="${coupon.couponTimeEnd}"
-                                    th:data-coupon-policy-discount="${coupon.discountType() == 'PERCENTAGE'
-                ? coupon.discountAmount() + '%'
-                : coupon.discountAmount() + '원'}"
+                                    th:data-coupon-policy-discount="${coupon.policyId()}"
                                     onclick="openEditModal(this)">
                                 수정
                             </button>
 
                             <!-- 삭제 버튼 -->
-                            <form th:action="@{/admin/coupons/book/{id}(id=${coupon.bookCouponId})}" method="post" style="display:inline;">
+                            <form th:action="@{/admin/coupons/book/{id}(id=${coupon.couponId()})}" method="post" style="display:inline;">
                                 <input type="hidden" name="_method" value="delete">
                                 <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제</button>
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(bookCoupons)}">
-                        <td colspan="7">등록된 쿠폰이 없습니다.</td>
+                    <tr th:if="${bookCoupons.getContent().isEmpty()}">
+                        <td colspan="7">
+                            <span>등록된 쿠폰이 없습니다.</span>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
@@ -402,7 +407,7 @@
                     </thead>
                     <tbody>
                     <tr th:each="coupon : ${categoryCoupons}">
-                        <td th:text="${coupon.couponName}"></td>
+                    <td th:text="${coupon.couponName}"></td>
                         <td th:text="${coupon.name}"></td>
                         <td th:text="${coupon.discountType() == 'PERCENTAGE'
                 ? coupon.discountAmount() + '%'
@@ -413,20 +418,19 @@
                         <td>
                             <!-- 수정 버튼 -->
                             <button type="button" class="action-button modify"
-                                    th:data-id="${coupon.categoryCouponId}"
+                                    th:data-id="${coupon.couponId()}"
                                     th:data-coupon-name="${coupon.couponName}"
                                     th:data-category-name="${coupon.name}"
-                                    th:data-coupon-status="${coupon.couponStatus}"
+                                    th:data-coupon-description="${coupon.couponDescription()}"
+                                    th:data-available-duration="${coupon.availableDuration()}"
                                     th:data-coupon-time-start="${coupon.couponTimeStart}"
                                     th:data-coupon-time-end="${coupon.couponTimeEnd}"
-                                    th:data-coupon-policy-discount="${coupon.discountType() == 'PERCENTAGE'
-                ? coupon.discountAmount() + '%'
-                : coupon.discountAmount() + '원'}"
+                                    th:data-coupon-policy-discount="${coupon.policyId()}"
                                     onclick="openEditModal(this)">
                                 수정
                             </button>
                             <!-- 삭제 버튼 -->
-                            <form th:action="@{/admin/coupons/category/{id}(id=${coupon.categoryCouponId})}"
+                            <form th:action="@{/admin/coupons/category/{id}(id=${coupon.couponId()})}"
                                   method="post" style="display:inline;">
                                 <input type="hidden" name="_method" value="delete">
                                 <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제
@@ -434,7 +438,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${#lists.isEmpty(categoryCoupons)}">
+                    <tr th:if="${categoryCoupons.getContent().isEmpty()}">
                         <td colspan="7">등록된 쿠폰이 없습니다.</td>
                     </tr>
                     </tbody>
@@ -456,8 +460,20 @@
                     <select id="edit-policyId" name="policyId" required>
                         <option th:each="policy : ${couponPolicyList}"
                                 th:value="${policy.id}"
-                                th:text="${policy.discountType == 'PERCENTAGE' ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
+                                th:text="${policy.discountType.name() == 'PERCENTAGE' ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
                     </select>
+
+                    <!-- 도서 제목 -->
+                    <div id="book-title-container" style="display: none;">
+                        <label>도서 제목</label>
+                        <span id="book-title-text"></span>
+                    </div>
+
+                    <!-- 카테고리 이름 -->
+                    <div id="category-name-container" style="display: none;">
+                        <label>카테고리 이름</label>
+                        <span id="category-name-text"></span>
+                    </div>
 
                     <label for="edit-couponName">쿠폰 이름</label>
                     <input type="text" id="edit-couponName" name="couponName" required>
@@ -480,40 +496,90 @@
             </div>
         </div>
     </section>
-    <script>
-        function confirmDeletion() {
-            if (confirm("정말 삭제하시겠습니까?")) {
-                event.target.closest("form").submit();
-            }
-        }
 
-        function closeModal() {
-            const modal = document.getElementById("editModal");
-            modal.style.display = "none";
-        }
-
-        function openEditModal(button) {
-            const modal = document.getElementById("editModal");
-            modal.style.display = "block";
-
-            // 각 필드 데이터 설정
-            document.getElementById("edit-id").value = button.getAttribute("data-id");
-            document.getElementById("edit-policyId").value = button.getAttribute("data-coupon-policy-discount");
-            document.getElementById("edit-couponName").value = button.getAttribute("data-coupon-name");
-            document.getElementById("edit-couponDescription").value = button.getAttribute("data-coupon-description");
-            document.getElementById("edit-availableDuration").value = button.getAttribute("data-available-duration");
-            document.getElementById("edit-couponTimeStart").value = button.getAttribute("data-coupon-time-start");
-            document.getElementById("edit-couponTimeEnd").value = button.getAttribute("data-coupon-time-end");
-        }
-
-        window.onclick = function (event) {
-            const modal = document.getElementById("editModal");
-            if (event.target === modal) {
-                closeModal();
-            }
-        }
-    </script>
 </main>
 <footer th:replace="~{admin/layout :: footer}"></footer>
+
+<script>
+    function confirmDeletion() {
+        if (confirm("정말 삭제하시겠습니까?")) {
+            event.target.closest("form").submit();
+        }
+    }
+
+    function closeModal() {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "none";
+        // document.getElementById("edit-category-name").value = null;
+        // document.getElementById("edit-book-title").value = null;
+
+    }
+
+
+
+    function openEditModal(button) {
+        const modal = document.getElementById("editModal");
+        modal.style.display = "block";
+
+        console.log("Data attributes:", {
+            id: button.getAttribute("data-id"),
+            couponPolicyDiscount: button.getAttribute("data-coupon-policy-discount"),
+            couponName: button.getAttribute("data-coupon-name"),
+            couponDescription: button.getAttribute("data-coupon-description"),
+            availableDuration: button.getAttribute("data-available-duration"),
+            couponTimeStart: button.getAttribute("data-coupon-time-start"),
+            couponTimeEnd: button.getAttribute("data-coupon-time-end"),
+        });
+
+
+        // 기존 필드 데이터 설정
+        const id = document.getElementById("edit-id");
+        id.value = button.getAttribute("data-id");
+        document.getElementById("edit-policyId").value = button.getAttribute("data-coupon-policy-discount");
+        document.getElementById("edit-couponName").value = button.getAttribute("data-coupon-name");
+        document.getElementById("edit-couponDescription").value = button.getAttribute("data-coupon-description");
+        document.getElementById("edit-availableDuration").value = button.getAttribute("data-available-duration");
+        document.getElementById("edit-couponTimeStart").value = button.getAttribute("data-coupon-time-start");
+        document.getElementById("edit-couponTimeEnd").value = button.getAttribute("data-coupon-time-end");
+
+        // 도서 제목과 카테고리 이름 처리
+        const bookTitle = button.getAttribute("data-book-title");
+        const categoryName = button.getAttribute("data-category-name");
+        const form = document.getElementById("editForm");
+        form.action = "/admin/coupons/"+id.value;
+
+        // 도서 제목 처리
+        const bookTitleContainer = document.getElementById("book-title-container");
+        const bookTitleText = document.getElementById("book-title-text");
+        if (bookTitle) {
+            bookTitleText.textContent = bookTitle;
+            bookTitleContainer.style.display = "block";
+        } else {
+            bookTitleContainer.style.display = "none";
+        }
+
+        // 카테고리 이름 처리
+        const categoryNameContainer = document.getElementById("category-name-container");
+        const categoryNameText = document.getElementById("category-name-text");
+        if (categoryName) {
+            categoryNameText.textContent = categoryName;
+            categoryNameContainer.style.display = "block";
+        } else {
+            categoryNameContainer.style.display = "none";
+        }
+
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById("editModal");
+        if (event.target === modal) {
+            closeModal();
+        }
+    }
+
+
+
+</script>
+
 </body>
 </html>
