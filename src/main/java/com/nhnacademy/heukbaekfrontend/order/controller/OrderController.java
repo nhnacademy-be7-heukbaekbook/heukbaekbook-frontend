@@ -1,32 +1,18 @@
 package com.nhnacademy.heukbaekfrontend.order.controller;
 
-import com.nhnacademy.heukbaekfrontend.book.domain.Book;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookOrderResponse;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
-import com.nhnacademy.heukbaekfrontend.book.service.BookService;
-import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
-import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
-import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
-import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
-import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderFormRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cloud.client.actuator.HasFeatures;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-
-import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
 
 @Controller
 @RequiredArgsConstructor
@@ -44,11 +30,23 @@ public class OrderController {
 
         log.info("bookIds = {}, quantity = {}, sessionId : {}", bookIds, quantity, sessionId);
 
-        OrderFormRequest orderFormRequest = orderService.createOrderFormRequest(sessionId, bookIds, quantity);
-        log.info("orderFormRequest = {}", orderFormRequest);
+        OrderFormResponse orderFormResponse = orderService.createOrderFormResponse(sessionId, bookIds, quantity);
+        log.info("orderFormResponse = {}", orderFormResponse);
 
         return new ModelAndView("order/orderForm")
-                .addObject("orderFormRequest", orderFormRequest);
+                .addObject("orderFormResponse", orderFormResponse);
+    }
+
+    @GetMapping("/{orderId}")
+    public ModelAndView getOrderDetailForm(@PathVariable String orderId) {
+        log.info("orderId = {}", orderId);
+
+        OrderDetailResponse orderDetailResponse = orderService.createOrderDetailResponse(orderId);
+        log.info("orderDetailResponse = {}", orderDetailResponse);
+
+        return new ModelAndView("order/detail")
+                .addObject("orderDetailResponse", orderDetailResponse)
+                .addObject("orderId", orderId);
     }
 
     @PostMapping

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <style>
+        /* 공통 스타일 */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 화면 전체 높이를 채우기 위해 설정 */
+            margin: 0;
+        }
+
+        .container {
+            flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .column form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        div {
+            margin-bottom: 10px; /* 전체 div 간격 */
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .address-container {
+            display: flex; /* 요소를 가로로 배치 */
+            align-items: center; /* 세로 가운데 정렬 */
+            margin-bottom: 8px; /* 필드 간격 */
+        }
+
+        .address2-container {
+            display: flex;
+            flex-direction: column; /* 수직 정렬 */
+            max-width: 300px; /* 적당한 컨테이너 너비 설정 */
+        }
+        #postcode {
+            width: 120px; /* 우편번호 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #roadAddress, #detailAddress {
+            width: 100%; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            /*input[type="tel"] {*/
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            /*margin-bottom: 2px;*/
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .sms-info {
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+
+        .table-header {
+            background-color: #f4f4f4; /* 헤더 배경색 */
+            color: #333; /* 헤더 텍스트 색 */
+            font-weight: bold; /* 텍스트 굵게 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: center; /* 가로 가운데 정렬 */
+            vertical-align: middle; /* 세로 가운데 정렬 */
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .book-image {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .name-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 200px;
+        }
+
+        .email-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 300px;
+        }
+
+        .phone-input-group {
+            display: flex; /* 가로로 정렬 */
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px; /* 요소 간 간격 */
+        }
+
+        .phone-input-group label {
+            font-weight: bold; /* 레이블 강조 */
+        }
+
+        .phone-input {
+            width: 60px; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center; /* 입력값 가운데 정렬 */
+            font-size: 14px; /* 입력 필드 글자 크기 */
+            line-height: 1.5;
+            position: relative; /* 위치 조정 활성화 */
+            top: -4px;
+        }
+
+        .separator {
+            font-size: 16px; /* 하이픈 크기 */
+            font-weight: normal; /* 하이픈 굵기 */
+            color: #333; /* 하이픈 색상 */
+            line-height: 1; /* 텍스트 높이 초기화 */
+            position: relative; /* 위치 조정을 위한 상대 위치 */
+            top: -4px; /* 하이픈을 위로 약간 이동 */
+            left: 4px;
+        }
+
+        .payment-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.5fr;
+            background-color: #eaf3fc;
+            border: 1px solid #d3e2f1;
+            border-radius: 10px;
+            overflow: hidden;
+            align-items: stretch;
+        }
+
+        .payment-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #d3e2f1;
+            height: 100%;
+        }
+
+        .payment-box:last-child {
+            border-right: none;
+        }
+
+        .payment-box h3 {
+            font-size: 16px;
+            color: #555;
+            margin: 0;
+        }
+
+        .payment-box .amount {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .payment-box .currency {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* 최종 결제 금액 강조 */
+        .final-box {
+            background-color: #f8e9ef;
+            color: #8b1c3d;
+        }
+
+        .final-box .amount {
+            color: #8b1c3d;
+        }
+
+        /* 디테일 정보 */
+        .detail-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+
+        .detail-info .item {
+            margin-bottom: 5px;
+        }
+
+        .detail-info .item span {
+            font-weight: bold;
+        }
+
+        .payment-form {
+            display: flex;
+            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+            margin-top: 20px; /* 버튼과 위 내용 간의 간격 */
+        }
+
+        .payment-button {
+            padding: 30px 45px; /* 버튼 크기 */
+            background: #d9534f; /* 버튼 배경색 */
+            color: #fff; /* 텍스트 색상 */
+            font-size: 18px; /* 텍스트 크기 */
+            font-weight: bold; /* 텍스트 굵기 */
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 8px; /* 모서리를 둥글게 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+            transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+        }
+
+        .payment-button:hover {
+            background: #c9302c; /* 호버 시 버튼 색상 변경 */
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+            .payment-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .header {
+            text-align: center;
+        }
+
+        h2 {
+            text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+        }
+
+        .common-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .delivery-header {
+            display: flex; /* 플렉스 레이아웃 설정 */
+            align-items: center; /* 세로 가운데 정렬 */
+            gap: 8px; /* 제목과 부제목 간 간격 */
+        }
+
+        .delivery-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .delivery-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+        .delivery-options {
+            display: flex;
+            gap: 10px; /* 버튼 간격 */
+        }
+
+        .delivery-button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        .delivery-button:hover {
+            background-color: #f0f0f0;
+        }
+        .delivery-button.active {
+            background-color: #4285F4;
+            color: #fff;
+            border-color: #4285F4;
+        }
+
+        #roadAddress, #detailAddress {
+            width: 400px; /* 원하는 너비값으로 설정하세요 */
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>흑백문고</h1>
+    <nav>
+        <ul>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/members/mypage">마이페이지</a></li>
+            <li><a href="/login">로그인</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="header">
+    <h1 th:text="${orderDetailResponse.customerName} + ' 님, 항상 흑백문고를 이용해주셔서 감사합니다!'"></h1>
+    <p th:text="'[주문번호: ' + ${orderId} + '] 결제가 안전하게 처리되었습니다.'"></p>
+</div>
+
+<div class="container">
+    <h2>주문상품</h2>
+    <!-- 상품 확인 -->
+    <div class="section">
+        <table>
+            <colgroup>
+                <col style="width: 60%;"> <!-- 상품 정보 열 -->
+                <col style="width: 10%;"> <!-- 정가 열 -->
+                <col style="width: 10%;"> <!-- 할인가 열 -->
+                <col style="width: 10%;"> <!-- 수량 열 -->
+                <col style="width: 10%;"> <!-- 합계 열 -->
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>상품명</th>
+                <th>정가</th>
+                <th>수량</th>
+                <th>할인금액</th>
+                <th>합계</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="book : ${orderDetailResponse.books}">
+                <td style="display: flex; align-items: center; gap: 10px;">
+                    <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image" style="width: 75px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <span th:text="${book.title}" style="font-weight: bold;">도서 제목</span>
+                </td>
+                <td th:text="${book.price} + '원'">정가</td>
+                <td th:text="${book.quantity}">수량</td>
+                <td th:text="${book.salePrice}">할인금액</td>
+                <td th:text="${book.totalPrice} + '원'">합계</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 배송 및 주문자 정보 -->
+    <h2>배송정보</h2>
+    <div class="flex-container">
+        <!-- 배송 정보 -->
+        <div class="column">
+            <form id="order-form">
+                <div class="name-input-group">
+                    <label for="recipientName">받는 분</label>
+                    <input type="text" id="recipientName" name="recipientName" th:field="*{orderDetailResponse.customerName}" placeholder="수령인 이름 입력" required>
+                </div>
+
+                <div>
+                    <label>배송주소</label>
+                    <div class="address-container">
+                        <label for="postcode"></label>
+                        <input type="text" id="postcode" name="postcode" th:field="*{orderDetailResponse.postalCode}" placeholder="우편번호" readonly required>
+                    </div>
+                    <div class="address2-container">
+                        <input type="text" id="roadAddress" name="roadAddress" th:field="*{orderDetailResponse.roadNameAddress}" placeholder="도로명 주소" readonly required>
+                        <input type="text" id="detailAddress" name="detailAddress" th:field="*{orderDetailResponse.detailAddress}" placeholder="상세 주소" required>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script
+            th:src="@{/js/order-form.js}">
+    </script>
+
+    <!-- 결제 정보 -->
+    <h2>결제정보</h2>
+    <div class="common-container">
+        <div class="payment-info">
+            <div class="payment-box">
+                <h3>총 상품금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount" th:text="${orderDetailResponse.totalBookPrice} + '원'"></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>즉시할인</span>:
+                        <span th:text="${orderDetailResponse.totalBookDiscountPrice} + '원'"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 추가금액</h3>
+                <div class="amount" th:text="${orderDetailResponse.deliveryFee}">원<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <!-- 추가 금액 정보 -->
+                        <span>배송비</span>:
+                        <span th:text="${orderDetailResponse.deliveryFee} + '원'">0원</span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 할인금액</h3>
+                <div class="amount">0<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>쿠폰</span>: 사용하지 않음
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box final-box">
+                <h3>최종 결제금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount" id="amount" th:text="${orderDetailResponse.totalPrice} + '원'">결제금액</div>
+                <div class="detail-info">
+                    <div class="item">
+<!--                        <span>기본적립 포인트</span>: 500-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 취소 버튼 -->
+    <div class="section">
+        <form id="complete-order-form" method="post">
+            <div class="payment-form">
+                <button type="button" id="payment-button" class="payment-button">주문취소</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

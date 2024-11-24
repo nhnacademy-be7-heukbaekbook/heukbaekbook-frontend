@@ -12,24 +12,29 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@FeignClient(name = "delivery-fee", url = "http://localhost:8082/api/admin/delivery-fee")
+import java.math.BigDecimal;
+
+@FeignClient(name = "deliveryFeeClient", url = "http://localhost:8082/api")
 public interface DeliveryFeeClient {
 
-    @PostMapping
+    @PostMapping("/admin/delivery-fee")
     ResponseEntity<DeliveryFeeCreateResponse> createDeliveryFee(@RequestBody DeliveryFeeCreateRequest request);
 
-    @GetMapping("/{delivery-fee-id}")
+    @GetMapping("/admin/delivery-fee/{delivery-fee-id}")
     ResponseEntity<DeliveryFeeDetailResponse> getDeliveryFee(@PathVariable("delivery-fee-id") Long deliveryFeeId);
 
-    @PutMapping("/{delivery-fee-id}")
+    @PutMapping("/admin/delivery-fee/{delivery-fee-id}")
     ResponseEntity<DeliveryFeeUpdateResponse> updateDeliveryFee(
             @PathVariable("delivery-fee-id") Long deliveryFeeId,
             @RequestBody DeliveryFeeUpdateRequest request);
 
-    @DeleteMapping("/{delivery-fee-id}")
+    @DeleteMapping("/admin/delivery-fee/{delivery-fee-id}")
     ResponseEntity<DeliveryFeeDeleteResponse> deleteDeliveryFee(@PathVariable("delivery-fee-id") Long deliveryFeeId);
 
-    @GetMapping
+    @GetMapping("/admin/delivery-fee")
     ResponseEntity<Page<DeliveryFeeDetailResponse>> getDeliveryFees(Pageable pageable);
+
+    @GetMapping("/delivery-fees")
+    BigDecimal getDeliveryFeeByMinimumOrderAmount(@RequestParam BigDecimal minimumOrderAmount);
 
 }

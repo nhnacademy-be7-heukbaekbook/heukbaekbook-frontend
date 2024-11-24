@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.book.dto.response;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.ContributorSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.publisher.dto.PublisherSummaryResponse;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public record BookViewResponse(Long id,
@@ -14,7 +15,7 @@ public record BookViewResponse(Long id,
                                boolean isPackable,
                                String price,
                                String salePrice,
-                               float discountRate,
+                               BigDecimal discountRate,
                                int popularity,
                                String status,
                                String thumbnailUrl,

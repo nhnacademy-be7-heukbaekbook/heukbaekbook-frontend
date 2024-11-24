@@ -1,12 +1,12 @@
-package com.nhnacademy.heukbaekfrontend.book.dto.response;
+package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
 import java.math.BigDecimal;
 
-public record BookOrderResponse(Long id,
+public record OrderBookResponse(String thumbnailUrl,
                                 String title,
                                 String price,
+                                int quantity,
                                 String salePrice,
                                 BigDecimal discountRate,
-                                String thumbnailUrl,
-                                int quantity) {
+                                String totalPrice) {
 }
