@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
@@ -22,7 +23,7 @@ public class BookUpdateRequest {
     boolean isPackable;
     @Min(0) int stock;
     @Min(0) int standardPrice;
-    @DecimalMin(value = "0.0")float discountRate;
+    BigDecimal discountRate;
     String bookStatus;
     String publisher;
     List<String> categories;

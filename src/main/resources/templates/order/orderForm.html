@@ -19,7 +19,7 @@
 
         .container {
             flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 20px auto;
             padding: 20px;
             background-color: #ffffff;
@@ -30,7 +30,7 @@
         .flex-container {
             display: flex;
             gap: 20px;
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 20px auto;
             padding: 20px;
             background-color: #ffffff;
@@ -293,7 +293,7 @@
         }
 
         .common-container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 20px auto;
             padding: 20px;
             background-color: #ffffff;
@@ -341,6 +341,10 @@
             color: #fff;
             border-color: #4285F4;
         }
+
+        #roadAddress, #detailAddress {
+            width: 400px; /* 원하는 너비값으로 설정하세요 */
+        }
     </style>
 </head>
 <body>
@@ -371,7 +375,8 @@
                 <col style="width: 55%;"> <!-- 상품 정보 열 -->
                 <col style="width: 10%;"> <!-- 정가 열 -->
                 <col style="width: 10%;"> <!-- 할인가 열 -->
-                <col style="width: 10%;"> <!-- 수량 열 -->
+                <col style="width: 5%;"> <!-- 수량 열 -->
+                <col style="width: 5%;"> <!-- 포장지 선택 열 -->
                 <col style="width: 10%;"> <!-- 합계 열 -->
             </colgroup>
             <thead>
@@ -387,7 +392,7 @@
             </thead>
             <tbody>
             <!-- 여러 책을 반복해서 표시 -->
-            <tr th:each="book : ${orderFormRequest.books}">
+            <tr th:each="book : ${orderFormResponse.books}">
                 <td>
                     <!-- 포장 여부 체크박스 -->
                     <label>
@@ -550,6 +555,7 @@
                 console.error("Element with ID 'delivery-options' not found!");
                 return;
             }
+
             const today = new Date(); // 현재 날짜
             const dayNames = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 배열
 
@@ -560,11 +566,13 @@
 
                 const dayName = dayNames[date.getDay()]; // 요일 이름 가져오기
                 const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // "MM/DD" 형식
+                const isoDate = date.toISOString().split('T')[0]; // "YYYY-MM-DD" 형식
 
                 // 버튼 생성
                 const button = document.createElement('button');
                 button.className = `delivery-button ${i === 1 ? 'active' : ''}`; // 첫 번째 버튼은 기본 선택
                 button.textContent = `${i === 1 ? '내일' : dayName} (${formattedDate})`;
+                button.setAttribute('data-date', isoDate); // ISO 형식 날짜를 data-date에 저장
                 button.onclick = () => selectDelivery(button);
 
                 // 버튼을 컨테이너에 추가
@@ -577,10 +585,28 @@
             const buttons = document.querySelectorAll('.delivery-button');
             buttons.forEach(btn => btn.classList.remove('active')); // 모든 버튼의 active 클래스 제거
             button.classList.add('active'); // 클릭된 버튼에 active 클래스 추가
+
+            // 선택된 날짜 가져오기
+            const selectedDate = button.getAttribute('data-date'); // ISO 형식 날짜 가져오기
+            console.log("Selected Delivery Date:", selectedDate);
+
+            // 선택된 날짜를 #selected-date-display에 업데이트
+            const displayElement = document.getElementById("selected-date-display");
+            if (displayElement) {
+                displayElement.textContent = selectedDate; // ISO 날짜 업데이트
+            }
+        }
+
+        // 선택된 날짜 가져오기
+        function getSelectedDate() {
+            const deliveryDate = document.getElementById("selected-date-display").textContent.trim();
+            console.log("Final Delivery Date:", deliveryDate);
+            return deliveryDate;
         }
 
         generateDates();
     </script>
+
 
     <!-- 결제 정보 -->
     <h2>결제 정보</h2>
@@ -589,20 +615,21 @@
             <div class="payment-box">
                 <h3>총 상품금액</h3>
                 <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
-                <div class="amount" th:attr="data-final-price=${orderFormRequest.totalPrice}" th:text="${orderFormRequest.totalPrice} + '원'">상품금액</div>
+                <div class="amount" th:attr="data-final-price=${orderFormResponse.totalBookPrice}" th:text="${orderFormResponse.totalBookPrice} + '원'">상품금액</div>
                 <div class="detail-info">
                     <div class="item">
                         <span>즉시할인</span>:
-                        <span th:text="${orderFormRequest.totalDiscountAmount} + '원'">할인금액</span>
+                        <span th:text="${orderFormResponse.totalBookDiscountAmount} + '원'">할인금액</span>
                     </div>
                 </div>
             </div>
             <div class="payment-box">
                 <h3>총 추가금액</h3>
-                <div class="amount">0<span class="currency">원</span></div>
+                <div class="amount" id="deliveryFee" th:text="${orderFormResponse.deliveryFee}"><span class="currency">원</span></div>
                 <div class="detail-info">
                     <div class="item">
-                        <!-- 추가 금액 정보 -->
+                        <span>배송비</span>:
+                        <span th:text="${orderFormResponse.deliveryFee} + '원'"></span>
                     </div>
                 </div>
             </div>
@@ -618,10 +645,10 @@
             <div class="payment-box final-box">
                 <h3>최종 결제금액</h3>
                 <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
-                <div class="amount" id="amount" th:attr="data-final-price=${orderFormRequest.totalPrice}" th:text="${orderFormRequest.totalPrice} + '원'">결제금액</div>
+                <div class="amount" id="amount" th:attr="data-final-price=${orderFormResponse.totalPrice}" th:text="${orderFormResponse.totalPrice} + '원'">결제금액</div>
                 <div class="detail-info">
                     <div class="item">
-                        <span>기본적립 포인트</span>: 500
+<!--                        <span>기본적립 포인트</span>: 500-->
                     </div>
                 </div>
             </div>
@@ -730,7 +757,21 @@
                 return;
             }
 
-            const customerPhoneNumber = `${customerPhone1.value.trim()}${customerPhone2.value.trim()}${customerPhone3.value.trim()}`;
+            const customerPhoneNumber = customerPhone1.value + "-" + customerPhone2.value + "-" + customerPhone3.value;
+
+            const recipientName = document.getElementById('recipientName').value;
+            const postcode = document.getElementById('postcode').value;
+            const roadAddress = document.getElementById('roadAddress').value;
+            const detailAddress = document.getElementById('detailAddress').value;
+            const recipientPhone1 = document.getElementById("recipientPhone1").value;
+            const recipientPhone2 = document.getElementById("recipientPhone2").value;
+            const recipientPhone3 = document.getElementById("recipientPhone3").value;
+            const deliveryFee = document.getElementById("deliveryFee").textContent;
+            const deliveryDate = getSelectedDate();
+
+            const recipientPhoneNumber = recipientPhone1 + "-" + recipientPhone2 + "-" + recipientPhone3;
+
+            console.log(deliveryDate);
 
             // 주문서 데이터를 생성
             const orderCreateRequest = {
@@ -739,6 +780,12 @@
                 customerName: customerName,
                 customerPhoneNumber: customerPhoneNumber,
                 tossOrderId: orderId,
+                recipient: recipientName,
+                postalCode: postcode,
+                roadNameAddress: roadAddress,
+                detailAddress: detailAddress,
+                recipientPhoneNumber: recipientPhoneNumber,
+                deliveryFee: deliveryFee,
                 orderBookRequests: Array.from(document.querySelectorAll("tbody tr")).map(row => {
                     const checkbox = row.querySelector("input[type='checkbox']");
                     if (!checkbox) {

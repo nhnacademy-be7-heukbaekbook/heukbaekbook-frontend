@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -71,7 +72,7 @@ class BookAdminControllerTest {
     @Test
     void testRegisterBook_Success() throws Exception {
         BookCreateRequest request = new BookCreateRequest("title", "index", "description", "publishedAt", "isbn", "imageUrl", false, 10, 100, 0.1f, "publisher", "categories", "authors");
-        when(bookService.registerBook(any(BookCreateRequest.class))).thenReturn(ResponseEntity.ok(new BookCreateResponse("title", "index", "description", "publication", "isbn", false, 10, 100, 0.1f, "publisher", List.of("categories"), List.of("authors"))));
+        when(bookService.registerBook(any(BookCreateRequest.class))).thenReturn(ResponseEntity.ok(new BookCreateResponse("title", "index", "description", "publication", "isbn", false, 10, 100, BigDecimal.valueOf(0.1), "publisher", List.of("categories"), List.of("authors"))));
 
         mockMvc.perform(post("/admin/books/register")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -92,7 +93,7 @@ class BookAdminControllerTest {
     @Test
     void testUpdateBookForm() throws Exception {
         Long bookId = 1L;
-        BookDetailResponse response = new BookDetailResponse(bookId, "title", "index", "description", "publishedAt", "isbn", "thumbnailImageUrl", List.of(), false, 10, 100, 0.1f, "AVAILABLE", "publisher", List.of("category"), List.of("author"), List.of());
+        BookDetailResponse response = new BookDetailResponse(bookId, "title", "index", "description", "publishedAt", "isbn", "thumbnailImageUrl", List.of(), false, 10, 100, BigDecimal.valueOf(0.1), "AVAILABLE", "publisher", List.of("category"), List.of("author"), List.of());
         when(bookService.getBookById(bookId)).thenReturn(response);
 
         mockMvc.perform(get("/admin/books/{book-id}/edit", bookId))
@@ -105,7 +106,7 @@ class BookAdminControllerTest {
     @Test
     void testUpdateBook_Success() throws Exception {
         Long bookId = 1L;
-        BookUpdateRequest request = new BookUpdateRequest("title", "index", "description", "publishedAt", "isbn", "thumbnailUrl", List.of(), false, 10, 100, 0.1f, "AVAILABLE", "publisher", List.of("category"), "author", List.of());
+        BookUpdateRequest request = new BookUpdateRequest("title", "index", "description", "publishedAt", "isbn", "thumbnailUrl", List.of(), false, 10, 100, BigDecimal.valueOf(0.1), "AVAILABLE", "publisher", List.of("category"), "author", List.of());
         when(bookService.updateBook(eq(bookId), any(BookUpdateRequest.class))).thenReturn(ResponseEntity.ok(new BookUpdateResponse("title", "index", "description", "publication", "isbn", "imageUrl", false, 10, 100, 0.1f, "AVAILABLE", "publisher", List.of("categories"), List.of("authors"))));
 
         mockMvc.perform(put("/admin/books/{book-id}", bookId)
@@ -166,7 +167,7 @@ class BookAdminControllerTest {
     @Test
     void testViewAllBooks() throws Exception {
         Page<BookDetailResponse> books = new PageImpl<>(List.of(
-                new BookDetailResponse(1L, "title", "index", "description", "publishedAt", "isbn", "imageUrl", List.of(), false, 10, 100, 0.1f, "AVAILABLE", "publisher", List.of("category"), List.of("author"), List.of())
+                new BookDetailResponse(1L, "title", "index", "description", "publishedAt", "isbn", "imageUrl", List.of(), false, 10, 100, BigDecimal.valueOf(0.1), "AVAILABLE", "publisher", List.of("category"), List.of("author"), List.of())
         ));
 
         when(bookService.getAllBooks(any(Pageable.class))).thenReturn(books);
@@ -195,7 +196,7 @@ class BookAdminControllerTest {
                 true,
                 10,
                 20000,
-                0.1f,
+                BigDecimal.valueOf(0.1),
                 "AVAILABLE",
                 "Publisher Name",
                 List.of("Category1", "Category2"),
