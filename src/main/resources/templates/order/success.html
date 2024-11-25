@@ -39,7 +39,7 @@
             } else {
                 const json = await response.json();
                 console.log("Success response:", json);
-                window.location.href = `/payment/result?orderId=${orderId}&amount=${amount}`;
+                window.location.href = `/order/${orderId}`;
             }
         } catch (error) {
             console.log("Error during payment confirmation:", error);
@@ -48,15 +48,15 @@
 
     confirm();
 
-    const paymentKeyElement = document.getElementById("paymentKey");
-    const orderIdElement = document.getElementById("orderId");
-    const amountElement = document.getElementById("amount");
-
-    orderIdElement.textContent = "주문번호: " + orderId;
-    amountElement.textContent = "결제 금액: " + amount;
-    paymentKeyElement.textContent = "paymentKey: " + paymentKey;
-
-    window.location.href = '/payment/result';
+    // const paymentKeyElement = document.getElementById("paymentKey");
+    // const orderIdElement = document.getElementById("orderId");
+    // const amountElement = document.getElementById("amount");
+    //
+    // orderIdElement.textContent = "주문번호: " + orderId;
+    // amountElement.textContent = "결제 금액: " + amount;
+    // paymentKeyElement.textContent = "paymentKey: " + paymentKey;
+    //
+    // window.location.href = `/order/${orderId}`;
 
 </script>
 </body>

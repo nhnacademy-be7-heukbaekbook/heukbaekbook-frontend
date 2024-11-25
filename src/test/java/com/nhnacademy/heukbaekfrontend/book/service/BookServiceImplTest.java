@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,7 +44,7 @@ class BookServiceImplTest {
     void testGetBooks() {
         Pageable pageable = mock(Pageable.class);
         Page<BookResponse> bookPage = new PageImpl<>(List.of(
-                new BookResponse(1L, "Book A", "2023-11-11", "10000", 0.1f, "thumbnailUrl", List.of(), null)
+                new BookResponse(1L, "Book A", "2023-11-11", "10000", BigDecimal.valueOf(0.1), "thumbnailUrl", List.of(), null)
         ));
 
         when(bookClient.getBooks(any(Pageable.class))).thenReturn(bookPage);
@@ -59,7 +60,7 @@ class BookServiceImplTest {
     void testGetAllBooks() {
         Pageable pageable = mock(Pageable.class);
         Page<BookDetailResponse> bookDetailPage = new PageImpl<>(List.of(
-                new BookDetailResponse(1L, "Book A", "Index A", "Description A", "2023-11-11", "ISBN001", "thumbnailUrl", List.of(), true, 10, 20000, 0.1f, "Available", "Publisher A", List.of("Category1"), List.of("Author A"), List.of("Tag1"))
+                new BookDetailResponse(1L, "Book A", "Index A", "Description A", "2023-11-11", "ISBN001", "thumbnailUrl", List.of(), true, 10, 20000, BigDecimal.valueOf(0.1), "Available", "Publisher A", List.of("Category1"), List.of("Author A"), List.of("Tag1"))
         ));
 
         when(bookAdmin.getBooks(any(Pageable.class)))
@@ -74,7 +75,7 @@ class BookServiceImplTest {
 
     @Test
     void testGetBookById() {
-        BookDetailResponse bookDetail = new BookDetailResponse(1L, "Book A", "Index A", "Description A", "2023-11-11", "ISBN001", "thumbnailUrl", List.of(), true, 10, 20000, 0.1f, "Available", "Publisher A", List.of("Category1"), List.of("Author A"), List.of("Tag1"));
+        BookDetailResponse bookDetail = new BookDetailResponse(1L, "Book A", "Index A", "Description A", "2023-11-11", "ISBN001", "thumbnailUrl", List.of(), true, 10, 20000, BigDecimal.valueOf(0.1), "Available", "Publisher A", List.of("Category1"), List.of("Author A"), List.of("Tag1"));
 
         when(bookClient.getBook(anyLong()))
                 .thenReturn(ResponseEntity.ok(bookDetail));
@@ -118,7 +119,7 @@ class BookServiceImplTest {
     @Test
     void testRegisterBook() {
         BookCreateRequest request = new BookCreateRequest("New Book", "Index B", "Description B", "2023-12-01", "ISBN002", "imageUrl", true, 15, 25000, 0.15f, "Publisher B", "Category1", "Author A");
-        BookCreateResponse response = new BookCreateResponse("New Book", "Index B", "Description B", "2023-12-01", "ISBN002", true, 15, 25000, 0.15f, "Publisher B", List.of("Category1"), List.of("Author A"));
+        BookCreateResponse response = new BookCreateResponse("New Book", "Index B", "Description B", "2023-12-01", "ISBN002", true, 15, 25000, BigDecimal.valueOf(0.1), "Publisher B", List.of("Category1"), List.of("Author A"));
 
         when(bookAdmin.registerBook(any(BookCreateRequest.class)))
                 .thenReturn(ResponseEntity.ok(response));
@@ -132,7 +133,7 @@ class BookServiceImplTest {
 
     @Test
     void testUpdateBook() {
-        BookUpdateRequest request = new BookUpdateRequest("Updated Book", "Index C", "Updated Description", "2023-12-15", "ISBN003", "thumbnailUrl", List.of("detailUrl1"), true, 20, 30000, 0.2f, "Available", "Publisher C", List.of("Category2"), "Author B", List.of("Tag2"));
+        BookUpdateRequest request = new BookUpdateRequest("Updated Book", "Index C", "Updated Description", "2023-12-15", "ISBN003", "thumbnailUrl", List.of("detailUrl1"), true, 20, 30000, BigDecimal.valueOf(0.2), "Available", "Publisher C", List.of("Category2"), "Author B", List.of("Tag2"));
         BookUpdateResponse response = new BookUpdateResponse("Updated Book", "Index C", "Updated Description", "2023-12-15", "ISBN003", "imageUrl", true, 20, 30000, 0.2f, "Available", "Publisher C", List.of("Category2"), List.of("Author B"));
 
         when(bookAdmin.updateBook(anyLong(), any(BookUpdateRequest.class)))
