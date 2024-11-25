@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.point.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.point.dto.EventCode;
 import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnStandardRequest;
 import com.nhnacademy.heukbaekfrontend.point.dto.PointEarnStandardResponse;
@@ -24,7 +23,6 @@ public class PointEarnStandardController {
 
     private final PointEarnStandardService pointEarnStandardService;
 
-    @Admin
     @GetMapping
     public String getPointEarnStandard(Model model) {
         model.addAttribute("triggerEvents", EventCode.values());
@@ -39,7 +37,6 @@ public class PointEarnStandardController {
         return "point/admin/point-earn-standard";
     }
 
-    @Admin
     @PostMapping
     public String savePointEarnStandard(@ModelAttribute PointEarnStandardRequest request, RedirectAttributes redirectAttributes) {
         PointEarnStandardResponse earnStandard = pointEarnStandardService.createPointEarnStandard(request);
@@ -47,7 +44,6 @@ public class PointEarnStandardController {
         return REDIRECT_PATH;
     }
 
-    @Admin
     @DeleteMapping("/{id}")
     public String deletePointEarnStandard(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         pointEarnStandardService.deletePointEarnStandard(id);
@@ -55,7 +51,6 @@ public class PointEarnStandardController {
         return REDIRECT_PATH;
     }
 
-    @Admin
     @PutMapping("/{id}")
     public String updatePointEarnStandard(
             @PathVariable Long id,

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class JwtAuthenticationFilterTest {
+class ReissueFilterTest {
 
     @Mock
     private AuthClient authClient;
@@ -45,14 +45,14 @@ class JwtAuthenticationFilterTest {
     private FilterChain filterChain;
 
     @InjectMocks
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private ReissueFilter reissueFilter;
 
     private static final String ACCESS_TOKEN = "accessToken";
     private static final String REFRESH_TOKEN = "refreshToken";
 
     @BeforeEach
     void setUp() {
-        jwtAuthenticationFilter = new JwtAuthenticationFilter(authClient, cookieUtil, jwtUtil);
+        reissueFilter = new ReissueFilter(authClient, cookieUtil, jwtUtil);
     }
 
     @Test
@@ -66,7 +66,7 @@ class JwtAuthenticationFilterTest {
 
         when(authClient.refreshTokens("refreshToken=validRefreshToken")).thenReturn(responseEntity);
 
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+        reissueFilter.doFilterInternal(request, response, filterChain);
 
         ArgumentCaptor<String> headerCaptor = ArgumentCaptor.forClass(String.class);
         verify(response, atLeastOnce()).addHeader(eq("Set-Cookie"), headerCaptor.capture());
@@ -80,7 +80,7 @@ class JwtAuthenticationFilterTest {
         when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn(null);
         when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn(null);
 
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+        reissueFilter.doFilterInternal(request, response, filterChain);
 
         verify(filterChain, times(1)).doFilter(request, response);
     }
@@ -95,7 +95,7 @@ class JwtAuthenticationFilterTest {
         PrintWriter writer = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(writer);
 
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+        reissueFilter.doFilterInternal(request, response, filterChain);
 
         verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         verify(writer, times(1)).write("Unauthorized: Invalid refresh token");
@@ -107,7 +107,7 @@ class JwtAuthenticationFilterTest {
         when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn("validAccessToken");
         when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn("validRefreshToken");
 
-        jwtAuthenticationFilter.doFilterInternal(request, response, filterChain);
+        reissueFilter.doFilterInternal(request, response, filterChain);
 
         verify(authClient, never()).refreshTokens(anyString());
         verify(response, never()).addHeader(eq("Set-Cookie"), anyString());

@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.point.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Member;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import com.nhnacademy.heukbaekfrontend.point.dto.PointHistoryResponse;
@@ -25,7 +24,6 @@ public class PointHistoryController {
     private final MemberService memberService;
     private final PointHistoryService pointHistoryService;
 
-    @Member
     @GetMapping("/points")
     public String getMyPagePoints(Model model, Pageable pageable) {
         MemberResponse memberResponse = memberService.getMember().getBody();

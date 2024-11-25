@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.client;
 
+import com.nhnacademy.heukbaekfrontend.common.dto.LoginResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -10,8 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface LoginClient {
 
     @PostMapping("/api/auth/login")
-    ResponseEntity<String> login(@RequestBody LoginRequest loginRequest);
+    ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest);
 
     @PostMapping("/api/auth/admin/login")
-    ResponseEntity<String> adminLogin(@RequestBody LoginRequest loginRequest);
+    ResponseEntity<LoginResponse> adminLogin(@RequestBody LoginRequest loginRequest);
 }

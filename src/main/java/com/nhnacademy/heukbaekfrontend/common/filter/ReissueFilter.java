@@ -10,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -20,9 +19,8 @@ import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInte
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.REFRESH_TOKEN;
 
 
-@Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class ReissueFilter extends OncePerRequestFilter {
     private final AuthClient authClient;
     private final CookieUtil cookieUtil;
     private final JwtUtil jwtUtil;

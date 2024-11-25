@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.tag.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.tag.dto.request.TagCreateRequest;
 import com.nhnacademy.heukbaekfrontend.tag.dto.request.TagUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.tag.dto.response.TagCreateResponse;
@@ -32,14 +31,12 @@ public class TagController {
         this.tagService = tagService;
     }
 
-    @Admin
     @GetMapping("/register")
     public String registerTag(Model model) {
         model.addAttribute("tagCreateRequest", new TagCreateRequest(""));
         return "tag/admin/registerTag";
     }
 
-    @Admin
     @PostMapping
     public String registerTag(@ModelAttribute TagCreateRequest request, Model model) {
         ResponseEntity<TagCreateResponse> response = tagService.registerTag(request);
@@ -53,7 +50,6 @@ public class TagController {
         return "tag/admin/registerTag";
     }
 
-    @Admin
     @GetMapping
     public String getTags(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -67,7 +63,6 @@ public class TagController {
         return "tag/admin/viewAllTags";
     }
 
-    @Admin
     @GetMapping("/{tag-id}/update")
     public String updateTagForm(@PathVariable(name = "tag-id") Long tagId,
                                       Model model
@@ -82,7 +77,6 @@ public class TagController {
         return "tag/admin/updateTag";
     }
 
-    @Admin
     @PutMapping("/{tag-id}")
     public String updateTag(@PathVariable(name = "tag-id") Long tagId,
                                  @ModelAttribute TagUpdateRequest request,
@@ -97,7 +91,6 @@ public class TagController {
         return "tag/admin/updateTag";
     }
 
-    @Admin
     @DeleteMapping("/{tag-id}")
     public String deleteTag(
             @PathVariable(name = "tag-id") Long tagId,

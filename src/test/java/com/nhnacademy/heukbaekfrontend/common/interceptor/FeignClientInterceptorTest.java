@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.interceptor;
 
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import feign.RequestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,8 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -20,6 +20,9 @@ class FeignClientInterceptorTest {
 
     @Mock
     private HttpServletRequest httpServletRequest;
+
+    @Mock
+    private CookieUtil cookieUtil;
 
     @InjectMocks
     private FeignClientInterceptor feignClientInterceptor;
@@ -33,45 +36,67 @@ class FeignClientInterceptorTest {
 
     @Test
     void apply_withAccessTokenAndRefreshToken() {
-        Cookie accessTokenCookie = new Cookie("accessToken", "testAccessToken");
-        Cookie refreshTokenCookie = new Cookie("refreshToken", "testRefreshToken");
-        when(httpServletRequest.getCookies()).thenReturn(new Cookie[]{accessTokenCookie, refreshTokenCookie});
+        // Mock 쿠키 값 설정
+        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
+        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
 
         feignClientInterceptor.apply(requestTemplate);
 
-        assertEquals("Bearer testAccessToken", requestTemplate.headers().get(HttpHeaders.AUTHORIZATION).iterator().next());
-        assertEquals("refreshToken=testRefreshToken", requestTemplate.headers().get(HttpHeaders.COOKIE).iterator().next());
+        // AUTHORIZATION 헤더 검증
+        assertTrue(requestTemplate.headers().containsKey(HttpHeaders.AUTHORIZATION));
+        assertEquals("Bearer testAccessToken",
+                requestTemplate.headers().get(HttpHeaders.AUTHORIZATION).iterator().next());
+
+        // COOKIE 헤더 검증
+        assertTrue(requestTemplate.headers().containsKey(HttpHeaders.COOKIE));
+        assertEquals("refreshToken=testRefreshToken",
+                requestTemplate.headers().get(HttpHeaders.COOKIE).iterator().next());
     }
 
     @Test
     void apply_withNoCookies() {
-        when(httpServletRequest.getCookies()).thenReturn(null);
+        // 쿠키가 없는 경우
+        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn(null);
+        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn(null);
 
         feignClientInterceptor.apply(requestTemplate);
 
+        // 헤더가 비어 있는지 확인
         assertFalse(requestTemplate.headers().containsKey(HttpHeaders.AUTHORIZATION));
         assertFalse(requestTemplate.headers().containsKey(HttpHeaders.COOKIE));
     }
 
     @Test
     void apply_withOnlyAccessToken() {
-        Cookie accessTokenCookie = new Cookie("accessToken", "testAccessToken");
-        when(httpServletRequest.getCookies()).thenReturn(new Cookie[]{accessTokenCookie});
+        // Mock Access Token 쿠키만 설정
+        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
+        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn(null);
 
         feignClientInterceptor.apply(requestTemplate);
 
-        assertEquals("Bearer testAccessToken", requestTemplate.headers().get(HttpHeaders.AUTHORIZATION).iterator().next());
+        // AUTHORIZATION 헤더 검증
+        assertTrue(requestTemplate.headers().containsKey(HttpHeaders.AUTHORIZATION));
+        assertEquals("Bearer testAccessToken",
+                requestTemplate.headers().get(HttpHeaders.AUTHORIZATION).iterator().next());
+
+        // COOKIE 헤더가 없는지 확인
         assertFalse(requestTemplate.headers().containsKey(HttpHeaders.COOKIE));
     }
 
     @Test
     void apply_withOnlyRefreshToken() {
-        Cookie refreshTokenCookie = new Cookie("refreshToken", "testRefreshToken");
-        when(httpServletRequest.getCookies()).thenReturn(new Cookie[]{refreshTokenCookie});
+        // Mock Refresh Token 쿠키만 설정
+        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn(null);
+        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
 
         feignClientInterceptor.apply(requestTemplate);
 
-        assertEquals("refreshToken=testRefreshToken", requestTemplate.headers().get(HttpHeaders.COOKIE).iterator().next());
+        // COOKIE 헤더 검증
+        assertTrue(requestTemplate.headers().containsKey(HttpHeaders.COOKIE));
+        assertEquals("refreshToken=testRefreshToken",
+                requestTemplate.headers().get(HttpHeaders.COOKIE).iterator().next());
+
+        // AUTHORIZATION 헤더가 없는지 확인
         assertFalse(requestTemplate.headers().containsKey(HttpHeaders.AUTHORIZATION));
     }
 }

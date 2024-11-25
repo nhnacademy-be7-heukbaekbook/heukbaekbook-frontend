@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.request.CouponPolicyRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
@@ -23,7 +22,6 @@ public class CouponPolicyController {
 
     private final CouponPolicyService couponPolicyService;
 
-    @Admin
     @ModelAttribute
     public void before(Model model, Pageable pageable) {
         Page<CouponPolicyResponse> couponPolicies = couponPolicyService.getCouponPolicies(pageable);
@@ -32,13 +30,11 @@ public class CouponPolicyController {
         model.addAttribute("policyTypes", DiscountType.values());
     }
 
-    @Admin
     @GetMapping
     public String getCouponPolicyPage() {
         return "coupon/admin/coupon-policy";
     }
 
-    @Admin
     @PostMapping
     public String addCouponPolicy(@Valid @ModelAttribute CouponPolicyRequest couponPolicyRequest,
                                      BindingResult bindingResult,
@@ -51,19 +47,15 @@ public class CouponPolicyController {
         return REDIRECT_PATH;
     }
 
-    @Admin
     @PutMapping("/{policyId}")
     public String updateCouponPolicy(@PathVariable Long policyId, @ModelAttribute CouponPolicyRequest couponPolicyRequest) {
         couponPolicyService.updateCouponPolicy(policyId, couponPolicyRequest);
         return REDIRECT_PATH;
     }
 
-    @Admin
     @DeleteMapping("/{policyId}")
     public String deleteCouponPolicy(@PathVariable Long policyId) {
         couponPolicyService.deleteCouponPolicy(policyId);
         return REDIRECT_PATH;
     }
-
-
 }

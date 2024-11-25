@@ -8,7 +8,7 @@ import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDeleteRespo
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDetailResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
+import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +45,7 @@ class CategoryAdminControllerTest {
     private CookieUtil cookieUtil;
 
     @MockBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private ReissueFilter reissueFilter;
 
     @BeforeEach
     void setUp() {
