@@ -1,16 +1,13 @@
 package com.nhnacademy.heukbaekfrontend.common.interceptor;
 
-import com.nhnacademy.heukbaekfrontend.common.dto.LoginResponse;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
