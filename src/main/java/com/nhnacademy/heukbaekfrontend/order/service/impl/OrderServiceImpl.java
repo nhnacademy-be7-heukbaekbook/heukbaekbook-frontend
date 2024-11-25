@@ -2,19 +2,21 @@ package com.nhnacademy.heukbaekfrontend.order.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookOrderResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import com.nhnacademy.heukbaekfrontend.order.client.DeliveryFeeClient;
 import com.nhnacademy.heukbaekfrontend.order.client.OrderClient;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
-import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderFormRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,18 +33,24 @@ public class OrderServiceImpl implements OrderService {
 
     private final CartService cartService;
 
-    @Override
-    public OrderFormRequest createOrderFormRequest(String sessionId, List<Long> bookIds, Integer quantity) {
-        List<Book> books = fetchBooks(sessionId, bookIds, quantity);
-        String totalPrice = commonService.calculateAllTotalPriceAndFormat(books);
-        String totalDiscountAmount = commonService.calculateAllTotalDiscountAndFormat(books);
+    private final DeliveryFeeClient deliveryFeeClient;
 
-        return new OrderFormRequest(books, totalPrice, totalDiscountAmount);
+    @Override
+    public OrderFormResponse createOrderFormResponse(String sessionId, List<Long> bookIds, Integer quantity) {
+        List<Book> books = fetchBooks(sessionId, bookIds, quantity);
+        BigDecimal totalPrice = commonService.calculateAllTotalPrice(books);
+        String totalBookPrice = commonService.calculateAllTotalPriceAndFormat(books);
+        String totalBookDiscountAmount = commonService.calculateAllTotalDiscountAndFormat(books);
+
+        BigDecimal deliveryFee = deliveryFeeClient.getDeliveryFeeByMinimumOrderAmount(totalPrice);
+        totalPrice = totalPrice.add(deliveryFee);
+
+        return new OrderFormResponse(books, totalBookPrice, totalBookDiscountAmount, commonService.formatPrice(deliveryFee), commonService.formatPrice(totalPrice));
     }
 
     private List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
         if (quantity == null) {
-            log.info("sessiondId {} bookIds {}", sessionId, bookIds);
+            log.info("sessionId {} bookIds {}", sessionId, bookIds);
             return cartService.getBooksByBookIdsFromCart(sessionId, bookIds); // 장바구니에서 체크 표시한 책 가져오기
         }
         return getBookOrderResponses(bookIds.getFirst(), quantity); // 주문 요청에서 책 가져오기
@@ -71,5 +79,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ResponseEntity<Long> createOrder(OrderCreateRequest orderCreateRequest) {
         return orderClient.createOrder(orderCreateRequest);
+    }
+
+    @Override
+    public OrderDetailResponse createOrderDetailResponse(String tossOrderId) {
+        return orderClient.getOrderDetailResponse(tossOrderId);
     }
 }

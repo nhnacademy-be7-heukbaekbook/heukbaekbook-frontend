@@ -37,6 +37,15 @@ public class CommonService {
         return formatPrice(totalPrice);
     }
 
+    public BigDecimal calculateAllTotalPrice(List<Book> books) {
+        BigDecimal allTotalPrice = BigDecimal.ZERO;
+        for (Book book : books) {
+            allTotalPrice = allTotalPrice.add(book.totalPrice());
+        }
+
+        return allTotalPrice;
+    }
+
     public String calculateAllTotalPriceAndFormat(List<Book> books) {
         BigDecimal allTotalPrice = BigDecimal.ZERO;
         for (Book book : books) {
@@ -48,7 +57,7 @@ public class CommonService {
     public String calculateAllTotalDiscountAndFormat(List<Book> books) {
         BigDecimal allTotalDiscount = BigDecimal.ZERO;
         for (Book book : books) {
-            allTotalDiscount = allTotalDiscount.add(book.discountAmount());
+            allTotalDiscount = allTotalDiscount.add(book.discountAmount().multiply(BigDecimal.valueOf(book.quantity())));
         }
         return formatPrice(allTotalDiscount);
     }

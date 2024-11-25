@@ -2,6 +2,8 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.dto;
 
 import jakarta.validation.constraints.*;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.sql.Date;
 
 public record MemberCreateRequest(
@@ -43,5 +45,7 @@ public record MemberCreateRequest(
         @NotBlank(message = "주소의 별칭을 입력하여 주십시오.")
         @Pattern(regexp = "^[가-힣0-9 ]{2,10}$", message = "올바른 주소 별칭 형식이 아닙니다.")
         String alias
-) {
+) implements Serializable{
+        @Serial
+        private static final long serialVersionUID = 1L;
 }

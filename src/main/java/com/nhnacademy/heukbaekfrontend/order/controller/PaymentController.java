@@ -5,13 +5,11 @@ import com.nhnacademy.heukbaekfrontend.order.dto.response.PaymentApprovalRespons
 import com.nhnacademy.heukbaekfrontend.order.service.PaymentService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/payment")
@@ -31,6 +29,7 @@ public class PaymentController {
 
     @GetMapping("/success")
     public String viewSuccess() {
+        log.info("view success");
         return "order/success";
     }
 
@@ -40,17 +39,17 @@ public class PaymentController {
     }
 
     @PostMapping("/confirm")
-    public String confirmPayment(@RequestBody PaymentApprovalRequest request, Model model) {
+    @ResponseBody
+    public ResponseEntity<PaymentApprovalResponse> confirmPayment(@RequestBody PaymentApprovalRequest request) {
+        log.info("confirm payment {}", request);
         PaymentApprovalResponse response = paymentService.approvePayment(request);
-        model.addAttribute("response", response);
-        log.info("결제 승인 요청 결과: {}", response.toString());
-        return "order/result";
+        log.info("결제 승인 요청 결과: {}", response);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping("/result")
     public String viewResult(Model model) {
         model.addAttribute("response", new PaymentApprovalResponse("결제에 성공하였습니다."));
-        return "order/result";
+        return "order/detail";
     }
-
 }
