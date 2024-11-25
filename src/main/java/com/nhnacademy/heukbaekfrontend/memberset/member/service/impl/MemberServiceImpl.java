@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service.impl;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Member;
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;

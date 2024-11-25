@@ -5,14 +5,11 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -37,13 +34,11 @@ public class BookAdminController {
         this.tagService = tagService;
     }
 
-    @Admin
     @GetMapping("/aladin")
     public String searchBooks() {
         return "book/admin/searchBookFromAladin";
     }
 
-    @Admin
     @PostMapping("/aladin")
     public String searchBooks(@RequestParam("title") String title, Model model) {
         List<BookSearchResponse> books = bookService.searchBooks(title);
@@ -51,14 +46,12 @@ public class BookAdminController {
         return "book/admin/searchBookFromAladin";
     }
 
-    @Admin
     @PostMapping("/aladin/register")
     public String selectBookForRegistration(@ModelAttribute BookCreateRequest request, Model model) {
         model.addAttribute("bookCreateRequest", request);
         return "book/admin/registerBook";
     }
 
-    @Admin
     @GetMapping("/books")
     public String viewAllBooks(
             @RequestParam(defaultValue = "0") int page,
@@ -78,7 +71,6 @@ public class BookAdminController {
         return "book/admin/viewAllBooks";
     }
 
-    @Admin
     @GetMapping("/books/{book-id}")
     public String viewBook(@PathVariable(name = "book-id") Long bookId, Model model) {
         BookDetailResponse bookDetail = bookService.getBookById(bookId);
@@ -86,7 +78,6 @@ public class BookAdminController {
         return "book/admin/bookDetail";
     }
 
-    @Admin
     @GetMapping("/books/register")
     public String showRegisterBookForm(Model model) {
         model.addAttribute("bookCreateRequest", new BookCreateRequest(
@@ -95,7 +86,6 @@ public class BookAdminController {
         return "book/admin/registerBook";
     }
 
-    @Admin
     @PostMapping("/books/register")
     public String registerBook(@ModelAttribute BookCreateRequest request, Model model) {
         ResponseEntity<BookCreateResponse> response = bookService.registerBook(request);
@@ -109,7 +99,6 @@ public class BookAdminController {
         return "book/admin/registerBook";
     }
 
-    @Admin
     @GetMapping("/books/{book-id}/edit")
     public String updateBookForm(@PathVariable(name = "book-id") Long bookId, Model model) {
         BookDetailResponse bookDetail = bookService.getBookById(bookId);
@@ -141,7 +130,6 @@ public class BookAdminController {
         return "book/admin/updateBook";
     }
 
-    @Admin
     @PutMapping("/books/{book-id}")
     public String updateBook(@PathVariable(name = "book-id") Long bookId,
                              @ModelAttribute BookUpdateRequest request,
@@ -160,7 +148,6 @@ public class BookAdminController {
         return "book/admin/updateBook";
     }
 
-    @Admin
     @DeleteMapping("/books/{book-id}")
     public String deleteBook(
             @PathVariable(name = "book-id") Long bookId,
@@ -181,5 +168,4 @@ public class BookAdminController {
 
         return "redirect:" + redirectUrl;
     }
-
 }

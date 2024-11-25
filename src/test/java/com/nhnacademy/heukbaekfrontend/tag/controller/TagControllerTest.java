@@ -1,6 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.tag.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
+import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.tag.dto.request.TagCreateRequest;
 import com.nhnacademy.heukbaekfrontend.tag.dto.request.TagUpdateRequest;
@@ -42,7 +42,7 @@ class TagControllerTest {
     private CookieUtil cookieUtil;
 
     @MockBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private ReissueFilter reissueFilter;
 
     @BeforeEach
     void setUp() {

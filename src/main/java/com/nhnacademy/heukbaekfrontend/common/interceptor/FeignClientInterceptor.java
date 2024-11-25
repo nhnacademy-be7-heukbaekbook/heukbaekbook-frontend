@@ -1,11 +1,16 @@
 package com.nhnacademy.heukbaekfrontend.common.interceptor;
 
+import com.nhnacademy.heukbaekfrontend.common.dto.LoginResponse;
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -18,11 +23,12 @@ public class FeignClientInterceptor implements RequestInterceptor {
     private static final String X_USER_ROLE = "X-USER-ROLE";
 
     private final HttpServletRequest httpServletRequest;
+    private final CookieUtil cookieUtil;
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        String accessToken = extractTokenFromCookie(httpServletRequest, ACCESS_TOKEN);
-        String refreshToken = extractTokenFromCookie(httpServletRequest, REFRESH_TOKEN);
+        String accessToken = cookieUtil.getCookie(httpServletRequest, ACCESS_TOKEN);
+        String refreshToken = cookieUtil.getCookie(httpServletRequest, REFRESH_TOKEN);
 
         // Access token 설정
         if (accessToken != null) {
@@ -35,25 +41,16 @@ public class FeignClientInterceptor implements RequestInterceptor {
         }
 
         // id와 role 설정
-        Long userId = (Long) httpServletRequest.getAttribute("id");
-        String userRole = (String) httpServletRequest.getAttribute("role");
-
-        if (userId != null) {
-            requestTemplate.header(X_USER_ID, userId.toString());
-        }
-        if (userRole != null) {
-            requestTemplate.header(X_USER_ROLE, userRole);
-        }
-    }
-
-    private String extractTokenFromCookie(HttpServletRequest request, String tokenName) {
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if (cookie.getName().equals(tokenName)) {
-                    return cookie.getValue();
-                }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof Long userId) {
+                requestTemplate.header(X_USER_ID, userId.toString());
             }
+
+            authentication.getAuthorities().stream().findFirst().ifPresent(authority -> {
+                requestTemplate.header(X_USER_ROLE, authority.getAuthority());
+            });
         }
-        return null;
     }
 }

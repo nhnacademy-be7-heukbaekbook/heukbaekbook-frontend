@@ -5,7 +5,7 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
+import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +44,7 @@ class BookAdminControllerTest {
     private CookieUtil cookieUtil;
 
     @MockBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private ReissueFilter reissueFilter;
 
     @MockBean
     private CategoryService categoryService;

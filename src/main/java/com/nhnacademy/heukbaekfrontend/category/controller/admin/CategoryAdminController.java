@@ -7,7 +7,6 @@ import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDeleteRespo
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDetailResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +31,6 @@ public class CategoryAdminController {
         this.categoryService = categoryService;
     }
 
-    @Admin
     @GetMapping
     public String viewAllCategories(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -43,7 +41,6 @@ public class CategoryAdminController {
         return "category/admin/viewAllCategories";
     }
 
-    @Admin
     @GetMapping("/register")
     public String viewRegisterCategoryForm(Model model, Pageable pageable) {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
@@ -52,7 +49,6 @@ public class CategoryAdminController {
         return "category/admin/registerCategory";
     }
 
-    @Admin
     @PostMapping("/register")
     public String registerCategory(@ModelAttribute CategoryCreateRequest request, Model model) {
         ResponseEntity<CategoryCreateResponse> response = categoryService.registerCategory(request);
@@ -66,7 +62,6 @@ public class CategoryAdminController {
         return "category/admin/registerCategory";
     }
 
-    @Admin
     @GetMapping("/{category-id}/update")
     public String updateCategoryForm(@PathVariable(name = "category-id") Long categoryId,
                                      Model model,
@@ -85,7 +80,6 @@ public class CategoryAdminController {
     }
 
 
-    @Admin
     @PutMapping("/{category-id}")
     public String updateCategory(@PathVariable(name = "category-id") Long categoryId,
                                  @ModelAttribute CategoryUpdateRequest request,
@@ -101,7 +95,6 @@ public class CategoryAdminController {
         return "category/admin/updateCategory";
     }
 
-    @Admin
     @DeleteMapping("/{category-id}")
     public String deleteBook(
             @PathVariable(name = "category-id") Long categoryId,

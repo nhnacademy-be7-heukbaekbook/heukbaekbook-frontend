@@ -26,4 +26,13 @@ public class CookieUtil {
         cookie.setPath("/");
         response.addCookie(cookie);
     }
+
+    public void addCookie(HttpServletResponse response, String name, String value, long expiryInSeconds) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge((int) expiryInSeconds);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+    }
 }

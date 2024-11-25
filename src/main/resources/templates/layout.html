@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>흑백문고</title>
@@ -18,12 +18,13 @@
             <li><a href="/categories">카테고리</a></li>
             <li><a href="/cart">장바구니</a></li>
             <li><a href="/members/mypage">마이페이지</a></li>
-            <li th:if="${isLogin}">
+            <!-- 로그인 상태에 따른 표시 -->
+            <li sec:authorize="isAuthenticated()">
                 <form th:action="@{/logout}" method="post" style="display: inline;">
                     <button type="submit" class="link-button">로그아웃</button>
                 </form>
             </li>
-            <li th:unless="${isLogin}">
+            <li sec:authorize="isAnonymous()">
                 <a href="/login">로그인</a>
             </li>
         </ul>
