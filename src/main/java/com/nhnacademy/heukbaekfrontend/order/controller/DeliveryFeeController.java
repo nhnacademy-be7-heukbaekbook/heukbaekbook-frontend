@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.order.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.DeliveryFeeCreateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.DeliveryFeeUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.DeliveryFeeCreateResponse;
@@ -32,14 +31,12 @@ public class DeliveryFeeController {
         this.deliveryFeeService = deliveryFeeService;
     }
 
-    @Admin
     @GetMapping("/register")
     public String viewDeliveryFee(Model model) {
         model.addAttribute("deliveryFeeCreateRequest", new DeliveryFeeCreateRequest("", BigDecimal.ZERO, BigDecimal.ZERO));
         return "order/admin/registerDeliveryFee";
     }
 
-    @Admin
     @PostMapping("/register")
     public String registerDeliveryFee(@ModelAttribute DeliveryFeeCreateRequest request, Model model) {
         ResponseEntity<DeliveryFeeCreateResponse> response = deliveryFeeService.registerDeliveryFee(request);
@@ -53,7 +50,6 @@ public class DeliveryFeeController {
         return "order/admin/registerDeliveryFee";
     }
 
-    @Admin
     @GetMapping
     public String getDeliveryFees(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -67,7 +63,6 @@ public class DeliveryFeeController {
         return "order/admin/viewAllDeliveryFees";
     }
 
-    @Admin
     @GetMapping("/{delivery-fee-id}/update")
     public String updateDeliveryFeeForm(@PathVariable(name = "delivery-fee-id") Long deliveryFeeId,
                                 Model model
@@ -84,7 +79,6 @@ public class DeliveryFeeController {
         return "order/admin/updateDeliveryFee";
     }
 
-    @Admin
     @PutMapping("/{delivery-fee-id}")
     public String updateDeliveryFee(@PathVariable(name = "delivery-fee-id") Long deliveryFeeId,
                             @ModelAttribute DeliveryFeeUpdateRequest request,
@@ -99,7 +93,6 @@ public class DeliveryFeeController {
         return "order/admin/updateDeliveryFee";
     }
 
-    @Admin
     @DeleteMapping("/{delivery-fee-id}")
     public String deleteDeliveryFee(
             @PathVariable(name = "delivery-fee-id") Long deliveryFeeId,
