@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.contributor.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.ContributorCreateResponse;
@@ -30,14 +29,12 @@ public class ContributorController {
         this.contributorService = contributorService;
     }
 
-    @Admin
     @GetMapping("/register")
     public String registerContributor(Model model) {
         model.addAttribute("contributorCreateRequest", new ContributorCreateRequest("", ""));
         return "contributor/admin/registerContributor";
     }
 
-    @Admin
     @PostMapping
     public String registerContributor(@ModelAttribute ContributorCreateRequest request, Model model) {
         ResponseEntity<ContributorCreateResponse> response = contributorService.registerContributor(request);
@@ -51,7 +48,6 @@ public class ContributorController {
         return "contributor/admin/registerContributor";
     }
 
-    @Admin
     @GetMapping
     public String getContributors(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -65,7 +61,6 @@ public class ContributorController {
         return "contributor/admin/viewAllContributor";
     }
 
-    @Admin
     @GetMapping("/{contributor-id}/update")
     public String updateContributorForm(@PathVariable(name = "contributor-id") Long contributorId,
                                      Model model
@@ -81,7 +76,6 @@ public class ContributorController {
         return "contributor/admin/updateContributor";
     }
 
-    @Admin
     @PutMapping("/{contributor-id}")
     public String updateContributor(@PathVariable(name = "contributor-id") Long contributorId,
                                  @ModelAttribute ContributorUpdateRequest request,
@@ -96,7 +90,6 @@ public class ContributorController {
         return "contributor/admin/updateContributor";
     }
 
-    @Admin
     @DeleteMapping("/{contributor-id}")
     public String deleteContributor(
             @PathVariable(name = "contributor-id") Long contributorId,

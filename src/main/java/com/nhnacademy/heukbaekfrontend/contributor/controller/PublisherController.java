@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.contributor.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.PublisherCreateResponse;
@@ -30,14 +29,12 @@ public class PublisherController {
         this.publisherService = publisherService;
     }
 
-    @Admin
     @GetMapping("/register")
     public String registerPublisher(Model model) {
         model.addAttribute("publisherCreateRequest", new PublisherCreateRequest(""));
         return "contributor/admin/registerPublisher";
     }
 
-    @Admin
     @PostMapping
     public String registerPublisher(@ModelAttribute PublisherCreateRequest request, Model model) {
         ResponseEntity<PublisherCreateResponse> response = publisherService.registerPublisher(request);
@@ -51,7 +48,6 @@ public class PublisherController {
         return "contributor/admin/registerPublisher";
     }
 
-    @Admin
     @GetMapping
     public String getPublishers(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC) Pageable pageable,
@@ -65,7 +61,6 @@ public class PublisherController {
         return "contributor/admin/viewAllPublisher";
     }
 
-    @Admin
     @GetMapping("/{publisher-id}/update")
     public String updatePublisherForm(@PathVariable(name = "publisher-id") Long publisherId,
                                      Model model
@@ -80,7 +75,6 @@ public class PublisherController {
         return "contributor/admin/updatePublisher";
     }
 
-    @Admin
     @PutMapping("/{publisher-id}")
     public String updatePublisher(@PathVariable(name = "publisher-id") Long publisherId,
                                  @ModelAttribute PublisherUpdateRequest request,
@@ -95,7 +89,6 @@ public class PublisherController {
         return "contributor/admin/updatePublisher";
     }
 
-    @Admin
     @DeleteMapping("/{publisher-id}")
     public String deletePublisher(
             @PathVariable(name = "publisher-id") Long publisherId,
@@ -116,5 +109,4 @@ public class PublisherController {
 
         return "redirect:" + redirectUrl;
     }
-
 }

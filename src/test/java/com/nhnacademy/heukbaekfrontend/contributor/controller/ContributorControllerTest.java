@@ -4,7 +4,7 @@ import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorCreate
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.contributor.service.ContributorService;
-import com.nhnacademy.heukbaekfrontend.common.filter.JwtAuthenticationFilter;
+import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,7 +42,7 @@ class ContributorControllerTest {
     private CookieUtil cookieUtil;
 
     @MockBean
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private ReissueFilter reissueFilter;
 
     @BeforeEach
     void setUp() {

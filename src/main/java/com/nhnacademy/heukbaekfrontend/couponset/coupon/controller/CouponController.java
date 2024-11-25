@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.couponset.coupon.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Admin;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponStatus;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
@@ -30,7 +29,6 @@ public class CouponController {
     private final CouponPolicyService couponPolicyService;
     private static final String REDIRECT_PATH = "redirect:/admin/coupons";
 
-    @Admin
     @ModelAttribute
     public void before(Model model, Pageable pageable) {
         Page<CouponResponse> normalCoupons = couponService.getAllNormalCoupons(pageable);
@@ -46,13 +44,11 @@ public class CouponController {
         model.addAttribute("couponPolicyList", couponPolicyList);
     }
 
-    @Admin
     @GetMapping
     public String getCouponPage() {
         return "coupon/admin/coupon";
     }
 
-    @Admin
     @PostMapping
     public String addCoupon(@Valid @ModelAttribute CouponRequest couponRequest,
                             BindingResult bindingResult,
@@ -65,14 +61,12 @@ public class CouponController {
         return REDIRECT_PATH;
     }
 
-    @Admin
     @PutMapping("/{couponId}")
     public String updateCoupon(@PathVariable Long couponId, @ModelAttribute CouponRequest couponRequest) {
         couponService.updateCoupon(couponId, couponRequest);
         return REDIRECT_PATH;
     }
 
-    @Admin
     @DeleteMapping("/{couponId}")
     public String deleteCoupon(@PathVariable Long couponId) {
         couponService.deleteCoupon(couponId);

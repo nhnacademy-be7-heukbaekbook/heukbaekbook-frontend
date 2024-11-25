@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.memberset.address.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.annotation.Member;
 import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.address.service.MemberAddressService;
@@ -27,7 +26,6 @@ public class MemberAddressController {
 
     private static final String REDIRECT_MY_PAGE_ADDRESS="redirect:/members/mypage/addresses";
 
-    @Member
     @GetMapping
     public String getMyPageAddresses(Model model) {
         List<MemberAddressResponse> addressList = memberAddressService.getMemberAddressesList();
@@ -37,13 +35,11 @@ public class MemberAddressController {
         return "mypage/mypage-address";
     }
 
-    @Member
     @GetMapping("/count")
     public ResponseEntity<Long> countMemberAddresses(){
         return memberAddressService.countMemberAddresses();
     }
 
-    @Member
     @PostMapping
     public String addMemberAddress(@Valid @ModelAttribute MemberAddressRequest memberAddressRequest,
                                    RedirectAttributes redirectAttributes,
@@ -58,14 +54,12 @@ public class MemberAddressController {
         return REDIRECT_MY_PAGE_ADDRESS;
     }
 
-    @Member
     @PutMapping("/{addressId}")
     public String updateMemberAddress(@PathVariable Long addressId, @Valid @ModelAttribute MemberAddressRequest memberAddressRequest) {
         memberAddressService.updateMemberAddress(addressId, memberAddressRequest);
         return REDIRECT_MY_PAGE_ADDRESS;
     }
 
-    @Member
     @DeleteMapping("/{addressId}")
     public String deleteMemberAddress(@PathVariable Long addressId) {
         memberAddressService.deleteMemberAddress(addressId);
