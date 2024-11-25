@@ -61,8 +61,8 @@ public class SecurityConfig {
                                         .requestMatchers("/members/**").hasRole("MEMBER")
                                         .requestMatchers("/admin/**").hasRole("ADMIN")
                                         .requestMatchers("/logout").hasAnyRole("ADMIN", "MEMBER")
-                                        .anyRequest().permitAll()
-//                                .anyRequest().authenticated()
+                                        .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                                .anyRequest().authenticated()
                 );
 
         http
