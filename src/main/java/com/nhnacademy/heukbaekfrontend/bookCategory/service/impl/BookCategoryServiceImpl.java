@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.bookCategory.service.impl;
 import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.bookCategory.service.client.BookCategoryClient;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
+import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ public class BookCategoryServiceImpl implements BookCategoryService {
     private final BookCategoryClient bookCategoryClient;
 
     @Override
-    public List<CategorySummaryResponse> getBookCategoriesByBookId(Long bookId) {
+    public List<ParentCategoryResponse> getBookCategoriesByBookId(Long bookId) {
         return bookCategoryClient.getBookCategoriesByBookId(bookId);
     }
 }
