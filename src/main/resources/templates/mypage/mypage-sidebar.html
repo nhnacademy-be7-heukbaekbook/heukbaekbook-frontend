@@ -2,21 +2,21 @@
 <aside id="sidebar" th:fragment="sidebar">
 
   <!-- 첫 번째 카드: 나의 마니아 등급 -->
-  <div class="menu-card" th:object="${memberResponse}">
+  <div class="menu-card" th:object="${myPageResponse.memberResponse}">
     <h3>
       <span>나의 등급</span>
-      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'NORMAL'}">일반 회원</span>
-      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'ROYAL'}">로얄 회원</span>
-      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'GOLD'}">골드 회원</span>
-      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'PLATINUM'}">플래티넘 회원</span>
+      <span class="member-level" th:if="${myPageResponse.memberResponse.grade.gradeName == 'NORMAL'}">일반 회원</span>
+      <span class="member-level" th:if="${myPageResponse.memberResponse.grade.gradeName == 'ROYAL'}">로얄 회원</span>
+      <span class="member-level" th:if="${myPageResponse.memberResponse.grade.gradeName == 'GOLD'}">골드 회원</span>
+      <span class="member-level" th:if="${myPageResponse.memberResponse.grade.gradeName == 'PLATINUM'}">플래티넘 회원</span>
     </h3>
 
     <div class="membership-levels">
       <!-- 각 등급에 따라 active 클래스가 적용되도록 설정 -->
-      <span th:classappend="${memberResponse.grade.gradeName} == 'NORMAL' ? 'active':null" class="level">일반</span>
-      <span th:classappend="${memberResponse.grade.gradeName} == 'ROYAL' ? 'active':null" class="level">로얄</span>
-      <span th:classappend="${memberResponse.grade.gradeName} == 'GOLD' ? 'active':null" class="level">골드</span>
-      <span th:classappend="${memberResponse.grade.gradeName} == 'PLATINUM' ? 'active':null" class="level">플래  티넘</span>
+      <span th:classappend="${myPageResponse.memberResponse.grade.gradeName} == 'NORMAL' ? 'active':null" class="level">일반</span>
+      <span th:classappend="${myPageResponse.memberResponse.grade.gradeName} == 'ROYAL' ? 'active':null" class="level">로얄</span>
+      <span th:classappend="${myPageResponse.memberResponse.grade.gradeName} == 'GOLD' ? 'active':null" class="level">골드</span>
+      <span th:classappend="${myPageResponse.memberResponse.grade.gradeName} == 'PLATINUM' ? 'active':null" class="level">플래  티넘</span>
     </div>
 
     <!-- 등급 설명 및 조건 표시 -->
