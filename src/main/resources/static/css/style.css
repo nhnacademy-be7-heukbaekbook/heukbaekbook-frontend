@@ -662,3 +662,43 @@ main {
 .toastui-editor-toolbar .tui-svg-icon {
     fill: #d0d0d0; /* 원하는 색상으로 변경 */
 }
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed; /* 열 너비 고정 */
+}
+
+.order-table th, .order-table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+.order-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+
+/* 열 너비 설정 */
+.order-table th:nth-child(1),
+.order-table td:nth-child(1) {
+    width: 15%; /* 첫 번째 열 */
+}
+
+.order-table th:nth-child(2),
+.order-table td:nth-child(2) {
+    width: 60%; /* 두 번째 열 */
+}
+
+.order-table th:nth-child(3),
+.order-table td:nth-child(3) {
+    width: 15%; /* 세 번째 열 */
+}
+
+.order-table th:nth-child(4),
+.order-table td:nth-child(4) {
+    width: 10%; /* 네 번째 열 */
+}
