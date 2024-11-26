@@ -1,5 +1,5 @@
 redis:
-  database: 106
+  database: 107
 
 server:
   servlet:

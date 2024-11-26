@@ -79,6 +79,16 @@
             border-radius: 4px;
             cursor: pointer;
         }
+
+        button {
+            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
         #roadAddress, #detailAddress {
             width: 100%; /* 입력 필드 너비 */
             padding: 6px;
@@ -345,6 +355,47 @@
         #roadAddress, #detailAddress {
             width: 400px; /* 원하는 너비값으로 설정하세요 */
         }
+
+        /* 모달 창 배경 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* 사진처럼 배경을 밝은 검정으로 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* 모달 창이 다른 요소 위로 오도록 설정 */
+        }
+
+        /* 모달 창 콘텐츠 */
+        .modal-content {
+            background-color: #f9f9f9; /* 사진처럼 밝은 회색 배경 */
+            padding: 20px;
+            border-radius: 8px; /* 모서리를 약간 더 둥글게 설정 */
+            width: 20%; /* 가로 길이를 40%로 설정 */
+            min-width: 400px; /* 최소 너비를 조금 더 넓게 설정 */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 더 뚜렷한 그림자 효과 */
+            text-align: center;
+            position: relative;
+            border: 1px solid #ddd; /* 사진처럼 약간의 테두리 추가 */
+        }
+
+        /* 닫기 버튼 */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 숨겨진 상태 */
+        .modal[hidden] {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -461,15 +512,56 @@
                     </div>
                 </div>
 
-<!--                <div>-->
-<!--                    <label>배송지</label>-->
-<!--                    <div class="radio-group">-->
-<!--                        <label><input type="radio" name="delivery" value="주소록" checked> 주소록</label>-->
-<!--                        <label><input type="radio" name="delivery" value="회원정보동일"> 회원정보동일</label>-->
-<!--                        <label><input type="radio" name="delivery" value="새로입력"> 새로입력</label>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div th:if="${orderFormResponse.memberDetailResponse() != null}">
+                    <label>배송지</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="deliveryAddress" value="주소록" onclick="openAddressModal()"> 주소록
+                        </label>
+                        <label>
+                            <input type="radio" name="deliveryAddress" value="새로입력" onclick="enableAddressInput()"> 새로입력
+                        </label>
+                    </div>
+                </div>
 
+                <!-- 모달 창 -->
+                <div id="addressModal" class="modal" hidden>
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddressModal()">&times;</span>
+                        <h3>주소록</h3>
+                        <table border="1" style="width: 100%; text-align: left;">
+                            <thead>
+                            <tr>
+                                <th>선택</th>
+                                <th>수령지</th>
+                                <th>우편번호</th>
+                                <th>도로명주소</th>
+                                <th>상세주소</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Thymeleaf로 주소 데이터를 렌더링 -->
+                            <tr th:each="address : ${orderFormResponse.memberDetailResponse()?.memberAddresses()}"
+                                th:if="${orderFormResponse.memberDetailResponse() != null}">
+                                <td>
+                                    <input type="radio" name="selectedAddress"
+                                           th:value="${address.addressId}"
+                                           th:attr="data-postal-code=${address.postalCode},
+                                                    data-road-name-address=${address.roadNameAddress},
+                                                    data-detail-address=${address.detailAddress}">
+                                </td>
+                                <td th:text="${address.alias}"></td>
+                                <td th:text="${address.postalCode}"></td>
+                                <td th:text="${address.roadNameAddress}"></td>
+                                <td th:text="${address.detailAddress}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button onclick="selectAddress()">선택 완료</button>
+                    </div>
+                </div>
+
+                <!-- 선택된 주소를 표시할 입력창 -->
                 <div class="name-input-group">
                     <label for="recipientName">이름</label>
                     <input type="text" id="recipientName" name="recipientName" placeholder="수령인 이름 입력" required>
@@ -484,6 +576,48 @@
                     <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly required>
                     <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" required>
                 </div>
+
+                <script>
+                    function openAddressModal() {
+                        document.getElementById("addressModal").hidden = false;
+                    }
+
+                    function closeAddressModal() {
+                        document.getElementById("addressModal").hidden = true;
+                    }
+
+                    function enableAddressInput() {
+                        // 입력 필드 활성화
+                        document.getElementById("postcode").readOnly = false;
+                        document.getElementById("roadAddress").readOnly = false;
+                        document.getElementById("detailAddress").readOnly = false;
+
+                        // 입력 필드 초기화
+                        document.getElementById("postcode").value = "";
+                        document.getElementById("roadAddress").value = "";
+                        document.getElementById("detailAddress").value = "";
+                    }
+
+                    function selectAddress() {
+                        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+                        if (selectedAddress) {
+                            // 선택된 주소의 데이터 속성 가져오기
+                            const postalCode = selectedAddress.getAttribute("data-postal-code");
+                            const roadNameAddress = selectedAddress.getAttribute("data-road-name-address");
+                            const detailAddress = selectedAddress.getAttribute("data-detail-address");
+
+                            // 입력창에 값 설정
+                            document.getElementById("postcode").value = postalCode;
+                            document.getElementById("roadAddress").value = roadNameAddress;
+                            document.getElementById("detailAddress").value = detailAddress;
+
+                            // 모달 창 닫기
+                            closeAddressModal();
+                        } else {
+                            alert("주소를 선택해주세요.");
+                        }
+                    }
+                </script>
 
                 <script>
                     // "주소 찾기" 버튼 클릭 이벤트
@@ -523,22 +657,42 @@
 
                 <div class="name-input-group">
                     <label for="customerName">이름</label>
-                    <input type="text" id="customerName" name="customerName" placeholder="주문자 이름 입력" required>
+                    <!-- 숨겨진 필드 -->
+                    <input type="hidden" id="customerId"
+                           th:if="${orderFormResponse.memberDetailResponse != null}"
+                           th:value="${orderFormResponse.memberDetailResponse.id}">
+                    <input type="text" id="customerName" name="customerName" placeholder="주문자 이름 입력"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? orderFormResponse.memberDetailResponse.customerName : ''}" required>
                 </div>
 
                 <div class="phone-input-group">
                     <label>휴대폰</label>
-                    <label for="customerPhone1"></label><input type="tel" id="customerPhone1" name="customerPhone1" placeholder="010" class="phone-input" maxlength="3" required>
+                    <!-- 첫 번째 필드 -->
+                    <label for="customerPhone1"></label>
+                    <input type="tel" id="customerPhone1" name="customerPhone1"
+                           placeholder="010" class="phone-input" maxlength="3"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[0] : ''}" required>
                     <span class="separator">-</span>
-                    <label for="customerPhone2"></label><input type="tel" id="customerPhone2" name="customerPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
+
+                    <!-- 두 번째 필드 -->
+                    <label for="customerPhone2"></label>
+                    <input type="tel" id="customerPhone2" name="customerPhone2"
+                           placeholder="1234" class="phone-input" maxlength="4"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[1] : ''}" required>
                     <span class="separator">-</span>
-                    <label for="customerPhone3"></label><input type="tel" id="customerPhone3" name="customerPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
+
+                    <!-- 세 번째 필드 -->
+                    <label for="customerPhone3"></label>
+                    <input type="tel" id="customerPhone3" name="customerPhone3"
+                           placeholder="5678" class="phone-input" maxlength="4"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[2] : ''}" required>
                 </div>
                 <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
 
                 <div class="email-input-group">
                     <label for="customerEmail">이메일</label>
-                    <input type="email" id="customerEmail" name="customerEmail" placeholder="이메일 주소 입력" required>
+                    <input type="email" id="customerEmail" name="customerEmail" placeholder="이메일 주소 입력"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? orderFormResponse.memberDetailResponse.customerEmail : ''}" required>
                 </div>
             </form>
         </div>
@@ -767,6 +921,15 @@
 
             const customerPhoneNumber = customerPhone1.value + "-" + customerPhone2.value + "-" + customerPhone3.value;
 
+            const customerIdInput = document.getElementById('customerId');
+            let customerId = null;
+            if (customerIdInput) {
+                customerId = customerIdInput.value;
+                console.log(`Customer ID: ${customerId}`);
+            } else {
+                console.log('No customer ID available.');
+            }
+
             const recipientName = document.getElementById('recipientName').value;
             const postcode = document.getElementById('postcode').value;
             const roadAddress = document.getElementById('roadAddress').value;
@@ -783,6 +946,7 @@
 
             // 주문서 데이터를 생성
             const orderCreateRequest = {
+                customerId: customerId,
                 totalPrice: finalPriceText,
                 customerEmail: customerEmail,
                 customerName: customerName,
@@ -794,12 +958,10 @@
                 detailAddress: detailAddress,
                 recipientPhoneNumber: recipientPhoneNumber,
                 deliveryFee: deliveryFee,
-                orderBookRequests: Array.from(document.querySelectorAll("tbody tr")).map(row => {
+                orderBookRequests: Array.from(document.querySelectorAll("tbody tr"))
+                    .filter(row => row.querySelector("input[type='checkbox']"))
+                    .map(row => {
                     const checkbox = row.querySelector("input[type='checkbox']");
-                    if (!checkbox) {
-                        console.error("Checkbox not found in row:", row);
-                        return null;
-                    }
 
                     const bookId = checkbox.id.split('_')[1]; // ID에서 bookId 추출
                     const isWrapped = checkbox.checked; // 체크 여부

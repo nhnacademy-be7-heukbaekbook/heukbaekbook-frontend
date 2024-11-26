@@ -1,9 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service;
 
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import feign.Response;
 import org.springframework.http.ResponseEntity;
 
@@ -24,4 +21,6 @@ public interface MemberService {
     boolean deleteMember();
 
     ResponseEntity<List<MemberAddressDto>> getAllMemberAddress();
+
+    MyPageResponse createMyPageResponse();
 }

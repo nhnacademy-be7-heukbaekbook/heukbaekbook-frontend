@@ -6,6 +6,7 @@ import com.nhnacademy.heukbaekfrontend.book.dto.response.BookViewResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
+import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
 import lombok.RequiredArgsConstructor;
@@ -55,9 +56,12 @@ public class BookController {
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
-        List<CategorySummaryResponse> categorySummaryResponses = bookCategoryService.getBookCategoriesByBookId(bookId);
+        List<ParentCategoryResponse> parentCategoryResponses = bookCategoryService.getBookCategoriesByBookId(bookId);
+        log.info("parentCategoryResponses : {}", parentCategoryResponses);
 
-        modelAndView.addObject("book", bookViewResponse).addObject("categories", categorySummaryResponses);
+        modelAndView
+                .addObject("book", bookViewResponse)
+                .addObject("categories", parentCategoryResponses);
         return modelAndView;
     }
 }
