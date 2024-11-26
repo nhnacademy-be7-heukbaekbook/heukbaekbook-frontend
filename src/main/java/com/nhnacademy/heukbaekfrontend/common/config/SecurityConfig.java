@@ -65,14 +65,16 @@ public class SecurityConfig {
                                 .anyRequest().authenticated()
                 );
 
-        http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        http
+//                .sessionManagement(session ->
+//                        session.sessionFixation().migrateSession());
+//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
                     logoutClient.logout();
+
 
                     cookieUtil.deleteCookie(response, ACCESS_TOKEN);
                     cookieUtil.deleteCookie(response, REFRESH_TOKEN);

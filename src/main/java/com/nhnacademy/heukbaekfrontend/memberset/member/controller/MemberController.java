@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.controller;
 import com.nhnacademy.heukbaekfrontend.common.exception.ServerErrorException;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -33,8 +34,9 @@ public class MemberController {
 
     @GetMapping
     public String getMyPageHome(Model model) {
-        MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute(MEMBER_RESPONSE, memberResponse);
+        MyPageResponse myPageResponse = memberService.createMyPageResponse();
+//        MemberResponse memberResponse = memberService.getMember().getBody();
+        model.addAttribute("myPageResponse", myPageResponse);
         return "mypage/mypage";
     }
 

@@ -74,6 +74,7 @@
             min-width: 80px; /* 모든 레이블의 고정 폭 */
             text-align: left; /* 왼쪽 정렬 */
         }
+
         .label1 {
             font-weight: bold; /* 강조 */
             min-width: 80px; /* 모든 레이블의 고정 폭 */
@@ -116,6 +117,7 @@
         #extra-content-container {
             display: block; /* 세로 배치를 위해 block 설정 */
         }
+
         /* 새 컨테이너 안의 내용 스타일 */
         .book-details h2 {
             font-size: 1.2rem;
@@ -176,26 +178,27 @@
                 <p class="price-row">
                     <span class="label">판매가</span>
                     <span class="value book-price" th:text="${book.salePrice} + '원'">판매가</span>
-                    <span class="book-discount" th:if="${book.discountRate > 0}" th:text="'(' + ${book.discountRate} + '% 할인)'">할인 정보</span>
+                    <span class="book-discount" th:if="${book.discountRate > 0}"
+                          th:text="'(' + ${book.discountRate} + '% 할인)'">할인 정보</span>
                 </p>
-                <p class="price-row">
-                    <span class="label1">카테고리</span>
-                    <span th:each="category, stat : ${categories}">
+                <span class="label1">카테고리</span>
+                <span th:each="category, stat : ${categories}">
                     <a th:href="@{/books/category(categoryId=${category.id})}"
                        th:text="${category.name}" class="category-link"></a>
-                    <span th:if="!${stat.last}" th:text="' > '"></span>
+                    <span th:if="!${stat.last}" th:text="'>'"></span>
                 </span>
-                </p>
             </div>
 
             <div class="book-actions">
                 <!-- 수량 조절 버튼 -->
                 <div class="quantity-selector">
-                    <button type="button" class="quantity-btn" th:onclick="'decreaseQuantity(' + ${book.id} + ')'">-</button>
+                    <button type="button" class="quantity-btn" th:onclick="'decreaseQuantity(' + ${book.id} + ')'">-
+                    </button>
                     <label>
                         <input type="text" th:id="'quantity-' + ${book.id}" value="1" class="quantity-input" readonly>
                     </label>
-                    <button type="button" class="quantity-btn" th:onclick="'increaseQuantity(' + ${book.id} + ')'">+</button>
+                    <button type="button" class="quantity-btn" th:onclick="'increaseQuantity(' + ${book.id} + ')'">+
+                    </button>
                 </div>
                 <button class="cart-btn" th:onclick="'addToCart(' + ${book.id} + ')'">장바구니</button>
                 <button class="buy-now-btn" th:onclick="'redirectToOrderPage(' + ${book.id} + ')'">바로구매</button>
@@ -207,7 +210,7 @@
     <div id="extra-content-container" class="common-container">
         <div class="book-details">
             <h2>목차</h2>
-            <p class="book-index" th:text="${book.index}">목차 내용이 표시됩니다.</p>
+            <p class="book-index" th:utext="${book.index}">목차 내용이 표시됩니다.</p>
 
             <h2>설명</h2>
             <p class="book-description" th:text="${book.description}">도서 설명이 표시됩니다.</p>

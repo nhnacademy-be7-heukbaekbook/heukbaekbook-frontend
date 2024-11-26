@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.bookCategory.service.client;
 
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
+import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,5 +12,5 @@ import java.util.List;
 public interface BookCategoryClient {
 
     @GetMapping("/books/{bookId}/book-categories")
-    List<CategorySummaryResponse> getBookCategoriesByBookId(@PathVariable Long bookId);
+    List<ParentCategoryResponse> getBookCategoriesByBookId(@PathVariable Long bookId);
 }
