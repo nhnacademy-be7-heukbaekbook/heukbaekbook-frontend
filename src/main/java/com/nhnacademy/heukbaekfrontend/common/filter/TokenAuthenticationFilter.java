@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,7 +59,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
 
-        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (token != null &&
+                (SecurityContextHolder.getContext().getAuthentication() == null ||
+                        SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+
             TokenResponse tokenResponse = validateToken(token);
             if (tokenResponse == null) {
                 response.setContentType("application/json");
