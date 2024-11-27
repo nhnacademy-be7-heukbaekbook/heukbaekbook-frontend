@@ -2,7 +2,6 @@ package com.nhnacademy.heukbaekfrontend.common.interceptor;
 
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import feign.RequestTemplate;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,8 +36,8 @@ class FeignClientInterceptorTest {
     @Test
     void apply_withAccessTokenAndRefreshToken() {
         // Mock 쿠키 값 설정
-        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
-        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
+        when(cookieUtil.getCookieValue(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
+        when(cookieUtil.getCookieValue(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
 
         feignClientInterceptor.apply(requestTemplate);
 
@@ -56,8 +55,8 @@ class FeignClientInterceptorTest {
     @Test
     void apply_withNoCookies() {
         // 쿠키가 없는 경우
-        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn(null);
-        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn(null);
+        when(cookieUtil.getCookieValue(httpServletRequest, "accessToken")).thenReturn(null);
+        when(cookieUtil.getCookieValue(httpServletRequest, "refreshToken")).thenReturn(null);
 
         feignClientInterceptor.apply(requestTemplate);
 
@@ -69,8 +68,8 @@ class FeignClientInterceptorTest {
     @Test
     void apply_withOnlyAccessToken() {
         // Mock Access Token 쿠키만 설정
-        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
-        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn(null);
+        when(cookieUtil.getCookieValue(httpServletRequest, "accessToken")).thenReturn("testAccessToken");
+        when(cookieUtil.getCookieValue(httpServletRequest, "refreshToken")).thenReturn(null);
 
         feignClientInterceptor.apply(requestTemplate);
 
@@ -86,8 +85,8 @@ class FeignClientInterceptorTest {
     @Test
     void apply_withOnlyRefreshToken() {
         // Mock Refresh Token 쿠키만 설정
-        when(cookieUtil.getCookie(httpServletRequest, "accessToken")).thenReturn(null);
-        when(cookieUtil.getCookie(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
+        when(cookieUtil.getCookieValue(httpServletRequest, "accessToken")).thenReturn(null);
+        when(cookieUtil.getCookieValue(httpServletRequest, "refreshToken")).thenReturn("testRefreshToken");
 
         feignClientInterceptor.apply(requestTemplate);
 

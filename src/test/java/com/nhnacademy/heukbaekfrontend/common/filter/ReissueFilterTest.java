@@ -57,8 +57,8 @@ class ReissueFilterTest {
 
     @Test
     void testDoFilterInternal_withValidRefreshToken() throws ServletException, IOException {
-        when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn(null);
-        when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn("validRefreshToken");
+        when(cookieUtil.getCookieValue(request, ACCESS_TOKEN)).thenReturn(null);
+        when(cookieUtil.getCookieValue(request, REFRESH_TOKEN)).thenReturn("validRefreshToken");
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, "accessToken=newAccessToken; Path=/; HttpOnly");
@@ -77,8 +77,8 @@ class ReissueFilterTest {
 
     @Test
     void testDoFilterInternal_withNullAccessAndRefreshToken() throws ServletException, IOException {
-        when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn(null);
-        when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn(null);
+        when(cookieUtil.getCookieValue(request, ACCESS_TOKEN)).thenReturn(null);
+        when(cookieUtil.getCookieValue(request, REFRESH_TOKEN)).thenReturn(null);
 
         reissueFilter.doFilterInternal(request, response, filterChain);
 
@@ -87,8 +87,8 @@ class ReissueFilterTest {
 
     @Test
     void testDoFilterInternal_withInvalidRefreshToken() throws Exception {
-        when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn(null);
-        when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn("expiredRefreshToken");
+        when(cookieUtil.getCookieValue(request, ACCESS_TOKEN)).thenReturn(null);
+        when(cookieUtil.getCookieValue(request, REFRESH_TOKEN)).thenReturn("expiredRefreshToken");
 
         when(authClient.refreshTokens("refreshToken=expiredRefreshToken")).thenThrow(new RuntimeException("Invalid refresh token"));
 
@@ -104,8 +104,8 @@ class ReissueFilterTest {
 
     @Test
     void testDoFilterInternal_withValidAccessAndRefreshToken() throws ServletException, IOException {
-        when(cookieUtil.getCookie(request, ACCESS_TOKEN)).thenReturn("validAccessToken");
-        when(cookieUtil.getCookie(request, REFRESH_TOKEN)).thenReturn("validRefreshToken");
+        when(cookieUtil.getCookieValue(request, ACCESS_TOKEN)).thenReturn("validAccessToken");
+        when(cookieUtil.getCookieValue(request, REFRESH_TOKEN)).thenReturn("validRefreshToken");
 
         reissueFilter.doFilterInternal(request, response, filterChain);
 

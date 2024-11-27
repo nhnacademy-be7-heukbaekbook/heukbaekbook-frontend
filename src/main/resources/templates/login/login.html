@@ -129,6 +129,35 @@
             margin-bottom: 1rem;
             font-weight: bold;
         }
+
+        .payco-login-button {
+            background-color: #FF2233;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .payco-login-button img {
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .payco-login-button span {
+            font-family: inherit;
+            font-size: 1.1rem;
+            letter-spacing: 0;
+        }
     </style>
 </head>
 <body>
@@ -148,6 +177,11 @@
         <button type="submit">로그인</button>
     </form>
     <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+
+    <a href="/oauth2/authorization/payco" class="payco-login-button">
+        PAYCO 로그인
+    </a>
+
 </div>
 </body>
 </html>

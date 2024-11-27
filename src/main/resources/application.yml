@@ -15,6 +15,11 @@ nhncloud:
 redis:
   key: "8bf046001ecc4ee09792d17bfa05db73"
 
+
+payco:
+  client-id-key: 52a6943306d343c290333018f2096f9e
+  client-secret-key: 4ed34dc0f902489884ed663554d0d9ed
+
 spring:
   main:
     allow-bean-definition-overriding: true
@@ -26,3 +31,21 @@ spring:
     web:
       pageable:
         default-page-size: 25
+  security:
+    oauth2:
+      client:
+        registration:
+          payco:
+            client-id: ${client.id}
+            client-secret: ${client.secret}
+            client-authentication-method: post
+            authorization-grant-type: authorization_code
+            redirect-uri: "https://www.heukbaekbook.shop/login/oauth2/code/payco"
+            scope: idNo, email, mobile, name
+            client-name: PAYCO
+        provider:
+          payco:
+            authorization-uri: https://id.payco.com/oauth2.0/authorize
+            token-uri: https://id.payco.com/oauth2.0/token
+            user-info-uri: https://apis-payco.krp.toastoven.net/payco/friends/find_member_v2.json
+            user-name-attribute: idNo

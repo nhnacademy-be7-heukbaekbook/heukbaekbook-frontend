@@ -362,20 +362,7 @@
 <body>
 
 <!-- 헤더 불러오기 -->
-<header>
-    <a href="/">
-        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
-    </a>
-    <h1>흑백문고</h1>
-    <nav>
-        <ul>
-            <li><a href="/categories">카테고리</a></li>
-            <li><a href="/cart">장바구니</a></li>
-            <li><a href="/members/mypage">마이페이지</a></li>
-            <li><a href="/login">로그인</a></li>
-        </ul>
-    </nav>
-</header>
+<header th:replace="~{layout :: header}"></header>
 
 <div class="header">
     <h1 th:text="${orderDetailResponse.customerName} + ' 님, 항상 흑백문고를 이용해주셔서 감사합니다!'"></h1>

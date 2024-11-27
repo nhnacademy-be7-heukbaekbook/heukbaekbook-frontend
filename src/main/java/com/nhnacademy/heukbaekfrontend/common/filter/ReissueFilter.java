@@ -8,6 +8,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -18,7 +19,7 @@ import java.util.Objects;
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.REFRESH_TOKEN;
 
-
+@Slf4j
 @RequiredArgsConstructor
 public class ReissueFilter extends OncePerRequestFilter {
     private final AuthClient authClient;
@@ -28,8 +29,8 @@ public class ReissueFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
-        String refreshToken = cookieUtil.getCookie(request, REFRESH_TOKEN);
+        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
+        String refreshToken = cookieUtil.getCookieValue(request, REFRESH_TOKEN);
 
         try {
             if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
@@ -51,6 +52,7 @@ public class ReissueFilter extends OncePerRequestFilter {
             cookieUtil.deleteCookie(response, REFRESH_TOKEN);
 
 
+            log.error(e.getMessage());
             response.sendRedirect("/login");
         }
     }

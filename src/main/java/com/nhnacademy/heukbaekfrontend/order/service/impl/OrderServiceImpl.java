@@ -77,7 +77,7 @@ public class OrderServiceImpl implements OrderService {
                 commonService.formatPrice(totalPrice));
     }
 
-    private List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
+    List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
         if (quantity == null) {
             log.info("sessionId {} bookIds {}", sessionId, bookIds);
             return cartService.getBooksByBookIdsFromCart(sessionId, bookIds); // 장바구니에서 체크 표시한 책 가져오기

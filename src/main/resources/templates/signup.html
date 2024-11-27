@@ -143,6 +143,35 @@
         .login-link-a {
             color: #444;
         }
+
+        .payco-login-button {
+            background-color: #FF2233;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        .payco-login-button img {
+            height: 24px;
+            margin-right: 8px;
+        }
+
+        .payco-login-button span {
+            font-family: inherit;
+            font-size: 1.1rem;
+            letter-spacing: 0;
+        }
     </style>
 </head>
 <body>
@@ -206,6 +235,9 @@
     <div class="login-link">
         <p>이미 계정이 있으신가요? <a href="/login" class="login-link-a">로그인</a></p>
     </div>
+    <a href="/oauth2/authorization/payco" class="payco-login-button">
+        PAYCO 로그인
+    </a>
 </div>
 <script src="/js/signup.js"></script>
 </body>

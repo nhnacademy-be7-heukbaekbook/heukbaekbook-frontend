@@ -5,10 +5,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Optional;
+
 @Component
 public class CookieUtil {
 
-    public String getCookie(HttpServletRequest request, String cookieName) {
+    public String getCookieValue(HttpServletRequest request, String cookieName) {
         if (request.getCookies() == null) {
             return null;
         }
@@ -18,6 +23,12 @@ public class CookieUtil {
             }
         }
         return null;
+    }
+
+    public Optional<Cookie> getCookie(HttpServletRequest request, String name) {
+        return Arrays.stream(request.getCookies())
+                .filter(cookie -> cookie.getName().equals(name))
+                .findFirst();
     }
 
     public void deleteCookie(HttpServletResponse response, String cookieName) {
@@ -30,9 +41,29 @@ public class CookieUtil {
     public void addCookie(HttpServletResponse response, String name, String value, long expiryInSeconds) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setMaxAge((int) expiryInSeconds);
         cookie.setPath("/");
+        cookie.setAttribute("SameSite", "Lax");
         response.addCookie(cookie);
+    }
+
+    public <T> String serialize(T object) {
+        try (ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+             ObjectOutputStream objectStream = new ObjectOutputStream(byteStream)) {
+            objectStream.writeObject(object);
+            return Base64.getUrlEncoder().encodeToString(byteStream.toByteArray());
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to serialize object", e);
+        }
+    }
+
+    public <T> T deserialize(String cookieValue, Class<T> clazz) {
+        try (ByteArrayInputStream byteStream = new ByteArrayInputStream(Base64.getUrlDecoder().decode(cookieValue));
+             ObjectInputStream objectStream = new ObjectInputStream(byteStream)) {
+            return clazz.cast(objectStream.readObject());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException("Failed to deserialize object", e);
+        }
     }
 }
