@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name = "reviewClient", url = "http://localhost:8082/api/reviews")
+@FeignClient(value = "reviewClient", url = "http://localhost:8082/api/reviews")
 public interface ReviewClient {
     @PostMapping
-    ResponseEntity<Void> createReview(
-            @ModelAttribute ReviewCreateRequest request);
+    ResponseEntity<ReviewDetailResponse> createReview(
+            @RequestBody ReviewCreateRequest request);
 
     @PutMapping("{orderId}/{bookId}")
     ResponseEntity<Void> updateReview(

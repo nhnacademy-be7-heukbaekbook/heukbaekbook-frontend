@@ -21,6 +21,11 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public List<ReviewDetailResponse> getReviewsByBook(Long bookId) {
+        return null;
+    }
+
+    @Override
     public ReviewDetailResponse getReviewDetails(Long bookId, String orderId) {
         return null;
     }

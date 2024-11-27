@@ -13,5 +13,5 @@ public record ReviewCreateRequest(
         String content,
         String title,
         int score,
-        List<MultipartFile> images // Base64 인코딩된 이미지 리스트
+        List<String> images
 ) {}
