@@ -70,5 +70,4 @@ public class HomeController {
                 .addObject("categories", categories);;
         return modelAndView;
     }
-
 }
