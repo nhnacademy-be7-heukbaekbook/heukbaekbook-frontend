@@ -18,8 +18,7 @@ public record CouponPageResponse (
         List<CouponPolicyResponse> couponPolicyList,
         DiscountType[] discountType,
         CouponStatus[] couponstatus,
-        CouponType[] couponType,
-        GradeDto gradeDto
+        CouponType[] couponType
 ) implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
