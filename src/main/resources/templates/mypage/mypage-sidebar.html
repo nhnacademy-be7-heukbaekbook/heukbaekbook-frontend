@@ -2,29 +2,28 @@
 <aside id="sidebar" th:fragment="sidebar">
 
   <!-- 첫 번째 카드: 나의 마니아 등급 -->
-  <div class="menu-card" th:object="${gradeDto}">
+  <div class="menu-card" th:object="${memberResponse}">
     <h3>
       <span>나의 등급</span>
-      <span class="member-level" th:if="${gradeDto.gradeName == 'NORMAL'}">일반 회원</span>
-      <span class="member-level" th:if="${gradeDto.gradeName == 'ROYAL'}">로얄 회원</span>
-      <span class="member-level" th:if="${gradeDto.gradeName == 'GOLD'}">골드 회원</span>
-      <span class="member-level" th:if="${gradeDto.gradeName == 'PLATINUM'}">플래티넘 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'NORMAL'}">일반 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'ROYAL'}">로얄 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'GOLD'}">골드 회원</span>
+      <span class="member-level" th:if="${memberResponse.grade.gradeName == 'PLATINUM'}">플래티넘 회원</span>
     </h3>
 
     <div class="membership-levels">
       <!-- 각 등급에 따라 active 클래스가 적용되도록 설정 -->
-      <span th:classappend="${gradeDto.gradeName} == 'NORMAL' ? 'active':null" class="level">일반</span>
-      <span th:classappend="${gradeDto.gradeName} == 'ROYAL' ? 'active':null" class="level">로얄</span>
-      <span th:classappend="${gradeDto.gradeName} == 'GOLD' ? 'active':null" class="level">골드</span>
-      <span th:classappend="${gradeDto.gradeName} == 'PLATINUM' ? 'active':null" class="level">플래  티넘</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'NORMAL' ? 'active':null" class="level">일반</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'ROYAL' ? 'active':null" class="level">로얄</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'GOLD' ? 'active':null" class="level">골드</span>
+      <span th:classappend="${memberResponse.grade.gradeName} == 'PLATINUM' ? 'active':null" class="level">플래  티넘</span>
     </div>
 
     <!-- 등급 설명 및 조건 표시 -->
     <p class="level-description">
-      순수 주문 금액이 <span style="font-weight: bold" th:text="${#numbers.formatInteger(gradeDto.promotionStandard, 0, 'COMMA') + '원'}">10만원</span> 이상일 경우
-      이상일 경우
+      순수 주문 금액이 <span style="font-weight: bold" th:text="*{#numbers.formatInteger(grade.promotionStandard, 0, 'COMMA') + '원'}">10만원</span> 이상일 경우
       다음 등급으로 올라갑니다.<br>
-      현재 내 등급 적립률 : <span style="font-weight: bold" th:text="${gradeDto.pointPercentage + '%'}">0%</span>
+      현재 내 등급 적립률 : <span style="font-weight: bold" th:text="*{grade.pointPercentage + '%'}">0%</span>
     </p>
   </div>
 
@@ -33,10 +32,10 @@
     <div class="menu-group">
       <h3>주문내역</h3>
       <ul>
-        <li><a href="/members/mypage/orders">주문내역/배송조회</a></li>
-        <li><a href="/refund">반품/교환 신청 및 조회</a></li>
-        <li><a href="#">취소 주문내역</a></li>
-        <li><a href="#">세금계산서</a></li>
+          <li><a href="/members/mypage/orders">주문내역/배송조회</a></li>
+          <li><a href="/refunds">반품/교환 신청 및 조회</a></li>
+          <li><a href="#">취소 주문내역</a></li>
+          <li><a href="#">세금계산서</a></li>
       </ul>
     </div>
 

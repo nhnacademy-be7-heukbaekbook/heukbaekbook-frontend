@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/sidebar.css">
     <style>
-        /* 기존 스타일 유지 */
+        /* 스타일 유지 */
         #content-area {
             background-color: #ffffff;
             padding: 15px 30px 30px 30px;
@@ -134,18 +134,69 @@
                     <th>주문 ID</th>
                     <td th:text="${orderDetail.orderId}"></td>
                 </tr>
+                <tr>
+                    <th>고객 이름</th>
+                    <td th:text="${orderDetail.customerName}"></td>
+                </tr>
+                <tr>
+                    <th>배송비</th>
+                    <td th:text="${orderDetail.deliveryFee}"></td>
+                </tr>
+                <tr>
+                    <th>결제 금액</th>
+                    <td th:text="${orderDetail.paymentPrice}"></td>
+                </tr>
+                <tr>
+                    <th>결제 유형</th>
+                    <td th:text="${orderDetail.paymentTypeName}"></td>
+                </tr>
+                <tr>
+                    <th>수령인</th>
+                    <td th:text="${orderDetail.recipient}"></td>
+                </tr>
+                <tr>
+                    <th>우편번호</th>
+                    <td th:text="${orderDetail.postalCode}"></td>
+                </tr>
+                <tr>
+                    <th>도로명 주소</th>
+                    <td th:text="${orderDetail.roadNameAddress}"></td>
+                </tr>
+                <tr>
+                    <th>상세 주소</th>
+                    <td th:text="${orderDetail.detailAddress}"></td>
+                </tr>
+                <tr>
+                    <th>총 도서 가격</th>
+                    <td th:text="${orderDetail.totalBookPrice}"></td>
+                </tr>
+                <tr>
+                    <th>총 도서 할인 가격</th>
+                    <td th:text="${orderDetail.totalBookDiscountPrice}"></td>
+                </tr>
+                <tr>
+                    <th>총 가격</th>
+                    <td th:text="${orderDetail.totalPrice}"></td>
+                </tr>
+                <tr>
+                    <th>주문 생성일</th>
+                    <td th:text="${#temporals.format(orderDetail.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
+                </tr>
+                <tr>
+                    <th>상태</th>
+                    <td th:text="${orderDetail.status}"></td>
+                </tr>
             </table>
         </div>
         <div>
             <h4>도서 목록</h4>
-            <form th:action="@{'/refund/request'}" method="post" th:object="${refundCreateRequest}">
+            <form th:action="@{/refunds}" method="post" th:object="${refundCreateRequest}">
+                <!-- Hidden Fields -->
+                <input type="hidden" th:field="*{paymentKey}" th:value="${orderDetail.paymentKey}" />
+                <input type="hidden" th:field="*{method}" value="TOSS" />
+                <!-- <input type="hidden" th:field="*{orderId}" th:value="${orderDetail.orderId}" /> -->
 
-                <input type="hidden" th:field="*{paymentKey}" />
-
-                <input type="hidden" th:field="*{cancelReason}" />
-
-                <input type="hidden" th:field="*{method}" value="환불" />
-
+                <!-- Books Table -->
                 <table class="info-table">
                     <thead>
                     <tr>
@@ -164,9 +215,9 @@
                     <tr th:each="book, iterStat : ${orderDetail.books}">
                         <td class="refund-checkbox">
                             <input type="checkbox"
-                                   th:id="'refund_' + ${iterStat.index}"
-                                   th:name="'refundBooks[' + ${iterStat.index} + '].selected'"
-                                   value="true" />
+                                   th:id="'refund_' + ${book.bookId}"
+                                   class="refund-checkbox-input"
+                                   th:attr="data-index=${iterStat.index}" />
                         </td>
                         <td>
                             <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" style="width:50px;height:50px;">
@@ -178,24 +229,23 @@
                         <td th:text="${book.discountRate} + '%'"></td>
                         <td th:text="${book.totalPrice}"></td>
                         <td>
-                            <input type="hidden"
-                                   th:field="*{refundBooks[__${iterStat.index}__].bookId}"
-                                   th:value="${book.bookId}" />
-                            <input type="hidden"
-                                   th:field="*{refundBooks[__${iterStat.index}__].price}"
-                                   th:value="${book.price}" />
+                            <!-- refundBooks list fields -->
                             <input type="number"
-                                   class="refund-quantity"
                                    th:field="*{refundBooks[__${iterStat.index}__].quantity}"
+                                   th:attr="max=${book.quantity}"
                                    min="1"
-                                   th:max="${book.quantity}"
-                                   value="0"
-                                   disabled />
+                                   value="1"
+                                   class="refund-quantity"
+                                   disabled
+                                   required />
+                            <!-- Hidden fields for bookId and price -->
+                            <input type="hidden" th:field="*{refundBooks[__${iterStat.index}__].bookId}" th:value="${book.bookId}" />
+                            <input type="hidden" th:field="*{refundBooks[__${iterStat.index}__].price}" th:value="${book.price}" />
                         </td>
                     </tr>
                     </tbody>
                 </table>
-
+                <!-- Refund Reason -->
                 <div class="cancel-reason">
                     <label>환불 사유</label>
                     <div class="reason-options">
@@ -225,10 +275,9 @@
                         </label>
                     </div>
                     <div class="other-reason-input">
-                        <input type="text" placeholder="환불 사유를 입력하세요">
+                        <input type="text" th:field="*{cancelReason}" placeholder="환불 사유를 입력하세요" />
                     </div>
                 </div>
-
                 <button type="submit" class="submit-button">환불 신청하기</button>
             </form>
         </div>
@@ -236,30 +285,33 @@
 </main>
 <footer th:replace="~{layout :: footer}"></footer>
 
+<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // 환불 수량 입력 필드 활성화/비활성화
-        const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="refundBooks["][name$="].selected"]');
-        checkboxes.forEach(function (checkbox) {
-            checkbox.addEventListener('change', function () {
-                const row = checkbox.closest('tr');
-                const quantityInput = row.querySelector('input[name^="refundBooks["][name$="].quantity"]');
-                quantityInput.disabled = !checkbox.checked;
-                if (!checkbox.checked) {
-                    quantityInput.value = 0;
+        // Checkbox handling
+        const checkboxes = document.querySelectorAll('.refund-checkbox-input');
+        checkboxes.forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                const index = checkbox.getAttribute('data-index');
+                const quantityInput = document.querySelector(`[name='refundBooks[${index}].quantity']`);
+                if (checkbox.checked) {
+                    quantityInput.disabled = false;
+                    quantityInput.required = true;
                 } else {
-                    quantityInput.value = 1; // 기본값 설정
+                    quantityInput.disabled = true;
+                    quantityInput.required = false;
+                    quantityInput.value = 1;
                 }
             });
         });
 
-        // 환불 사유 "기타" 선택 시 텍스트 입력 필드 활성화
+        // Refund reason handling
         const reasonOptions = document.getElementsByName('cancelReasonOption');
         const otherReasonInput = document.querySelector('.other-reason-input');
-        const cancelReasonField = document.querySelector('input[name="cancelReason"]');
 
-        reasonOptions.forEach(function (option) {
-            option.addEventListener('change', function () {
+        reasonOptions.forEach(function(option) {
+            option.addEventListener('change', function() {
+                const cancelReasonField = document.querySelector('[name="cancelReason"]');
                 if (this.value === '기타') {
                     otherReasonInput.style.display = 'block';
                     otherReasonInput.querySelector('input').setAttribute('required', 'required');
@@ -273,17 +325,38 @@
             });
         });
 
-        // "기타" 입력 값이 변경될 때 cancelReason 필드에 반영
-        otherReasonInput.querySelector('input').addEventListener('input', function() {
-            cancelReasonField.value = this.value;
-        });
-
-        // 페이지 로드 시 "기타"가 선택된 경우 처리
+        // Initial load handling for "기타"
         const checkedOption = document.querySelector('input[name="cancelReasonOption"]:checked');
         if (checkedOption && checkedOption.value === '기타') {
             otherReasonInput.style.display = 'block';
             otherReasonInput.querySelector('input').setAttribute('required', 'required');
         }
+
+        // Form submission handling
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            checkboxes.forEach(function(checkbox) {
+                const index = checkbox.getAttribute('data-index');
+                const fields = document.querySelectorAll(`[name^='refundBooks[${index}]']`);
+                if (!checkbox.checked) {
+                    fields.forEach(function(field) {
+                        field.disabled = true;
+                    });
+                }
+            });
+
+            // Set cancel reason
+            const selectedReason = document.querySelector('input[name="cancelReasonOption"]:checked');
+            const cancelReasonField = document.querySelector('[name="cancelReason"]');
+            if (selectedReason) {
+                if (selectedReason.value === '기타') {
+                    const otherReasonText = otherReasonInput.querySelector('input').value;
+                    cancelReasonField.value = otherReasonText;
+                } else {
+                    cancelReasonField.value = selectedReason.value;
+                }
+            }
+        });
     });
 </script>
 </body>
