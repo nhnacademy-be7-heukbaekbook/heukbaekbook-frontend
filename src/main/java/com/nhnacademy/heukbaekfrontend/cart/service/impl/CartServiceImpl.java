@@ -120,6 +120,10 @@ public class CartServiceImpl implements CartService {
     public void synchronizeCartToDb(String sessionId) {
         Map<String, Integer> entries = hashOperations.entries(sessionId);
 
+        if (entries.isEmpty()) {
+            log.info("No cart data found for sessionId: {}", sessionId);
+            return;
+        }
 
         List<CartCreateRequest> cartCreateRequests = entries.entrySet().stream()
                 .map(entry -> new CartCreateRequest(Long.parseLong(entry.getKey()), entry.getValue()))
@@ -130,6 +134,8 @@ public class CartServiceImpl implements CartService {
         }
 
         cartClient.synchronizeCartToDb(cartCreateRequests);
+
+        redisTemplate.delete(sessionId);
     }
 
     private Book createBook(BookSummaryResponse bookSummaryResponse, int quantity) {
@@ -137,6 +143,7 @@ public class CartServiceImpl implements CartService {
                 bookSummaryResponse.id(),
                 bookSummaryResponse.title(),
                 bookSummaryResponse.isPackable(),
+                bookSummaryResponse.wrappingPaperId(),
                 commonService.formatPrice(bookSummaryResponse.price()),
                 commonService.formatPrice(bookSummaryResponse.salePrice()),
                 bookSummaryResponse.discountRate(),

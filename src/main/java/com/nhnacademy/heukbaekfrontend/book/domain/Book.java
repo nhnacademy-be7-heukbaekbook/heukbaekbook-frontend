@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 public record Book(Long id,
                    String title,
                    boolean isPackable,
+                   Long wrappingPaperId,
                    String price,
                    String salePrice,
                    BigDecimal discountRate,
