@@ -56,7 +56,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = cookieUtil.getCookie(request, ACCESS_TOKEN);
+        String token = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
 
         if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             TokenResponse tokenResponse = validateToken(token);

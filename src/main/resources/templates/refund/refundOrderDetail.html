@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>환불 신청</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 기존 스타일 유지 */
+        #content-area {
+            background-color: #ffffff;
+            padding: 15px 30px 30px 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding-bottom: 10px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #bfbfbf;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .info-table th, .info-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .info-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .submit-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: #45a049;
+        }
+
+        .refund-checkbox {
+            text-align: center;
+        }
+
+        .refund-quantity {
+            width: 60px;
+        }
+
+        .cancel-reason {
+            margin-bottom: 20px;
+        }
+
+        .cancel-reason label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .reason-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .reason-options label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+        }
+
+        .reason-options input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .other-reason-input {
+            margin-top: 10px;
+            display: none;
+        }
+
+        .other-reason-input input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .reason-options {
+                flex-direction: column;
+            }
+        }
+
+    </style>
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<div id="mypage-header">
+    <span class="header-title">마이페이지</span>
+</div>
+
+<main class="mypage-container">
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+    <section id="content-area">
+        <h3 class="content-title">환불 신청</h3>
+        <div th:if="${errorMessage}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+        <div>
+            <h4>주문 상세 정보</h4>
+            <table class="info-table">
+                <tr>
+                    <th>주문 ID</th>
+                    <td th:text="${orderDetail.orderId}"></td>
+                </tr>
+            </table>
+        </div>
+        <div>
+            <h4>도서 목록</h4>
+            <form th:action="@{'/refund/request'}" method="post" th:object="${refundCreateRequest}">
+
+                <input type="hidden" th:field="*{paymentKey}" />
+
+                <input type="hidden" th:field="*{cancelReason}" />
+
+                <input type="hidden" th:field="*{method}" value="환불" />
+
+                <table class="info-table">
+                    <thead>
+                    <tr>
+                        <th>선택</th>
+                        <th>썸네일</th>
+                        <th>도서 제목</th>
+                        <th>가격</th>
+                        <th>수량</th>
+                        <th>할인 가격</th>
+                        <th>할인율</th>
+                        <th>총 가격</th>
+                        <th>환불 수량</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="book, iterStat : ${orderDetail.books}">
+                        <td class="refund-checkbox">
+                            <input type="checkbox"
+                                   th:id="'refund_' + ${iterStat.index}"
+                                   th:name="'refundBooks[' + ${iterStat.index} + '].selected'"
+                                   value="true" />
+                        </td>
+                        <td>
+                            <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" style="width:50px;height:50px;">
+                        </td>
+                        <td th:text="${book.title}"></td>
+                        <td th:text="${book.price}"></td>
+                        <td th:text="${book.quantity}"></td>
+                        <td th:text="${book.salePrice}"></td>
+                        <td th:text="${book.discountRate} + '%'"></td>
+                        <td th:text="${book.totalPrice}"></td>
+                        <td>
+                            <input type="hidden"
+                                   th:field="*{refundBooks[__${iterStat.index}__].bookId}"
+                                   th:value="${book.bookId}" />
+                            <input type="hidden"
+                                   th:field="*{refundBooks[__${iterStat.index}__].price}"
+                                   th:value="${book.price}" />
+                            <input type="number"
+                                   class="refund-quantity"
+                                   th:field="*{refundBooks[__${iterStat.index}__].quantity}"
+                                   min="1"
+                                   th:max="${book.quantity}"
+                                   value="0"
+                                   disabled />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <div class="cancel-reason">
+                    <label>환불 사유</label>
+                    <div class="reason-options">
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="상품파손" required>
+                            상품파손
+                        </label>
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="오배송">
+                            오배송
+                        </label>
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="변심">
+                            변심
+                        </label>
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="배송지연">
+                            배송지연
+                        </label>
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="제작불량">
+                            제작불량
+                        </label>
+                        <label>
+                            <input type="radio" name="cancelReasonOption" value="기타">
+                            기타 (직접 입력)
+                        </label>
+                    </div>
+                    <div class="other-reason-input">
+                        <input type="text" placeholder="환불 사유를 입력하세요">
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-button">환불 신청하기</button>
+            </form>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // 환불 수량 입력 필드 활성화/비활성화
+        const checkboxes = document.querySelectorAll('input[type="checkbox"][name^="refundBooks["][name$="].selected"]');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener('change', function () {
+                const row = checkbox.closest('tr');
+                const quantityInput = row.querySelector('input[name^="refundBooks["][name$="].quantity"]');
+                quantityInput.disabled = !checkbox.checked;
+                if (!checkbox.checked) {
+                    quantityInput.value = 0;
+                } else {
+                    quantityInput.value = 1; // 기본값 설정
+                }
+            });
+        });
+
+        // 환불 사유 "기타" 선택 시 텍스트 입력 필드 활성화
+        const reasonOptions = document.getElementsByName('cancelReasonOption');
+        const otherReasonInput = document.querySelector('.other-reason-input');
+        const cancelReasonField = document.querySelector('input[name="cancelReason"]');
+
+        reasonOptions.forEach(function (option) {
+            option.addEventListener('change', function () {
+                if (this.value === '기타') {
+                    otherReasonInput.style.display = 'block';
+                    otherReasonInput.querySelector('input').setAttribute('required', 'required');
+                    cancelReasonField.value = '';
+                } else {
+                    otherReasonInput.style.display = 'none';
+                    otherReasonInput.querySelector('input').removeAttribute('required');
+                    otherReasonInput.querySelector('input').value = '';
+                    cancelReasonField.value = this.value;
+                }
+            });
+        });
+
+        // "기타" 입력 값이 변경될 때 cancelReason 필드에 반영
+        otherReasonInput.querySelector('input').addEventListener('input', function() {
+            cancelReasonField.value = this.value;
+        });
+
+        // 페이지 로드 시 "기타"가 선택된 경우 처리
+        const checkedOption = document.querySelector('input[name="cancelReasonOption"]:checked');
+        if (checkedOption && checkedOption.value === '기타') {
+            otherReasonInput.style.display = 'block';
+            otherReasonInput.querySelector('input').setAttribute('required', 'required');
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,4 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
-public record DeliverySummaryResponse() {
+public record DeliverySummaryResponse(
+        String recipient
+) {
 }

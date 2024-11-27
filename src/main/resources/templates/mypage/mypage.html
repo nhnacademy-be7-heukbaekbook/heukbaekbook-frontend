@@ -25,7 +25,7 @@
 
   <!-- 오른쪽 콘텐츠 영역 -->
   <section id="content-area">
-    <h3 class="content-title">주문 내역</h3>
+    <h3 class="content-title">최근 주문내역</h3>
     <!-- 주문 내역이 없을 경우 -->
     <p class="content-description" th:if="${#lists.isEmpty(myPageResponse.orderResponse.orderSummaryResponseList)}">최근 주문 내역이 없습니다.</p>
 
@@ -35,23 +35,25 @@
       <tr>
         <th>주문일자</th>
         <th>주문번호</th>
+        <th>주문내역</th>
         <th>주문상태</th>
         <th>배송</th>
       </tr>
       </thead>
-      <tbody>
+      <tbody style="font-size: 12px">
       <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponseList}">
         <td th:text="${order.createdAt}"></td>
         <td>
-          <a th:href="@{/order/detail/{orderId}(orderId=${order.tossOrderId})}"
+          <a th:href="@{/members/mypage/order/detail(orderId=${order.tossOrderId})}"
              th:text="${order.tossOrderId}"
-             style="font-weight: bold; text-decoration: underline;">
+             style="font-weight: bold; color: #1a1a1a">
           </a>
         </td>
+        <td th:text="${order.title}"></td>
         <td th:text="${order.status}"></td>
         <td>
           <a th:if="${order.delivery != null}" href="#" class="link-button">조회</a>
-          <span th:if="${order.delivery == null}">없음</span>
+          <span th:if="${order.delivery == null}"></span>
         </td>
       </tr>
       </tbody>

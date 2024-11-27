@@ -24,8 +24,8 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
     @Override
     public void apply(RequestTemplate requestTemplate) {
-        String accessToken = cookieUtil.getCookie(httpServletRequest, ACCESS_TOKEN);
-        String refreshToken = cookieUtil.getCookie(httpServletRequest, REFRESH_TOKEN);
+        String accessToken = cookieUtil.getCookieValue(httpServletRequest, ACCESS_TOKEN);
+        String refreshToken = cookieUtil.getCookieValue(httpServletRequest, REFRESH_TOKEN);
 
         // Access token 설정
         if (accessToken != null) {

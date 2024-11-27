@@ -14,5 +14,6 @@ public record OrderDetailResponse(String customerName,
                                   String totalBookPrice,
                                   String totalBookDiscountPrice,
                                   String totalPrice,
+                                  String status,
                                   List<OrderBookResponse> books) {
 }

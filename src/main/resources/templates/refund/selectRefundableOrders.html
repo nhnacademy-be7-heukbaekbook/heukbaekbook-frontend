@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>환불 가능한 주문 목록</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 오른쪽 콘텐츠 영역 스타일 */
+        #content-area {
+            background-color: #ffffff;
+            padding: 15px 30px 30px 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 콘텐츠 제목 스타일 */
+        .content-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding-bottom: 10px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #bfbfbf;
+        }
+
+        /* 환불 테이블 스타일 */
+        .refund-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            table-layout: fixed; /* 고정된 테이블 레이아웃 */
+        }
+
+        .refund-table th, .refund-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+            word-wrap: break-word; /* 텍스트 줄바꿈 */
+        }
+
+        .refund-table th {
+            background-color: #f2f2f2;
+        }
+
+        /* 컬럼 너비 조정 */
+        .refund-table th:nth-child(1), .refund-table td:nth-child(1) {
+            width: 10%; /* 주문자명 */
+        }
+
+        .refund-table th:nth-child(2), .refund-table td:nth-child(2) {
+            width: 10%; /* 수취인명 */
+        }
+
+        .refund-table th:nth-child(3), .refund-table td:nth-child(3) {
+            width: 15%; /* 주문 날짜 */
+        }
+
+        .refund-table th:nth-child(4), .refund-table td:nth-child(4) {
+            width: 15%; /* 결제 방식 */
+        }
+
+        .refund-table th:nth-child(5), .refund-table td:nth-child(5) {
+            width: 30%; /* 주소 */
+        }
+
+        .refund-table th:nth-child(6), .refund-table td:nth-child(6) {
+            width: 10%; /* 총 금액 */
+        }
+
+        .refund-table th:nth-child(7), .refund-table td:nth-child(7) {
+            width: 10%; /* 환불 신청 */
+        }
+
+        .submit-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h3 class="content-title">환불 가능한 주문 목록</h3>
+        <div th:if="${myPageResponse.orders.size() == 0}">
+            <p>환불 가능한 주문이 없습니다.</p>
+        </div>
+        <div th:if="${myPageResponse.orders.size() > 0}">
+            <table class="refund-table">
+                <thead>
+                <tr>
+                    <!-- <th>주문 ID</th> -->
+                    <th>주문자명</th>
+                    <th>수취인명</th>
+                    <th>주문 날짜</th>
+                    <!-- <th>배송비</th> -->
+                    <!--<th>결제 금액</th>-->
+                    <th>결제 방식</th>
+                    <!-- <th>우편번호</th>-->
+                    <th>주소</th>
+                    <!-- <th>상세 주소</th> -->
+                    <!-- <th>총 도서 가격</th> -->
+                    <!-- <th>총 할인 금액</th> -->
+                    <th>총 금액</th>
+                    <!-- <th>상태</th>-->
+                    <th>환불 신청</th>
+                </tr>
+                </thead>
+
+                <tbody>
+                <tr th:each="order : ${myPageResponse.orders}">
+                    <!-- <td th:text="${order.orderId}"></td>-->
+                    <td th:text="${order.customerName}"></td>
+                    <td th:text="${order.recipient}"></td>
+                    <td th:text="${#temporals.format(order.createdAt, 'yyyy-MM-dd')}"></td>
+                    <!-- <td th:text="${order.deliveryFee}"></td>-->
+                    <!-- <td th:text="${order.paymentPrice}"></td>-->
+                    <td th:text="${order.paymentTypeName}"></td>
+                    <!-- <td th:text="${order.postalCode}"></td>-->
+                    <td th:text="${order.roadNameAddress + ' ' + order.detailAddress}"></td>
+                    <!-- <td th:text="${order.totalBookPrice}"></td> -->
+                    <!-- <td th:text="${order.totalBookDiscountPrice}"></td> -->
+                    <td th:text="${order.totalPrice}"></td>
+                    <!-- <td th:text="${order.status}"></td>-->
+                    <td>
+                        <a th:href="@{'/refund/request/' + ${order.orderId}}" class="submit-button">환불 신청</a>
+                    </td>
+                </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </section>
+</main>
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

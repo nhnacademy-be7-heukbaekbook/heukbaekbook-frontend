@@ -36,7 +36,7 @@ public class HomeController {
     @GetMapping("/")
     public ModelAndView home(HttpServletRequest request,
                              Pageable pageable) {
-        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
+        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
         boolean isLogin = accessToken != null;
         log.info("isLogin: {}, pageable : {}", isLogin, pageable);
 
@@ -55,7 +55,7 @@ public class HomeController {
 
     @GetMapping("/search")
     public ModelAndView searchBooks(HttpServletRequest request, BookSearchRequest bookSearchRequest, @PageableDefault(page = 0, size = 10) Pageable pageable ) {
-        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
+        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
         boolean isLogin = accessToken != null;
         log.info("isLogin: {}", isLogin);
 
@@ -70,5 +70,4 @@ public class HomeController {
                 .addObject("categories", categories);;
         return modelAndView;
     }
-
 }
