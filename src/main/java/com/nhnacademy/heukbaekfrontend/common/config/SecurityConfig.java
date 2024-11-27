@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.config;
 
+import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
 import com.nhnacademy.heukbaekfrontend.common.filter.AdminLoginFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.MemberLoginFilter;
@@ -56,6 +57,7 @@ public class SecurityConfig {
     private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     private final CustomAuthenticationFailureHandler authenticationFailureHandler;
     private final PaycoTokenClient paycoTokenClient;
+    private final CartService cartService;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -77,7 +79,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                                 auth
-                                        .requestMatchers("/login", "/admin/login", "/signup/**", "/cart").permitAll()
+                                        .requestMatchers("/login", "/admin/login", "/signup/**", "/cart/**").permitAll()
                                         .requestMatchers("/", "/payment/**", "/order/**", "/search", "/books/**").permitAll()
                                         .requestMatchers("/members/**").hasRole("MEMBER")
                                         .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -133,12 +135,12 @@ public class SecurityConfig {
 
     @Bean
     public MemberLoginFilter memberLoginFilter(AuthenticationManager authenticationManager) {
-        return new MemberLoginFilter(authenticationManager, loginClient, cookieUtil);
+        return new MemberLoginFilter(authenticationManager, loginClient, cookieUtil, cartService);
     }
 
     @Bean
     public AdminLoginFilter adminLoginFilter(AuthenticationManager authenticationManager) {
-        return new AdminLoginFilter(authenticationManager, loginClient, cookieUtil);
+        return new AdminLoginFilter(authenticationManager, loginClient, cookieUtil, cartService);
     }
 
     @Bean

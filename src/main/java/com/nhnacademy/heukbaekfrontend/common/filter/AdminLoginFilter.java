@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.filter;
 
+import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.dto.LoginResponse;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.LoginClient;
@@ -10,8 +11,11 @@ import org.springframework.http.ResponseEntity;
 public class AdminLoginFilter extends BaseLoginFilter {
     private final LoginClient loginClient;
 
-    public AdminLoginFilter(AuthenticationManager authenticationManager, LoginClient loginClient, CookieUtil cookieUtil) {
-        super(authenticationManager, cookieUtil, "/admin/login");
+    public AdminLoginFilter(AuthenticationManager authenticationManager,
+                            LoginClient loginClient,
+                            CookieUtil cookieUtil,
+                            CartService cartService) {
+        super(authenticationManager, cookieUtil, "/admin/login", cartService);
         this.loginClient = loginClient;
     }
 

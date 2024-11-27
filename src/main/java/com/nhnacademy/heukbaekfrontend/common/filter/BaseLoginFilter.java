@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.filter;
 
+import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.dto.LoginResponse;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
@@ -7,6 +8,9 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,15 +28,21 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilter {
     private final CookieUtil cookieUtil;
     private final AntPathRequestMatcher requiresAuthenticationRequestMatcher;
+    private final CartService cartService;
 
-    protected BaseLoginFilter(AuthenticationManager authenticationManager, CookieUtil cookieUtil, String filterUrl) {
+    protected BaseLoginFilter(AuthenticationManager authenticationManager,
+                              CookieUtil cookieUtil,
+                              String filterUrl,
+                              CartService cartService) {
         super(authenticationManager);
         this.cookieUtil = cookieUtil;
         this.requiresAuthenticationRequestMatcher = new AntPathRequestMatcher(filterUrl, "POST");
         setFilterProcessesUrl(filterUrl);
+        this.cartService = cartService;
     }
 
     protected abstract ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest);
@@ -85,6 +95,12 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
             cookieUtil.addCookie(response, "accessToken", loginResponse.accessToken(), loginResponse.accessExpire() / 1000);
             cookieUtil.addCookie(response, "refreshToken", loginResponse.refreshToken(), loginResponse.refreshExpire() / 1000);
         }
+
+        // 레디스에 있는 장바구니 데이터 db로 동기화
+        String sessionId = request.getSession().getId();
+        log.info("sessionId: {}", sessionId);
+
+        cartService.synchronizeCartToDb(sessionId);
 
         response.sendRedirect(getSuccessRedirectUrl());
     }
