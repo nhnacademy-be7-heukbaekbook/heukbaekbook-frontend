@@ -21,6 +21,8 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -131,7 +133,8 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
     private void addCookieIfNotNull(HttpServletResponse response, String name, String value) {
         if (value != null && !value.isEmpty()) {
-            cookieUtil.addCookie(response, name, value, 300);
+            String encodedValue = URLEncoder.encode(value, StandardCharsets.UTF_8);
+            cookieUtil.addCookie(response, name, encodedValue, 300);
         }
     }
 
