@@ -16,4 +16,5 @@ public interface ReviewService {
     void updateReview(Long customerId, ReviewUpdateRequest request);
     List<ReviewDetailResponse> getMyReviews();
 
+    List<ReviewDetailResponse> getReviewsByBook(Long bookId);
 }
