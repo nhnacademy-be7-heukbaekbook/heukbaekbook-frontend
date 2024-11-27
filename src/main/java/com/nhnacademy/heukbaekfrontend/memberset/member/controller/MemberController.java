@@ -110,4 +110,10 @@ public class MemberController {
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
                 .addObject("memberResponse", myPageOrderDetailResponse.memberResponse());
     }
+
+    @GetMapping("/reviews")
+    public ModelAndView getMyPageReviews() {
+
+        return new ModelAndView("mypage/reviews");
+    }
 }

@@ -731,6 +731,7 @@ th, td {
     text-align: right;
 }
 
+.review-button,
 .order-cancel-button {
     padding: 8px 12px; /* 버튼 크기 */
     /*background: #ffffff; !* 버튼 배경색 *!*/

@@ -58,13 +58,14 @@
                 <td th:text="${book.totalPrice} + '원'">가격</td>
                 <td>
                     <label>
-                        <input type="checkbox" name="selectedBooks" th:value="${book.title}" />
+                        <input type="checkbox" name="selectedBooks" th:value="${book.id}" />
                     </label>
                 </td>
             </tr>
             </tbody>
         </table>
         <div class="button-container">
+            <button type="button" id="review-button" class="review-button">리뷰작성</button>
             <button type="button" id="order-cancel-button" class="order-cancel-button">주문취소</button>
         </div>
     </section>
