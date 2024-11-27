@@ -5,6 +5,7 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class FeignClientInterceptor implements RequestInterceptor {
     public static final String ACCESS_TOKEN = "accessToken";
     public static final String REFRESH_TOKEN = "refreshToken";
@@ -39,6 +41,8 @@ public class FeignClientInterceptor implements RequestInterceptor {
 
         // id와 role 설정
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("{} {} : {}", requestTemplate.method(), requestTemplate.path(), authentication);
+
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof Long userId) {
