@@ -21,6 +21,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,10 +65,10 @@ public class OAuthAdditionalInfoService {
 
     private AdditionalInfoCreate createAdditionalInfoForm(HttpServletRequest request) {
         return new AdditionalInfoCreate(
-                cookieUtil.getCookieValue(request, "idNo"),
-                cookieUtil.getCookieValue(request, "name"),
-                cookieUtil.getCookieValue(request, "phoneNumber"),
-                cookieUtil.getCookieValue(request, "email"),
+                decodeCookieValue(cookieUtil.getCookieValue(request, "idNo")),
+                decodeCookieValue(cookieUtil.getCookieValue(request, "name")),
+                decodeCookieValue(cookieUtil.getCookieValue(request, "phoneNumber")),
+                decodeCookieValue(cookieUtil.getCookieValue(request, "email")),
                 null
         );
     }
@@ -96,4 +98,12 @@ public class OAuthAdditionalInfoService {
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
+
+    private String decodeCookieValue(String value) {
+        if (value != null) {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8);
+        }
+        return null;
+    }
 }
+
