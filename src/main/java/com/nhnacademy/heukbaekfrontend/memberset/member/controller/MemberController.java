@@ -44,6 +44,7 @@ public class MemberController {
     public String getMyPageInfo(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute(MEMBER_RESPONSE, memberResponse);
+        model.addAttribute("gradeDto", memberResponse.grade());
         return "mypage/mypage-info";
     }
 
@@ -55,6 +56,7 @@ public class MemberController {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute(MEMBER_RESPONSE, memberUpdateRequest);
+            redirectAttributes.addFlashAttribute("gradeDto", memberService.getMembersGrade().get());
             redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/members/mypage/info";
         }
@@ -65,7 +67,7 @@ public class MemberController {
             // error
             redirectAttributes.addFlashAttribute("error", "처리하지 못했습니다. 다시 시도해주세요.");
         } else {
-            model.addAttribute(MEMBER_RESPONSE, optionalMemberResponse.get());
+            model.addAttribute("gradeDto", optionalMemberResponse.get().grade());
         }
 
         model.addAttribute("message", "정상적으로 처리되었습니다.");
@@ -75,7 +77,7 @@ public class MemberController {
     @GetMapping("/withdraw")
     public String getMyPageWithdraw(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute(MEMBER_RESPONSE, memberResponse);
+        model.addAttribute("gradeDto", memberResponse.grade());
         return "mypage/mypage-withdraw";
 
     }
@@ -113,7 +115,7 @@ public class MemberController {
 
     @GetMapping("/reviews")
     public ModelAndView getMyPageReviews() {
-
-        return new ModelAndView("mypage/reviews");
+        return new ModelAndView("mypage/reviews")
+                .addObject("gradeDto", memberService.getMembersGrade().get());
     }
 }

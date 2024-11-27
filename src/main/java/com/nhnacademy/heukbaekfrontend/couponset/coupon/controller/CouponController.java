@@ -55,7 +55,6 @@ public class CouponController {
     public String getCouponPage(Pageable pageable, Model model) {
         CouponPageResponse couponPageResponse = couponService.getCouponPageResponse(pageable);
         model.addAttribute("couponPageResponse", couponPageResponse);
-        model.addAttribute("gradeDto", couponPageResponse.gradeDto());
         return "coupon/admin/coupon";
     }
 
@@ -65,9 +64,9 @@ public class CouponController {
                             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("couponRequest", couponRequest);
-            return REDIRECT_PATH;
+        }else{
+            couponService.createCoupon(couponRequest);
         }
-        couponService.createCoupon(couponRequest);
         return REDIRECT_PATH;
     }
 

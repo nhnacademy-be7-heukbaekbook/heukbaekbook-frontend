@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.address.controller;
 import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.address.service.MemberAddressService;
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
@@ -29,8 +30,8 @@ public class MemberAddressController {
     @GetMapping
     public String getMyPageAddresses(Model model) {
         List<MemberAddressResponse> addressList = memberAddressService.getMemberAddressesList();
-        MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute("memberResponse", memberResponse);
+        GradeDto gradeDto = memberService.getMembersGrade().get();
+        model.addAttribute("gradeDto", gradeDto);
         model.addAttribute("addressList", addressList);
         return "mypage/mypage-address";
     }
