@@ -76,4 +76,9 @@ public class MemberServiceImpl implements MemberService {
     public MyPageResponse createMyPageResponse() {
         return memberClient.getMyPageResponse();
     }
+
+    @Override
+    public MyPageOrderDetailResponse getMyPageOrderDetail(String orderId) {
+        return memberClient.getMyPageOrderDetail(orderId);
+    }
 }

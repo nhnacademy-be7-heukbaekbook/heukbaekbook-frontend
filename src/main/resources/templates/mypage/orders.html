@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+    <span class="header-title" >마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h2>주문내역/배송조회</h2>
+
+        <h3 class="content-title">주문상품정보</h3>
+        <table>
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 10%;">
+                <col style="width: 38%;">
+                <col style="width: 6%;">
+                <col style="width: 8%;">
+                <col style="width: 6%;">
+                <col style="width: 6%;">
+                <col style="width: 6%;">
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>주문번호</th>
+                <th>주문일자</th>
+                <th>주문내역</th>
+                <th>주문금액/수량</th>
+                <th>주문상태</th>
+                <th>배송조회</th>
+                <th>주문자</th>
+                <th>수령자</th>
+            </tr>
+            </thead>
+            <tbody style="font-size: 12px">
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponseList}">
+                <td>
+                    <a th:href="@{/members/mypage/order/detail(orderId=${order.tossOrderId})}"
+                       th:text="${order.tossOrderId}" class="underline-on-hover">
+                    </a>
+                </td>
+<!--                <td th:text="${order.tossOrderId}">주문번호</td>-->
+                <td th:text="${order.createdAt}">주문일자</td>
+                <td>
+                    <a th:href="@{/books/detail(bookId=${order.tossOrderId})}"
+                       th:text="${order.title}" class="underline-on-hover">
+                    </a>
+                </td>
+                <td th:text="${order.priceAndQuantity}">주문금액/수량</td>
+                <td th:text="${order.status}">주문상태</td>
+                <td></td>
+                <td th:text="${order.customerName}">주문자</td>
+<!--                <td></td>-->
+                <td th:text="${order.delivery.recipient}">수령자</td>
+
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>
