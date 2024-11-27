@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고</title>
+    <!--  <title th:text="${pageTitle}">마이페이지</title>-->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+    <span class="header-title" >마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h3 class="content-title">주문 내역</h3>
+        <!-- 주문 내역이 없을 경우 -->
+
+    </section>
+</main>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

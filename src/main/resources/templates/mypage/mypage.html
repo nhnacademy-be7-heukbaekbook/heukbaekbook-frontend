@@ -2,7 +2,8 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title th:text="${pageTitle}">마이페이지</title>
+  <title>흑백문고</title>
+<!--  <title th:text="${pageTitle}">마이페이지</title>-->
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/sidebar.css">
 </head>
@@ -25,17 +26,36 @@
   <!-- 오른쪽 콘텐츠 영역 -->
   <section id="content-area">
     <h3 class="content-title">주문 내역</h3>
-    <p class="content-description">최근 주문 내역이 없습니다.</p>
+    <!-- 주문 내역이 없을 경우 -->
+    <p class="content-description" th:if="${#lists.isEmpty(myPageResponse.orderResponse.orderSummaryResponseList)}">최근 주문 내역이 없습니다.</p>
 
-    <div class="content-box">
-      <div class="order-summary">
-        <p>주문내역이 없습니다.</p>
-      </div>
-      <div class="content-links">
-        <a href="#" class="link-button">간편결제관리</a>
-        <a href="#" class="link-button">티켓 예매내역 확인</a>
-      </div>
-    </div>
+    <!-- 주문 내역이 있을 경우 -->
+    <table th:if="${!#lists.isEmpty(myPageResponse.orderResponse.orderSummaryResponseList)}" class="order-table">
+      <thead>
+      <tr>
+        <th>주문일자</th>
+        <th>주문번호</th>
+        <th>주문상태</th>
+        <th>배송</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponseList}">
+        <td th:text="${order.createdAt}"></td>
+        <td>
+          <a th:href="@{/order/detail/{orderId}(orderId=${order.tossOrderId})}"
+             th:text="${order.tossOrderId}"
+             style="font-weight: bold; text-decoration: underline;">
+          </a>
+        </td>
+        <td th:text="${order.status}"></td>
+        <td>
+          <a th:if="${order.delivery != null}" href="#" class="link-button">조회</a>
+          <span th:if="${order.delivery == null}">없음</span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
   </section>
 </main>
 
