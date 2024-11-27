@@ -14,6 +14,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -61,7 +62,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         if (token != null &&
                 (SecurityContextHolder.getContext().getAuthentication() == null ||
-                        SecurityContextHolder.getContext().getAuthentication() instanceof AnonymousAuthenticationToken)) {
+                        SecurityContextHolder.getContext().getAuthentication() instanceof OAuth2AuthenticationToken)) {
 
             TokenResponse tokenResponse = validateToken(token);
             if (tokenResponse == null) {
