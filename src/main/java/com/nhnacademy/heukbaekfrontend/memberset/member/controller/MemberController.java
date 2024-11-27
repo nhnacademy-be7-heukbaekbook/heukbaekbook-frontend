@@ -35,8 +35,8 @@ public class MemberController {
     public String getMyPageHome(Model model) {
         MyPageResponse myPageResponse = memberService.createMyPageResponse();
 //        MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute("myPageResponse", myPageResponse)
-                .addAttribute("memberResponse", myPageResponse.memberResponse());
+        model.addAttribute("gradeDto", myPageResponse.gradeDto());
+        model.addAttribute("myPageResponse", myPageResponse);
         return "mypage/mypage";
     }
 
@@ -97,7 +97,7 @@ public class MemberController {
 
         return new ModelAndView("mypage/orders")
                 .addObject("myPageResponse", myPageResponse)
-                .addObject("memberResponse", myPageResponse.memberResponse());
+                .addObject("gradeDto", myPageResponse.gradeDto());
     }
 
     @GetMapping("/order/detail")
@@ -108,7 +108,7 @@ public class MemberController {
 
         return new ModelAndView("mypage/orderDetail")
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
-                .addObject("memberResponse", myPageOrderDetailResponse.memberResponse());
+                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto());
     }
 
     @GetMapping("/reviews")

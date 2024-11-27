@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service.impl;
 
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
@@ -78,9 +79,15 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public ResponseEntity<List<MemberAddressDto>> getAllMemberAddress() {
-        return null;
+    public Optional<GradeDto> getMembersGrade() {
+        ResponseEntity<GradeDto> responseEntity = memberClient.getMembersGrade();
+        return Optional.ofNullable(responseEntity.getBody());
     }
+
+//    @Override
+//    public ResponseEntity<List<MemberAddressDto>> getAllMemberAddress() {
+//        return null;
+//    }
 
     @Override
     public MyPageResponse createMyPageResponse() {

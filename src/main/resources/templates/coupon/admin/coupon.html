@@ -254,7 +254,7 @@
             <form th:action="@{/admin/coupons}" method="post">
                 <label for="policyId">쿠폰 정책</label>
                 <select id="policyId" name="policyId" required>
-                    <option th:each="policy : ${couponPolicyList}"
+                    <option th:each="policy : ${couponPageResponse.couponPolicyList}"
                             th:value="${policy.id}"
                             th:text="${policy.discountType.name().equals('PERCENTAGE') ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
                 </select>
@@ -298,7 +298,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="coupon : ${normalCoupons}">
+                    <tr th:each="coupon : ${couponPageResponse.normalCoupons}">
                         <td th:text="${coupon.couponName}"></td>
                         <td th:text="${coupon.couponPolicyResponse().discountType().name() == 'PERCENTAGE'
                         ? coupon.couponPolicyResponse().discountAmount() + '%'
@@ -329,7 +329,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${normalCoupons.getContent().isEmpty()}">
+                    <tr th:if="${couponPageResponse.normalCoupons.getContent().isEmpty()}">
                         <td colspan="7">등록된 쿠폰이 없습니다.</td>
                     </tr>
                     </tbody>
@@ -351,7 +351,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="coupon : ${bookCoupons}">
+                    <tr th:each="coupon : ${couponPageResponse.bookCoupons}">
                         <td th:text="${coupon.couponName}"></td>
                         <td th:text="${coupon.title}"></td>
                         <td th:text="${coupon.discountType().name() == 'PERCENTAGE'
@@ -382,7 +382,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${bookCoupons.getContent().isEmpty()}">
+                    <tr th:if="${couponPageResponse.bookCoupons.getContent().isEmpty()}">
                         <td colspan="7">
                             <span>등록된 쿠폰이 없습니다.</span>
                         </td>
@@ -406,7 +406,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="coupon : ${categoryCoupons}">
+                    <tr th:each="coupon : ${couponPageResponse.categoryCoupons}">
                     <td th:text="${coupon.couponName}"></td>
                         <td th:text="${coupon.name}"></td>
                         <td th:text="${coupon.discountType() == 'PERCENTAGE'
@@ -438,7 +438,7 @@
                             </form>
                         </td>
                     </tr>
-                    <tr th:if="${categoryCoupons.getContent().isEmpty()}">
+                    <tr th:if="${couponPageResponse.categoryCoupons.getContent().isEmpty()}">
                         <td colspan="7">등록된 쿠폰이 없습니다.</td>
                     </tr>
                     </tbody>
@@ -458,7 +458,7 @@
 
                     <label for="edit-policyId">정책</label>
                     <select id="edit-policyId" name="policyId" required>
-                        <option th:each="policy : ${couponPolicyList}"
+                        <option th:each="policy : ${couponPageResponse.couponPolicyList}"
                                 th:value="${policy.id}"
                                 th:text="${policy.discountType.name() == 'PERCENTAGE' ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></option>
                     </select>
