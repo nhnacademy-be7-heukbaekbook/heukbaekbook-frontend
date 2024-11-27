@@ -40,7 +40,7 @@ spring:
             client-secret: ${client.secret}
             client-authentication-method: post
             authorization-grant-type: authorization_code
-            redirect-uri: "http://test.com:8080/login/oauth2/code/payco"
+            redirect-uri: "https://www.heukbaekbook.shop/login/oauth2/code/payco"
             scope: idNo, email, mobile, name
             client-name: PAYCO
         provider:
