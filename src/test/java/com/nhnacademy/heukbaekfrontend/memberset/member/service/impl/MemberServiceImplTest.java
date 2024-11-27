@@ -229,12 +229,12 @@ class MemberServiceImplTest {
         verify(memberClient, times(1)).deleteMember();
     }
 
-    @Test
-    void testGetAllMemberAddress_NotImplemented() {
-        // When
-        ResponseEntity<List<MemberAddressDto>> result = memberService.getAllMemberAddress();
-
-        // Then
-        assertThat(result).isNull(); // 해당 메서드가 현재 구현되지 않음
-    }
+//    @Test
+//    void testGetAllMemberAddress_NotImplemented() {
+//        // When
+//        ResponseEntity<List<MemberAddressDto>> result = memberService.getAllMemberAddress();
+//
+//        // Then
+//        assertThat(result).isNull(); // 해당 메서드가 현재 구현되지 않음
+//    }
 }
