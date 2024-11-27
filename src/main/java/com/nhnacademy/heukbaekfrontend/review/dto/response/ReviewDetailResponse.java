@@ -8,7 +8,7 @@ import java.util.List;
 public record ReviewDetailResponse(
         Long customerId,
         Long bookId,
-        Long orderId,
+        String orderId,
         String content,
         String title,
         int score,

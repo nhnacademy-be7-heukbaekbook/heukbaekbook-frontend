@@ -1,55 +1,62 @@
 package com.nhnacademy.heukbaekfrontend.review.controller;
 
 import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewCreateRequest;
-import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewUpdateRequest;
-import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Controller
-@Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/reviews")
+@RequestMapping("/members/mypage")
+@Slf4j
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @GetMapping("/book/{bookId}")
-    public ModelAndView getReviewsByBook(@PathVariable Long bookId) {
-        List<ReviewDetailResponse> reviews = reviewService.getReviewsByBook(bookId);
-        return new ModelAndView("reviews/review-list").addObject("reviews", reviews);
+    // 리뷰 작성 폼 이동
+    @GetMapping("/review")
+    public String getReviewForm(@RequestParam Long bookId,
+                                @RequestParam String orderId,
+                                Model model) {
+        log.info("Received orderId: {}", orderId);
+        model.addAttribute("bookId", bookId);
+        model.addAttribute("orderId", orderId);
+        return "review/reviewForm";
     }
 
-    @GetMapping("/my")
-    public ModelAndView getMyReviews(HttpSession session) {
-        Long customerId = (Long) session.getAttribute("customerId");
-        List<ReviewDetailResponse> reviews = reviewService.getMyReviews(customerId);
-        return new ModelAndView("reviews/my-reviews").addObject("reviews", reviews);
+    // 리뷰 작성 처리
+    @PostMapping("/reviews")
+    public String createReview(@RequestParam String orderId,
+                               @RequestParam Long bookId,
+                               @RequestParam String title,
+                               @RequestParam String content,
+                               @RequestParam int score,
+                               @RequestParam(required = false) List<MultipartFile> images,
+                               Model model) {
+        try {
+            ReviewCreateRequest reviewRequest = new ReviewCreateRequest(orderId, bookId, content, title, score, images);
+            reviewService.createReview(reviewRequest); // customerId는 서비스 내부에서 처리
+            model.addAttribute("message", "리뷰가 성공적으로 등록되었습니다.");
+        } catch (Exception e) {
+            log.error("리뷰 작성 중 오류 발생: {}", e.getMessage(), e);
+            model.addAttribute("error", "리뷰 작성 중 오류가 발생했습니다. 다시 시도해주세요.");
+            return "review/reviewForm";
+        }
+        return "redirect:/members/mypage/reviews";
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createReview(HttpSession session,
-                                             @ModelAttribute ReviewCreateRequest reviewCreateRequest) {
-        Long customerId = (Long) session.getAttribute("customerId");
-        reviewService.createReview(customerId, reviewCreateRequest);
-        return ResponseEntity.status(201).build();
-    }
 
-    @PutMapping("/{orderId}/{bookId}")
-    public ResponseEntity<Void> updateReview(HttpSession session,
-                                             @PathVariable Long orderId,
-                                             @PathVariable Long bookId,
-                                             @ModelAttribute ReviewUpdateRequest reviewUpdateRequest) {
-        Long customerId = (Long) session.getAttribute("customerId");
-        reviewService.updateReview(customerId, orderId, bookId, reviewUpdateRequest);
-        return ResponseEntity.ok().build();
+    // 리뷰 목록
+    @GetMapping("/reviews")
+    public String listMyReviews(Model model) {
+        model.addAttribute("reviews", reviewService.getMyReviews());
+        log.info(model.toString());
+        return "review/reviewList";
     }
 }

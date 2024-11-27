@@ -31,7 +31,8 @@
         <table>
             <colgroup>
                 <col style="width: 10%;">
-                <col style="width: 60%;">
+                <col style="width: 50%;">
+                <col style="width: 10%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
@@ -43,6 +44,7 @@
                 <th>수량</th>
                 <th>가격</th>
                 <th>선택</th>
+                <th>리뷰작성</th>
             </tr>
             </thead>
             <tbody style="font-size: 12px">
@@ -61,11 +63,20 @@
                         <input type="checkbox" name="selectedBooks" th:value="${book.id}" />
                     </label>
                 </td>
+                <td>
+                    <form method="GET" th:action="@{/members/mypage/review}">
+                        <input type="hidden" name="bookId" th:value="${book.id}">
+                        <input type="hidden" name="orderId" th:value="${orderId}">
+                        <button type="submit" class="review-button">리뷰작성</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>
+
+
         <div class="button-container">
-            <button type="button" id="review-button" class="review-button">리뷰작성</button>
+<!--            <button type="button" id="review-button" class="review-button">리뷰작성</button>-->
             <button type="button" id="order-cancel-button" class="order-cancel-button">주문취소</button>
         </div>
     </section>

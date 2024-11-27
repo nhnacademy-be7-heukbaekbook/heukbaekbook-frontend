@@ -7,6 +7,7 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailRes
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -107,13 +109,22 @@ public class MemberController {
         log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
 
         return new ModelAndView("mypage/orderDetail")
+                .addObject("orderId", orderId)
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
                 .addObject("memberResponse", myPageOrderDetailResponse.memberResponse());
     }
+//    @GetMapping("/reviews")
+//    public ModelAndView getMyPageReviews() {
+//        // 현재 사용자의 리뷰 가져오기
+//        List<ReviewDetailResponse> myReviews = memberService.getMyPageReviews();
+//
+//        // 리뷰 데이터를 로깅
+//        log.info("myReviews: {}", myReviews);
+//
+//        // 뷰에 데이터 전달
+//        return new ModelAndView("mypage/reviews")
+//                .addObject("myReviews", myReviews)
+//                .addObject("memberResponse", memberService.getMember().getBody());
+//    }
 
-    @GetMapping("/reviews")
-    public ModelAndView getMyPageReviews() {
-
-        return new ModelAndView("mypage/reviews");
-    }
 }

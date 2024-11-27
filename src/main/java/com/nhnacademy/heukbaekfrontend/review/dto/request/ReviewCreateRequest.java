@@ -8,7 +8,7 @@ import java.util.List;
  * 리뷰 생성 요청 DTO
  */
 public record ReviewCreateRequest(
-        Long orderId,
+        String orderId,
         Long bookId,
         String content,
         String title,
