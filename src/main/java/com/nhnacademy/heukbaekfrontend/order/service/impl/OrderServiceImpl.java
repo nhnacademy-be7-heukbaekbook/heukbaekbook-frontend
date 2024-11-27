@@ -5,19 +5,30 @@ import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.client.DeliveryFeeClient;
 import com.nhnacademy.heukbaekfrontend.order.client.OrderClient;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.RefundableOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
+import com.nhnacademy.heukbaekfrontend.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,8 +46,18 @@ public class OrderServiceImpl implements OrderService {
 
     private final DeliveryFeeClient deliveryFeeClient;
 
+    private final MemberClient memberClient;
+
     @Override
     public OrderFormResponse createOrderFormResponse(String sessionId, List<Long> bookIds, Integer quantity) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        MemberDetailResponse memberDetailResponse = null;
+
+        if (authentication != null && authentication.isAuthenticated() &&
+                !(authentication.getPrincipal() instanceof String && authentication.getPrincipal().equals("anonymousUser"))) {
+            memberDetailResponse = memberClient.getMemberDetail();
+        }
+
         List<Book> books = fetchBooks(sessionId, bookIds, quantity);
         BigDecimal totalPrice = commonService.calculateAllTotalPrice(books);
         String totalBookPrice = commonService.calculateAllTotalPriceAndFormat(books);
@@ -45,7 +66,15 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal deliveryFee = deliveryFeeClient.getDeliveryFeeByMinimumOrderAmount(totalPrice);
         totalPrice = totalPrice.add(deliveryFee);
 
-        return new OrderFormResponse(books, totalBookPrice, totalBookDiscountAmount, commonService.formatPrice(deliveryFee), commonService.formatPrice(totalPrice));
+        log.info("memberDetailResponse: {}", memberDetailResponse);
+
+        return new OrderFormResponse(
+                memberDetailResponse,
+                books,
+                totalBookPrice,
+                totalBookDiscountAmount,
+                commonService.formatPrice(deliveryFee),
+                commonService.formatPrice(totalPrice));
     }
 
     private List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
@@ -84,5 +113,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDetailResponse createOrderDetailResponse(String tossOrderId) {
         return orderClient.getOrderDetailResponse(tossOrderId);
+    }
+
+    @Override
+    public MyPageRefundableOrderDetailResponse getRefundableOrders() {
+        String userId = Utils.getCustomerId();
+        return orderClient.getRefundableOrders(userId).getBody();
     }
 }

@@ -1,10 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import feign.FeignException;
@@ -83,5 +80,15 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public ResponseEntity<List<MemberAddressDto>> getAllMemberAddress() {
         return null;
+    }
+
+    @Override
+    public MyPageResponse createMyPageResponse() {
+        return memberClient.getMyPageResponse();
+    }
+
+    @Override
+    public MyPageOrderDetailResponse getMyPageOrderDetail(String orderId) {
+        return memberClient.getMyPageOrderDetail(orderId);
     }
 }

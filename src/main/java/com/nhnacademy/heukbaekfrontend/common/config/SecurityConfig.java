@@ -25,7 +25,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
 import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
@@ -105,9 +104,10 @@ public class SecurityConfig {
                         .failureHandler(authenticationFailureHandler)
                 );
 
-        http
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+//        http
+//                .sessionManagement(session ->
+//                        session.sessionFixation().migrateSession());
+//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
                 .logout(logout -> logout

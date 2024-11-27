@@ -1,5 +1,8 @@
 package com.nhnacademy.heukbaekfrontend.common.dto;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 public record LoginResponse(
         Long userId,
         String userRole,
@@ -7,5 +10,7 @@ public record LoginResponse(
         String refreshToken,
         Long accessExpire,
         Long refreshExpire
-) {
+) implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
 }

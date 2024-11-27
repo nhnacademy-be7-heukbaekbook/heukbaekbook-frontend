@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service;
 
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberAddressDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
@@ -26,4 +27,8 @@ public interface MemberService {
     boolean deleteMember();
 
     ResponseEntity<List<MemberAddressDto>> getAllMemberAddress();
+
+    MyPageResponse createMyPageResponse();
+
+    MyPageOrderDetailResponse getMyPageOrderDetail(String orderId);
 }

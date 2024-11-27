@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.client;
 
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
@@ -31,4 +32,13 @@ public interface MemberClient {
 
     @DeleteMapping
     ResponseEntity<MemberResponse> deleteMember();
+
+    @GetMapping("/detail")
+    MemberDetailResponse getMemberDetail();
+
+    @GetMapping("/my-page")
+    MyPageResponse getMyPageResponse();
+
+    @GetMapping("/orders/{orderId}")
+    MyPageOrderDetailResponse getMyPageOrderDetail(@PathVariable String orderId);
 }

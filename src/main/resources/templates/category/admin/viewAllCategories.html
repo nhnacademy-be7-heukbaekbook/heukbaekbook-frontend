@@ -55,10 +55,26 @@
             justify-content: center;
         }
 
+        .action-buttons .button {
+            display: inline-block;
+            padding: 10px 8px; /* 버튼 안쪽 여백 (위/아래, 좌/우) */
+            font-size: 0.85em; /* 버튼 글꼴 크기 */
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            height: 36px; /* 동일한 높이 */
+            min-width: 80px; /* 최소 너비 설정 */
+            box-sizing: border-box; /* 패딩 포함 */
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+            line-height: 16px; /* 텍스트 수직 정렬 */
+        }
+
         /* 수정 버튼 스타일 */
         .action-buttons .button.edit {
             display: inline-block;
-            padding: 8px 10px;
             background-color: #555;
             color: #fff;
             border: none;
@@ -74,10 +90,16 @@
             transform: scale(1.01);
         }
 
+
+        /* 수정 버튼 및 삭제 버튼 패딩 제거 */
+        .action-buttons .button.edit,
+        .action-buttons .button.delete {
+            /* padding: 8px 10px; */ /* 중복 패딩 제거 */
+            /* 공통 패딩 상속 */
+        }
         /* 삭제 버튼 스타일 */
         .action-buttons .button.delete {
             display: inline-block;
-            padding: 8px 10px;
             background-color: #d9534f;
             color: #fff;
             border: none;
@@ -110,6 +132,18 @@
         .add-category-button:hover, .back-to-home-button:hover {
             background-color: #333;
         }
+
+        /* 쿠폰 추가 버튼 스타일 */
+        .action-buttons .button.coupon {
+            background-color: #0275d8; /* 파란색 */
+            color: #fff;
+        }
+
+        .action-buttons .button.coupon:hover {
+            background-color: #025aa5; /* 진한 파란색 */
+            transform: scale(1.01); /* 확대 효과 */
+        }
+
     </style>
 </head>
 <body>
@@ -158,6 +192,11 @@
                                 <input type="hidden" name="_method" value="DELETE"/>
                                 <button type="submit" class="button delete">삭제</button>
                             </form>
+                            <!-- 쿠폰 추가 버튼 시작 -->
+                            <form th:action="@{/admin/categories/{categoryId}/add-coupon(categoryId=${category.id})}" method="post" class="coupon-form">
+                                <button type="submit" class="button coupon">쿠폰 추가</button>
+                            </form>
+                            <!-- 쿠폰 추가 버튼 끝 -->
                         </div>
                     </td>
                 </tr>
