@@ -23,4 +23,6 @@ public interface MemberService {
     ResponseEntity<List<MemberAddressDto>> getAllMemberAddress();
 
     MyPageResponse createMyPageResponse();
+
+    MyPageOrderDetailResponse getMyPageOrderDetail(String orderId);
 }

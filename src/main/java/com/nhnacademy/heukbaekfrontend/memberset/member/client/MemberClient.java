@@ -32,4 +32,7 @@ public interface MemberClient {
 
     @GetMapping("/my-page")
     MyPageResponse getMyPageResponse();
+
+    @GetMapping("/orders/{orderId}")
+    MyPageOrderDetailResponse getMyPageOrderDetail(@PathVariable String orderId);
 }

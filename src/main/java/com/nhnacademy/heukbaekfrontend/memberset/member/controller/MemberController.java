@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.controller;
 import com.nhnacademy.heukbaekfrontend.common.exception.ServerErrorException;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
@@ -13,10 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Optional;
@@ -36,7 +35,8 @@ public class MemberController {
     public String getMyPageHome(Model model) {
         MyPageResponse myPageResponse = memberService.createMyPageResponse();
 //        MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute("myPageResponse", myPageResponse);
+        model.addAttribute("myPageResponse", myPageResponse)
+                .addAttribute("memberResponse", myPageResponse.memberResponse());
         return "mypage/mypage";
     }
 
@@ -88,5 +88,26 @@ public class MemberController {
             throw new ServerErrorException();
         }
         return "redirect:/";
+    }
+
+    @GetMapping("/orders")
+    public ModelAndView getMyPageOrders() {
+        MyPageResponse myPageResponse = memberService.createMyPageResponse();
+        log.info("myPageResponse: {}", myPageResponse);
+
+        return new ModelAndView("mypage/orders")
+                .addObject("myPageResponse", myPageResponse)
+                .addObject("memberResponse", myPageResponse.memberResponse());
+    }
+
+    @GetMapping("/order/detail")
+    public ModelAndView getMyPageOrderDetail(@RequestParam String orderId) {
+        log.info("orderId: {}", orderId);
+        MyPageOrderDetailResponse myPageOrderDetailResponse = memberService.getMyPageOrderDetail(orderId);
+        log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
+
+        return new ModelAndView("mypage/orderDetail")
+                .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
+                .addObject("memberResponse", myPageOrderDetailResponse.memberResponse());
     }
 }
