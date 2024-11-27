@@ -4,6 +4,7 @@ import com.nhnacademy.heukbaekfrontend.couponset.coupon.client.CouponClient;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CategoryCouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponPageResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
@@ -62,5 +63,10 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public void deleteCoupon(Long couponId) {
         couponClient.deleteCoupon(couponId);
+    }
+
+    @Override
+    public CouponPageResponse getCouponPageResponse(Pageable pageable) {
+        return couponClient.getCouponPageResponse(pageable.getPageNumber(), pageable.getPageSize()).getBody();
     }
 }

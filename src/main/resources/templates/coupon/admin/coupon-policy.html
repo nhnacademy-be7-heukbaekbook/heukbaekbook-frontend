@@ -36,6 +36,7 @@
             min-width: 50%;
         }
         .contents{
+            width: 80%;
             box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
             background-color: #fff;
             border-radius: 10px;
@@ -290,7 +291,7 @@
                         </form>
                     </td>
                 </tr>
-                <tr th:if="${couponPolicies.empty}">
+                <tr th:if="${couponPolicies.getContent().isEmpty()}">
                     <td colspan="6">등록된 정책이 없습니다.</td>
                 </tr>
                 </tbody>
