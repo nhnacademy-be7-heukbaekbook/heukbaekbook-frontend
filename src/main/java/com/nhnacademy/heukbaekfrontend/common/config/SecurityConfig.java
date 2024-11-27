@@ -5,6 +5,14 @@ import com.nhnacademy.heukbaekfrontend.common.filter.AdminLoginFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.MemberLoginFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.TokenAuthenticationFilter;
+import com.nhnacademy.heukbaekfrontend.oauth.client.PaycoClient;
+import com.nhnacademy.heukbaekfrontend.oauth.client.PaycoTokenClient;
+import com.nhnacademy.heukbaekfrontend.oauth.handler.CustomAuthenticationFailureHandler;
+import com.nhnacademy.heukbaekfrontend.oauth.handler.CustomAuthenticationSuccessHandler;
+import com.nhnacademy.heukbaekfrontend.oauth.repository.HttpCookieOAuth2AuthorizationRequestRepository;
+import com.nhnacademy.heukbaekfrontend.oauth.resolver.CustomAuthorizationRequestResolver;
+import com.nhnacademy.heukbaekfrontend.oauth.service.PaycoAuthorizationCodeTokenResponseClient;
+import com.nhnacademy.heukbaekfrontend.oauth.service.PaycoOAuth2UserService;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.LoginClient;
@@ -19,6 +27,15 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AccessTokenResponseClient;
+import org.springframework.security.oauth2.client.endpoint.OAuth2AuthorizationCodeGrantRequest;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
+import org.springframework.security.oauth2.client.web.AuthorizationRequestRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -35,6 +52,11 @@ public class SecurityConfig {
     private final CookieUtil cookieUtil;
     private final LogoutClient logoutClient;
     private final JwtUtil jwtUtil;
+    private final PaycoClient paycoClient;
+    private final ClientRegistrationRepository clientRegistrationRepository;
+    private final CustomAuthenticationSuccessHandler authenticationSuccessHandler;
+    private final CustomAuthenticationFailureHandler authenticationFailureHandler;
+    private final PaycoTokenClient paycoTokenClient;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -61,15 +83,34 @@ public class SecurityConfig {
                                         .requestMatchers("/members/**").hasRole("MEMBER")
                                         .requestMatchers("/admin/**").hasRole("ADMIN")
                                         .requestMatchers("/logout").hasAnyRole("ADMIN", "MEMBER")
+                                        .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                                 .anyRequest().authenticated()
+                );
+
+        http
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .authorizationEndpoint(authorizationEndpoint -> authorizationEndpoint
+                                .authorizationRequestRepository(httpCookieOAuth2AuthorizationRequestRepository())
+                                .authorizationRequestResolver(customAuthorizationRequestResolver())
+                        )
+                        .tokenEndpoint(tokenEndpoint -> tokenEndpoint
+                                .accessTokenResponseClient(paycoAccessTokenResponseClient())
+                        )
+                        .userInfoEndpoint(userInfoEndpoint -> userInfoEndpoint
+                                .userService(paycoOAuth2UserService())
+                        )
+                        .successHandler(authenticationSuccessHandler)
+                        .failureHandler(authenticationFailureHandler)
                 );
 
         http
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.logout(logout -> logout
+        http
+                .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessHandler((request, response, authentication) -> {
                     logoutClient.logout();
@@ -108,5 +149,25 @@ public class SecurityConfig {
     @Bean
     public ReissueFilter reissueFilter() {
         return new ReissueFilter(authClient, cookieUtil, jwtUtil);
+    }
+
+    @Bean
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> paycoOAuth2UserService() {
+        return new PaycoOAuth2UserService(paycoClient);
+    }
+
+    @Bean
+    public OAuth2AuthorizationRequestResolver customAuthorizationRequestResolver() {
+        return new CustomAuthorizationRequestResolver(clientRegistrationRepository, "/oauth2/authorization");
+    }
+
+    @Bean
+    public OAuth2AccessTokenResponseClient<OAuth2AuthorizationCodeGrantRequest> paycoAccessTokenResponseClient() {
+        return new PaycoAuthorizationCodeTokenResponseClient(paycoTokenClient);
+    }
+
+    @Bean
+    public AuthorizationRequestRepository<OAuth2AuthorizationRequest> httpCookieOAuth2AuthorizationRequestRepository() {
+        return new HttpCookieOAuth2AuthorizationRequestRepository(cookieUtil);
     }
 }

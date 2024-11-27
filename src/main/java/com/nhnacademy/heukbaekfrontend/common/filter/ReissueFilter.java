@@ -28,8 +28,8 @@ public class ReissueFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = cookieUtil.getCookie(request, ACCESS_TOKEN);
-        String refreshToken = cookieUtil.getCookie(request, REFRESH_TOKEN);
+        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
+        String refreshToken = cookieUtil.getCookieValue(request, REFRESH_TOKEN);
 
         try {
             if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {

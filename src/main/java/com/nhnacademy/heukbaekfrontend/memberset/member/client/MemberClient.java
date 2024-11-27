@@ -3,7 +3,7 @@ package com.nhnacademy.heukbaekfrontend.memberset.member.client;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
-import feign.Response;
+import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +13,9 @@ public interface MemberClient {
 
     @PostMapping
     ResponseEntity<MemberResponse> signup(@RequestBody MemberCreateRequest memberCreateRequest);
+
+    @PostMapping("/oauth")
+    ResponseEntity<MemberResponse> signupOAuth(@RequestBody OAuthMemberCreateRequest oAuthMemberCreateRequest);
 
     @GetMapping("/existsLoginId/{loginId}")
     ResponseEntity<Boolean> existsLoginId(@PathVariable String loginId);

@@ -6,6 +6,7 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,13 +19,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
-
     private final MemberClient memberClient;
 
     @Override
     public Optional<MemberResponse> signup(MemberCreateRequest memberCreateRequest) {
         try {
             ResponseEntity<MemberResponse> responseEntity = memberClient.signup(memberCreateRequest);
+            return Optional.ofNullable(responseEntity.getBody());
+        } catch (FeignException fe) {
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<MemberResponse> signupOAuth(OAuthMemberCreateRequest oAuthMemberCreateRequest) {
+        try {
+            ResponseEntity<MemberResponse> responseEntity = memberClient.signupOAuth(oAuthMemberCreateRequest);
             return Optional.ofNullable(responseEntity.getBody());
         } catch (FeignException fe) {
             return Optional.empty();
