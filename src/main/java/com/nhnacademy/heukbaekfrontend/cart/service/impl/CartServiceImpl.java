@@ -134,8 +134,6 @@ public class CartServiceImpl implements CartService {
         }
 
         cartClient.synchronizeCartToDb(cartCreateRequests);
-
-        redisTemplate.delete(sessionId);
     }
 
     private Book createBook(BookSummaryResponse bookSummaryResponse, int quantity) {
