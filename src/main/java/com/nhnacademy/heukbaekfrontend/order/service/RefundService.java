@@ -19,7 +19,7 @@ public class RefundService {
         return refundClient.getRefunds(customerId).getBody();
     }
 
-    public RefundCreateResponse requestRefund(RefundCreateRequest request) {
-        return refundClient.requestRefund(request).getBody();
+    public RefundCreateResponse createRefund(RefundCreateRequest request) {
+        return refundClient.createRefund(request).getBody();
     }
 }

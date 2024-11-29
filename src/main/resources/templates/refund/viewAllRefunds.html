@@ -64,14 +64,14 @@
     <section id="content-area">
         <h3 class="content-title">환불 내역</h3>
         <div style="text-align: right; margin-bottom: 20px;">
-            <a href="/refund/list" class="submit-button">환불 신청하기</a>
+            <a href="/refunds/refundable-orders" class="submit-button">환불 신청하기</a>
         </div>
-        <div th:if="${myPageResponse.refunds.size() == 0}">
+        <div th:if="${refunds.size() == 0}">
             <p>환불 내역이 없습니다.</p>
         </div>
-        <div th:if="${myPageResponse.refunds.size() > 0}">
+        <div th:if="${refunds.size() > 0}">
             <ul>
-                <li th:each="refund : ${myPageResponse.refunds}">
+                <li th:each="refund : ${refunds}">
                     <h4>환불 ID: <span th:text="${refund.refundId}"></span></h4>
                     <table class="refund-table">
                         <tr>

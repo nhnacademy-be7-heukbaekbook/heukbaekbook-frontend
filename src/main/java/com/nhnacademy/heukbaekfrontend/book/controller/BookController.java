@@ -9,6 +9,8 @@ import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResp
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
+import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,6 +25,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
+import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/books")
@@ -34,6 +38,8 @@ public class BookController {
     private final CategoryService categoryService;
 
     private final BookCategoryService bookCategoryService;
+
+    private final CookieUtil cookieUtil;
 
     @GetMapping("/category")
     public ModelAndView viewBooksByCategory(@RequestParam Long categoryId,
@@ -51,8 +57,10 @@ public class BookController {
     }
 
     @GetMapping("/detail")
-    public ModelAndView viewBookDetail(@RequestParam Long bookId) {
+    public ModelAndView viewBookDetail(HttpServletRequest request, @RequestParam Long bookId) {
         log.info("bookId : {}", bookId);
+        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
+        boolean isLogin = accessToken != null;
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
@@ -61,6 +69,7 @@ public class BookController {
 
         modelAndView
                 .addObject("book", bookViewResponse)
+                .addObject("isLogin", isLogin)
                 .addObject("categories", parentCategoryResponses);
         return modelAndView;
     }

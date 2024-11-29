@@ -144,6 +144,20 @@
         .category-link:hover {
             text-decoration: underline; /* 밑줄 표시 */
         }
+
+        .coupon-btn {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #000000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+            text-decoration: none; /* 링크 스타일 제거 */
+            display: inline-block; /* 버튼처럼 보이도록 */
+        }
     </style>
 </head>
 <body>
@@ -191,6 +205,14 @@
 
             <div class="book-actions">
                 <!-- 수량 조절 버튼 -->
+                <div class="book-actions">
+                    <a class="coupon-btn"
+                       th:if="${isLogin}"
+                       th:href="@{/api/coupons/(bookId=${book.id})}">
+                        쿠폰 발급 받기
+                    </a>
+                </div>
+
                 <div class="quantity-selector">
                     <button type="button" class="quantity-btn" th:onclick="'decreaseQuantity(' + ${book.id} + ')'">-
                     </button>
