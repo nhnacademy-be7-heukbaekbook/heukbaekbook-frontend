@@ -7,7 +7,6 @@ import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPoli
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
