@@ -109,7 +109,9 @@ public class MemberController {
 
         return new ModelAndView("mypage/orderDetail")
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
-                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto());
+                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto())
+                .addObject("orderId",orderId);
+
     }
 
 //    @GetMapping("/reviews")

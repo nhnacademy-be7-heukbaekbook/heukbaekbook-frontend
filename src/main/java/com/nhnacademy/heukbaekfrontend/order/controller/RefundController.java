@@ -28,7 +28,7 @@ public class RefundController {
     @GetMapping
     public String getAllRefunds(Model model) {
         MyPageRefundDetailResponse myPageRefundDetailResponse = refundService.getAllRefunds();
-        model.addAttribute("memberResponse", myPageRefundDetailResponse.memberResponse());
+        model.addAttribute("gradeDto", myPageRefundDetailResponse.gradeDto());
         model.addAttribute("refunds", myPageRefundDetailResponse.refunds());
         return "refund/viewAllRefunds";
     }
@@ -36,7 +36,7 @@ public class RefundController {
     @GetMapping("/refundable-orders")
     public String getRefundableOrders(Model model) {
         MyPageRefundableOrderDetailListResponse myPageRefundableOrderDetailResponse = orderService.getRefundableOrders();
-        model.addAttribute("memberResponse", myPageRefundableOrderDetailResponse.memberResponse());
+        model.addAttribute("gradeDto", myPageRefundableOrderDetailResponse.gradeDto());
         model.addAttribute("orders", myPageRefundableOrderDetailResponse.orders());
         return "refund/refundableOrders";
     }
@@ -44,7 +44,7 @@ public class RefundController {
     @GetMapping("/refundable-orders/{order-id}")
     public String getRefundableOrderDetail(@PathVariable(name = "order-id") Long orderId, Model model) {
         MyPageRefundableOrderDetailResponse myPageRefundableOrderDetailResponse = orderService.getRefundableOrderDetail(orderId);
-        model.addAttribute("memberResponse", myPageRefundableOrderDetailResponse.memberResponse());
+        model.addAttribute("gradeDto", myPageRefundableOrderDetailResponse.gradeDto());
         model.addAttribute("orderDetail", myPageRefundableOrderDetailResponse.order());
 
         RefundCreateRequest refundCreateRequest = new RefundCreateRequest(new ArrayList<>(), null, null, "TOSS");

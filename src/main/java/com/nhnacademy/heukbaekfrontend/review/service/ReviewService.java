@@ -6,6 +6,7 @@ import com.nhnacademy.heukbaekfrontend.review.dto.ReviewDto;
 import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewImageRequest;
 import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewCreateResponse;
 import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
+import com.nhnacademy.heukbaekfrontend.util.Utils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ public class ReviewService {
 //                }
 //            }
 //        }
+        String customerId = Utils.getCustomerId();
         return reviewClient.createReview(orderId, bookId, title, content, score, images).getBody();
     }
 
