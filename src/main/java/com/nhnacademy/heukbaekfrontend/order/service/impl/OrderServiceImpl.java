@@ -18,15 +18,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -121,8 +117,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public MyPageRefundableOrderDetailResponse getRefundableOrders() {
-        String userId = Utils.getCustomerId();
-        return orderClient.getRefundableOrders(userId).getBody();
+    public MyPageRefundableOrderDetailListResponse getRefundableOrders() {
+        String customerId = Utils.getCustomerId();
+        return orderClient.getRefundableOrders(customerId).getBody();
+    }
+
+    @Override
+    public MyPageRefundableOrderDetailResponse getRefundableOrderDetail(Long orderId) {
+        String customerId = Utils.getCustomerId();
+        return orderClient.getRefundableOrderDetail(customerId, orderId).getBody();
     }
 }

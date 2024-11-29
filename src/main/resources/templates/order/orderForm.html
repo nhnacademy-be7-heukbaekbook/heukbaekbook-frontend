@@ -918,6 +918,28 @@
     <!-- 결제 정보 -->
     <h2>결제 정보</h2>
     <div class="common-container">
+        <div th:if="${orderFormResponse.memberDetailResponse != null}">
+            <div>
+                <h3>포인트</h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" id="usePoint"
+                       min="0"
+                       th:attr="max=${orderFormResponse.memberDetailResponse.point}"
+                       placeholder="포인트 입력"
+                       style="width: 90px; height: 20px; font-size: 16px; padding: 5px;">
+                <button type="button" onclick="applyPoints()">적용</button>
+            </div>
+            <div>
+                <span id="remainingPoints" th:text="'잔여 포인트 : ' + ${orderFormResponse.memberDetailResponse.point} + 'P'">
+                    잔여 포인트 : 0P
+                </span>
+            </div>
+            <div>
+                <h3>최종 결제 금액</h3>
+                <span id="finalAmount" th:text="${orderFormResponse.totalPrice} + '원'">0원</span>
+            </div>
+        </div>
         <div class="payment-info">
             <div class="payment-box">
                 <h3>총 상품금액</h3>
@@ -947,10 +969,9 @@
             </div>
             <div class="payment-box">
                 <h3>총 할인금액</h3>
-                <div class="amount">0<span class="currency">원</span></div>
+                <div class="amount" id="discountAmount">0<span class="currency">원</span></div>
                 <div class="detail-info">
                     <div class="item">
-                        <span>쿠폰</span>: 사용하지 않음
                     </div>
                 </div>
             </div>
@@ -987,6 +1008,48 @@
 
 <!-- 푸터 불러오기 -->
 <footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    function applyPoints() {
+        // HTML 요소 참조
+        const usePointInput = document.getElementById('usePoint');
+        const discountAmountElement = document.getElementById('discountAmount');
+        const amountElement = document.getElementById('amount');
+        const remainingPointsElement = document.getElementById('remainingPoints');
+
+        // 사용 가능한 포인트와 입력값 가져오기
+        const availablePoints = parseFloat(remainingPointsElement.innerText.replace('잔여 포인트 : ', '').replace('P', ''), 10);
+        let usePoints = parseFloat(usePointInput.value) || 0;
+
+        // 현재 결제 금액
+        const initialAmount = parseFloat(amountElement.textContent.replace(",", ""));
+
+        // 유효성 검사
+        if (usePoints > availablePoints) {
+            alert("입력한 포인트가 사용 가능한 포인트를 초과했습니다.");
+            usePointInput.value = ''; // 입력값 초기화
+            return;
+        }
+
+        // 잔여 포인트 계산
+        const remainingPoints = availablePoints - usePoints;
+
+        // 최종 결제 금액 계산
+        let finalAmount = initialAmount - usePoints;
+        finalAmount = finalAmount.toLocaleString();
+
+        // 화면에 반영
+        remainingPointsElement.innerText = `잔여 포인트 : ${remainingPoints}P`;
+        amountElement.innerText = `${finalAmount}원`;
+        usePointInput.value = '';
+
+        usePoints = usePoints.toLocaleString();
+
+        // 할인 금액 업데이트
+        discountAmountElement.innerHTML = `${usePoints}
+        <span class="currency">원</span>`;
+    }
+</script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -1102,6 +1165,7 @@
             const recipientPhone3 = document.getElementById("recipientPhone3").value;
             const deliveryFee = document.getElementById("deliveryFee").textContent;
             const deliveryDate = getSelectedDate();
+            const usedPoint = document.getElementById('discountAmount').textContent;
 
             const recipientPhoneNumber = recipientPhone1 + "-" + recipientPhone2 + "-" + recipientPhone3;
 
@@ -1121,6 +1185,7 @@
                 detailAddress: detailAddress,
                 recipientPhoneNumber: recipientPhoneNumber,
                 deliveryFee: deliveryFee,
+                usedPoint: usedPoint,
                 orderBookRequests: Array.from(document.querySelectorAll("tbody tr"))
                     .filter(row => row.querySelector("input[type='checkbox']"))
                     .map(row => {
