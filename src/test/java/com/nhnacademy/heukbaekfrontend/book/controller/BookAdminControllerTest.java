@@ -7,6 +7,7 @@ import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
 import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,10 +54,13 @@ class BookAdminControllerTest {
     @MockBean
     private TagService tagService;
 
+    @MockBean
+    private CouponPolicyService couponPolicyService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookAdminController(bookService, categoryService, tagService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookAdminController(bookService, categoryService, tagService, couponPolicyService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

@@ -59,8 +59,6 @@ public class BookController {
     @GetMapping("/detail")
     public ModelAndView viewBookDetail(HttpServletRequest request, @RequestParam Long bookId) {
         log.info("bookId : {}", bookId);
-        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
-        boolean isLogin = accessToken != null;
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
@@ -69,8 +67,9 @@ public class BookController {
 
         modelAndView
                 .addObject("book", bookViewResponse)
-                .addObject("isLogin", isLogin)
-                .addObject("categories", parentCategoryResponses);
+                .addObject("categories", parentCategoryResponses)
+                .addObject("availableCoupons", List.of());
+        ;
         return modelAndView;
     }
 }

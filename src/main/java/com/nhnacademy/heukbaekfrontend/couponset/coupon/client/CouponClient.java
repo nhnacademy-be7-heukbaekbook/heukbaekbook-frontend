@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
 @FeignClient(name = "couponClient", url = "http://localhost:8082/api/admin/coupons")
 public interface CouponClient {
 

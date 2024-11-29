@@ -5,6 +5,9 @@ import com.nhnacademy.heukbaekfrontend.book.dto.request.BookUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
 import com.nhnacademy.heukbaekfrontend.tag.service.TagService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,11 +30,13 @@ public class BookAdminController {
     private final BookService bookService;
     private final CategoryService categoryService;
     private final TagService tagService;
+    private final CouponPolicyService couponPolicyService;
 
-    public BookAdminController(BookService bookService, CategoryService categoryService, TagService tagService) {
+    public BookAdminController(BookService bookService, CategoryService categoryService, TagService tagService, CouponPolicyService couponPolicyService) {
         this.bookService = bookService;
         this.categoryService = categoryService;
         this.tagService = tagService;
+        this.couponPolicyService = couponPolicyService;
     }
 
     @GetMapping("/aladin")
@@ -62,11 +67,14 @@ public class BookAdminController {
         String[] sortParams = sort.split(",");
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortParams[1]), sortParams[0]));
 
+        List<CouponPolicyResponse> couponPolicyResponses = couponPolicyService.getCouponPolicyList();
         Page<BookDetailResponse> books = bookService.getAllBooks(pageable);
         model.addAttribute("books", books);
         model.addAttribute("page", page);
         model.addAttribute("size", size);
         model.addAttribute("sort", sort);
+        model.addAttribute("couponType", CouponType.BOOK);
+        model.addAttribute("couponPolicyList", couponPolicyResponses);
 
         return "book/admin/viewAllBooks";
     }
