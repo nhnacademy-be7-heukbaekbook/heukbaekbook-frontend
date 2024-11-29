@@ -1,8 +1,8 @@
 package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 
 public record MyPageRefundableOrderDetailResponse(
-        MemberResponse memberResponse,
+        GradeDto gradeDto,
         RefundableOrderDetailResponse order
 ) {}
