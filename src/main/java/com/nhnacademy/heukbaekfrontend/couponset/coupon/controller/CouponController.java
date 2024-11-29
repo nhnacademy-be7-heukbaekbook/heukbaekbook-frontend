@@ -1,14 +1,18 @@
 package com.nhnacademy.heukbaekfrontend.couponset.coupon.controller;
 
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponStatus;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CategoryCouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponPageResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,27 +29,32 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/admin/coupons")
 public class CouponController {
+    private final MemberService memberService;
     private final CouponService couponService;
     private final CouponPolicyService couponPolicyService;
     private static final String REDIRECT_PATH = "redirect:/admin/coupons";
 
-    @ModelAttribute
-    public void before(Model model, Pageable pageable) {
-        Page<CouponResponse> normalCoupons = couponService.getAllNormalCoupons(pageable);
-        Page<BookCouponResponse> bookCoupons = couponService.getAllBookCoupons(pageable);
-        Page<CategoryCouponResponse> categoryCoupons = couponService.getAllCategoryCoupons(pageable);
-        List<CouponPolicyResponse> couponPolicyList = couponPolicyService.getCouponPolicyList();
-
-        model.addAttribute("normalCoupons", normalCoupons);
-        model.addAttribute("bookCoupons", bookCoupons);
-        model.addAttribute("categoryCoupons", categoryCoupons);
-        model.addAttribute("discountType", DiscountType.values());
-        model.addAttribute("status", CouponStatus.values());
-        model.addAttribute("couponPolicyList", couponPolicyList);
-    }
+//    @ModelAttribute
+//    public void before(Model model, Pageable pageable) {
+//        Page<CouponResponse> normalCoupons = couponService.getAllNormalCoupons(pageable);
+//        Page<BookCouponResponse> bookCoupons = couponService.getAllBookCoupons(pageable);
+//        Page<CategoryCouponResponse> categoryCoupons = couponService.getAllCategoryCoupons(pageable);
+//        List<CouponPolicyResponse> couponPolicyList = couponPolicyService.getCouponPolicyList();
+//
+//        model.addAttribute("normalCoupons", normalCoupons);
+//        model.addAttribute("bookCoupons", bookCoupons);
+//        model.addAttribute("categoryCoupons", categoryCoupons);
+//        model.addAttribute("couponPolicyList", couponPolicyList);
+//
+//        model.addAttribute("discountType", DiscountType.values());
+//        model.addAttribute("status", CouponStatus.values());
+//        model.addAttribute("couponType", CouponType.values());
+//    }
 
     @GetMapping
-    public String getCouponPage() {
+    public String getCouponPage(Pageable pageable, Model model) {
+        CouponPageResponse couponPageResponse = couponService.getCouponPageResponse(pageable);
+        model.addAttribute("couponPageResponse", couponPageResponse);
         return "coupon/admin/coupon";
     }
 
@@ -55,9 +64,9 @@ public class CouponController {
                             RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("couponRequest", couponRequest);
-            return REDIRECT_PATH;
+        }else{
+            couponService.createCoupon(couponRequest);
         }
-        couponService.createCoupon(couponRequest);
         return REDIRECT_PATH;
     }
 

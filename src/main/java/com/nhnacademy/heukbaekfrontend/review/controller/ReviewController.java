@@ -1,99 +1,86 @@
 package com.nhnacademy.heukbaekfrontend.review.controller;
 
-import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewCreateRequest;
+import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewImageRequest;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewCreateResponse;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
 import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-@Controller
-@RequiredArgsConstructor
-@RequestMapping("/members/mypage")
 @Slf4j
+@Controller
+@RequestMapping("/members/mypage")
 public class ReviewController {
 
-    private final ReviewService reviewService;
+    @Autowired
+    private ReviewService reviewService;
 
-    // 리뷰 작성 폼 이동
-    @GetMapping("/review")
-    public String getReviewForm(@RequestParam Long bookId,
-                                @RequestParam String orderId,
-                                Model model) {
-        log.info("Received orderId: {}", orderId);
-        model.addAttribute("bookId", bookId);
-        model.addAttribute("orderId", orderId);
-        return "review/reviewForm";
-    }
     @PostMapping("/reviews")
-    public String createReview(@RequestParam String orderId,
-                               @RequestParam Long bookId,
-                               @RequestParam String title,
-                               @RequestParam String content,
-                               @RequestParam int score,
-                               @RequestParam(required = false) List<MultipartFile> images,
-                               Model model) {
+    public String createReview(
+            @RequestParam("orderId") String orderId,
+            @RequestParam("bookId") Long bookId,
+            @RequestParam("title") String title,
+            @RequestParam("content") String content,
+            @RequestParam("score") int score,
+            @RequestParam(value = "images", required = false) List<MultipartFile> images,
+            Model model
+    ) {
         try {
-            // Authentication에서 사용자 ID 추출
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Object principal = authentication.getPrincipal();
-
-            Long customerId;
-            if (principal instanceof Long) {
-                customerId = (Long) principal; // Long인 경우 그대로 사용
-            } else if (principal instanceof String) {
-                customerId = Long.valueOf((String) principal); // String이면 Long으로 변환
-            } else {
-                throw new IllegalStateException("Unexpected principal type: " + principal.getClass().getName());
+            // Multipart 데이터를 Base64 문자열로 변환
+            List<ReviewImageRequest> imageDataList = new ArrayList<>();
+            if (images != null && !images.isEmpty()) {
+                for (MultipartFile image : images) {
+                    if (!image.isEmpty()) {
+                        // Base64 변환
+                        String base64Data = java.util.Base64.getEncoder().encodeToString(image.getBytes());
+                        imageDataList.add(new ReviewImageRequest(image.getOriginalFilename(), image.getContentType(), base64Data));
+                    }
+                }
             }
 
-            log.info("Creating review for customerId: {}", customerId);
+            // Service로 데이터 전달
+            ReviewCreateResponse response = reviewService.createReview(orderId, bookId, title, content, score, imageDataList);
 
-            // 이미지 처리
-            List<String> imageBase64List = images != null
-                    ? images.stream()
-                    .map(image -> {
-                        try {
-                            return Base64.getEncoder().encodeToString(image.getBytes());
-                        } catch (Exception e) {
-                            log.error("Image encoding failed", e);
-                            return null;
-                        }
-                    })
-                    .collect(Collectors.toList())
-                    : List.of();
+            if (response == null) {
+                log.warn("Review creation returned null response");
+                model.addAttribute("error", "리뷰 등록에 실패했습니다. 다시 시도해주세요.");
+            } else {
+                log.info("Review created successfully: {}", response);
+                model.addAttribute("message", "리뷰가 성공적으로 등록되었습니다.");
+            }
 
-            // 리뷰 생성 요청
-            ReviewCreateRequest reviewRequest = new ReviewCreateRequest(orderId, bookId, content, title, score, imageBase64List);
-            reviewService.createReview(reviewRequest);
+            // 리뷰 목록 가져오기
+            List<ReviewDetailResponse> reviews = reviewService.getMyReviews();
+            if (reviews == null || reviews.isEmpty()) {
+                log.warn("No reviews found for the current user");
+                model.addAttribute("reviews", new ArrayList<>()); // 빈 리스트 추가
+            } else {
+                model.addAttribute("reviews", reviews);
+            }
 
-            model.addAttribute("message", "리뷰가 성공적으로 등록되었습니다.");
+            return "review/reviewList"; // 리뷰 목록 뷰 템플릿으로 이동
         } catch (Exception e) {
-            log.error("리뷰 작성 중 오류 발생: {}", e.getMessage(), e);
-            model.addAttribute("error", "리뷰 작성 중 오류가 발생했습니다. 다시 시도해주세요.");
-            return "review/reviewForm";
+            log.error("Failed to create review", e);
+
+            // 에러 발생 시 기존 리뷰 목록 유지
+            List<ReviewDetailResponse> reviews = reviewService.getMyReviews();
+            if (reviews == null || reviews.isEmpty()) {
+                model.addAttribute("reviews", new ArrayList<>()); // 빈 리스트 추가
+            } else {
+                model.addAttribute("reviews", reviews);
+            }
+            model.addAttribute("error", "리뷰 등록 중 문제가 발생했습니다.");
+
+            return "review/reviewList"; // 리뷰 목록 뷰 템플릿으로 이동
         }
-        return "redirect:/members/mypage/reviews";
-    }
-
-
-
-    // 리뷰 목록
-    @GetMapping("/reviews")
-    public String listMyReviews(Model model) {
-        model.addAttribute("reviews", reviewService.getMyReviews());
-        log.info(model.toString());
-        return "review/reviewList";
     }
 }

@@ -5,7 +5,6 @@
     <title th:text="${book.title} + ' - 도서 상세 페이지'">도서 상세 페이지</title>
     <link rel="stylesheet" href="/css/style.css">
     <style>
-        /* 전체 페이지에 스크롤을 허용 */
         html, body {
             height: 100%;
             margin: 0;
@@ -13,7 +12,6 @@
             overflow-y: auto;
         }
 
-        /* 도서 썸네일 섹션 */
         .book-thumbnail img {
             width: 100%;
             max-width: 400px;
@@ -21,7 +19,6 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        /* 상세 정보 섹션 */
         .book-info {
             display: flex;
             flex-direction: column;
@@ -40,24 +37,9 @@
             text-decoration: none;
         }
 
-        .book-meta {
-            font-size: 1rem;
-            color: #555;
-        }
-
-        .book-price {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #d9534f;
-        }
-
-        .book-discount {
-            font-size: 1rem;
-            color: #555;
-        }
-
         .price-container {
             max-width: 400px;
+            margin: 0;
         }
 
         .price-row {
@@ -73,17 +55,9 @@
             text-align: left;
         }
 
-        .label1 {
-            font-weight: bold;
-            min-width: 80px;
-            text-align: left;
-            margin-right: 20px;
-        }
-
         .value {
-            text-align: left;
             margin-left: 20px;
-            font-weight: normal;
+            text-align: left;
         }
 
         .book-discount {
@@ -92,7 +66,6 @@
             margin-left: 10px;
         }
 
-        /* 공통 컨테이너 스타일 */
         .common-container {
             width: 1000px;
             margin: 30px auto;
@@ -102,19 +75,16 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* 콘텐츠 컨테이너 */
         #content-container {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 20px;
         }
 
-        /* 별도 컨테이너 */
         #extra-content-container {
             display: block;
         }
 
-        /* 새 컨테이너 안의 내용 스타일 */
         .book-details h2 {
             font-size: 1.2rem;
             font-weight: bold;
@@ -122,15 +92,6 @@
             color: #333;
         }
 
-        .book-index,
-        .book-description {
-            font-size: 1rem;
-            line-height: 1.6;
-            color: #555;
-            margin-bottom: 20px;
-        }
-
-        /* 리뷰 섹션 스타일 */
         .review-container {
             margin-top: 30px;
         }
@@ -144,29 +105,26 @@
         .review-list {
             list-style-type: none;
             padding: 0;
-            margin: 0;
         }
 
         .review-item {
             padding: 15px;
-            margin-bottom: 20px;
             background-color: #f9f9f9;
             border: 1px solid #ddd;
             border-radius: 6px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
         }
 
         .review-title {
             font-size: 1.4em;
             color: #34495e;
-            margin-bottom: 10px;
         }
 
         .review-content {
             font-size: 1.2em;
             line-height: 1.6;
             color: #2c3e50;
-            margin-bottom: 10px;
         }
 
         .review-score {
@@ -179,7 +137,6 @@
             margin-top: 10px;
             display: flex;
             gap: 10px;
-            flex-wrap: wrap;
         }
 
         .review-image {
@@ -194,25 +151,32 @@
         .no-review {
             font-size: 1.2em;
             color: #7f8c8d;
-            margin-top: 20px;
             text-align: center;
+            margin-top: 20px;
+        }
+
+        .coupon-btn {
+            padding: 10px 20px;
+            color: #fff;
+            background-color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
         }
     </style>
 </head>
 <body>
 
-<!-- 헤더 불러오기 -->
 <header th:replace="~{layout :: header}"></header>
 
 <main>
-    <!-- 콘텐츠 컨테이너 -->
     <div id="content-container" class="common-container">
-        <!-- 도서 썸네일 -->
         <div class="book-thumbnail">
             <img th:src="@{${book.thumbnailUrl}}" alt="도서 썸네일">
         </div>
-
-        <!-- 도서 상세 정보 -->
         <div class="book-info">
             <p class="book-title1">
                 <a th:text="${book.title}">제목</a>
@@ -230,12 +194,12 @@
                 <p class="price-row">
                     <span class="label">판매가</span>
                     <span class="value book-price" th:text="${book.salePrice} + '원'">판매가</span>
+                    <span class="book-discount" th:if="${book.discountRate > 0}" th:text="'(' + ${book.discountRate} + '% 할인)'"></span>
                 </p>
             </div>
         </div>
     </div>
 
-    <!-- 별도 컨테이너: 목차 및 설명 -->
     <div id="extra-content-container" class="common-container">
         <div class="book-details">
             <h2>목차</h2>
@@ -246,16 +210,13 @@
         </div>
     </div>
 
-    <!-- 리뷰 섹션 -->
     <div th:if="${!#lists.isEmpty(reviews)}" class="review-container common-container">
         <h2>사용자 리뷰</h2>
         <ul class="review-list">
             <li class="review-item" th:each="review : ${reviews}">
                 <h4 th:text="${review.title}" class="review-title">제목</h4>
                 <p th:text="${review.content}" class="review-content">내용</p>
-                <p class="review-score">평점:
-                    <span th:text="${review.score != null ? review.score : 0}"></span>/5
-                </p>
+                <p class="review-score">평점: <span th:text="${review.score != null ? review.score : 0}"></span>/5</p>
                 <div class="review-images" th:if="${review.imageUrls.size() > 0}">
                     <img th:each="url : ${review.imageUrls}" th:src="${url}" alt="리뷰 이미지" class="review-image">
                 </div>
@@ -264,10 +225,8 @@
     </div>
 
     <p th:if="${#lists.isEmpty(reviews)}" class="no-review">아직 작성된 리뷰가 없습니다.</p>
-
 </main>
 
-<!-- 푸터 불러오기 -->
 <footer th:replace="~{layout :: footer}"></footer>
 
 </body>

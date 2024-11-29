@@ -1,48 +1,19 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>리뷰 목록</title>
-    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-<!-- 헤더 -->
-<header th:replace="~{layout :: header}"></header>
-
-<!-- 리뷰 목록 -->
-<div class="container">
-    <h1>내 리뷰 목록</h1>
-    <table>
-        <thead>
-        <tr>
-            <th>도서 제목</th>
-            <th>리뷰 제목</th>
-            <th>평점</th>
-            <th>작성일</th>
-            <th>내용</th>
-            <th>수정</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="review : ${reviews}">
-            <td th:text="${review.bookTitle}">도서 제목</td>
-            <td th:text="${review.title}">리뷰 제목</td>
-            <td th:text="${review.score}">평점</td>
-            <td th:text="${#dates.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
-            <td th:text="${review.content}">내용</td>
-            <td>
-                <form th:action="@{/members/mypage/review}" method="get">
-                    <input type="hidden" name="bookId" th:value="${review.bookId}" />
-                    <input type="hidden" name="orderId" th:value="${review.orderId}" />
-                    <button type="submit">수정</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<h1>내 리뷰 목록</h1>
+<div>
+    <ul>
+        <li th:each="review : ${reviews}">
+            <p><strong>제목:</strong> <span th:text="${review.title}"></span></p>
+            <p><strong>내용:</strong> <span th:text="${review.content}"></span></p>
+            <p><strong>평점:</strong> <span th:text="${review.score}"></span></p>
+        </li>
+    </ul>
 </div>
-
-<!-- 푸터 -->
-<footer th:replace="~{layout :: footer}"></footer>
 </body>
 </html>

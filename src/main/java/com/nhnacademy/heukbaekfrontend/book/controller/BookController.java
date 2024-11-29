@@ -62,15 +62,15 @@ public class BookController {
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
         List<ParentCategoryResponse> parentCategoryResponses = bookCategoryService.getBookCategoriesByBookId(bookId);
         // 리뷰 정보
-        List<ReviewDetailResponse> reviews = reviewService.getReviewsByBook(bookId);
-
-        log.info("parentCategoryResponses : {}", parentCategoryResponses);
-        log.info("reviews : {}", reviews);
+//        List<ReviewDetailResponse> reviews = reviewService.getReviewsByBook(bookId);
+//
+//        log.info("parentCategoryResponses : {}", parentCategoryResponses);
+//        log.info("reviews : {}", reviews);
 
         modelAndView
                 .addObject("book", bookViewResponse)
-                .addObject("categories", parentCategoryResponses)
-                .addObject("reviews", reviews); // 리뷰 데이터를 모델에 추가
+                .addObject("categories", parentCategoryResponses);
+//                .addObject("reviews", reviews); // 리뷰 데이터를 모델에 추가
         return modelAndView;
     }
 

@@ -5,10 +5,13 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberDetailResponse
 
 import java.util.List;
 
-public record OrderFormResponse(MemberDetailResponse memberDetailResponse,
-                                List<Book> books,
-                                String totalBookPrice,
-                                String totalBookDiscountAmount,
-                                String deliveryFee,
-                                String totalPrice) {
+public record OrderFormResponse(
+        MemberDetailResponse memberDetailResponse,
+        List<Book> books,
+        String totalBookPrice,
+        String totalBookDiscountAmount,
+        String deliveryFee,
+        String totalPrice,
+        List<WrappingPaperResponse> wrappingPapers
+) {
 }

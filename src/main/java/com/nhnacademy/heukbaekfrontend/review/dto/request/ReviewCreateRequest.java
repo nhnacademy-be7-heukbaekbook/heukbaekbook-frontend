@@ -12,6 +12,5 @@ public record ReviewCreateRequest(
         Long bookId,
         String content,
         String title,
-        int score,
-        List<String> images
+        int score
 ) {}

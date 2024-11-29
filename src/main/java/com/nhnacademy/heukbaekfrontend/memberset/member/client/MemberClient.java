@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.client;
 
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
@@ -35,6 +36,9 @@ public interface MemberClient {
 
     @GetMapping("/detail")
     MemberDetailResponse getMemberDetail();
+
+    @GetMapping("/grade")
+    ResponseEntity<GradeDto> getMembersGrade();
 
     @GetMapping("/my-page")
     MyPageResponse getMyPageResponse();

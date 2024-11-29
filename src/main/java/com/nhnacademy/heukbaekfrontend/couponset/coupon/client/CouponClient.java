@@ -3,6 +3,7 @@ package com.nhnacademy.heukbaekfrontend.couponset.coupon.client;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CategoryCouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponPageResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
@@ -40,4 +41,7 @@ public interface CouponClient {
     @DeleteMapping("/{couponId}")
     ResponseEntity<Void> deleteCoupon(@PathVariable Long couponId);
 
+    @GetMapping("/coupon-page")
+    ResponseEntity<CouponPageResponse> getCouponPageResponse(@RequestParam("page") int page,
+                                                             @RequestParam("size") int size);
 }

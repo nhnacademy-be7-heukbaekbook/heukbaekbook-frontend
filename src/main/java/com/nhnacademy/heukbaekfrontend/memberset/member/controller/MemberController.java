@@ -7,7 +7,6 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailRes
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
-import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -36,9 +34,8 @@ public class MemberController {
     @GetMapping
     public String getMyPageHome(Model model) {
         MyPageResponse myPageResponse = memberService.createMyPageResponse();
-//        MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute("myPageResponse", myPageResponse)
-                .addAttribute("memberResponse", myPageResponse.memberResponse());
+        model.addAttribute("gradeDto", myPageResponse.gradeDto());
+        model.addAttribute("myPageResponse", myPageResponse);
         return "mypage/mypage";
     }
 
@@ -46,6 +43,7 @@ public class MemberController {
     public String getMyPageInfo(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute(MEMBER_RESPONSE, memberResponse);
+        model.addAttribute("gradeDto", memberResponse.grade());
         return "mypage/mypage-info";
     }
 
@@ -57,6 +55,7 @@ public class MemberController {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute(MEMBER_RESPONSE, memberUpdateRequest);
+            redirectAttributes.addFlashAttribute("gradeDto", memberService.getMembersGrade().get());
             redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/members/mypage/info";
         }
@@ -67,7 +66,7 @@ public class MemberController {
             // error
             redirectAttributes.addFlashAttribute("error", "처리하지 못했습니다. 다시 시도해주세요.");
         } else {
-            model.addAttribute(MEMBER_RESPONSE, optionalMemberResponse.get());
+            model.addAttribute("gradeDto", optionalMemberResponse.get().grade());
         }
 
         model.addAttribute("message", "정상적으로 처리되었습니다.");
@@ -77,7 +76,7 @@ public class MemberController {
     @GetMapping("/withdraw")
     public String getMyPageWithdraw(Model model) {
         MemberResponse memberResponse = memberService.getMember().getBody();
-        model.addAttribute(MEMBER_RESPONSE, memberResponse);
+        model.addAttribute("gradeDto", memberResponse.grade());
         return "mypage/mypage-withdraw";
 
     }
@@ -99,7 +98,7 @@ public class MemberController {
 
         return new ModelAndView("mypage/orders")
                 .addObject("myPageResponse", myPageResponse)
-                .addObject("memberResponse", myPageResponse.memberResponse());
+                .addObject("gradeDto", myPageResponse.gradeDto());
     }
 
     @GetMapping("/order/detail")
@@ -109,22 +108,13 @@ public class MemberController {
         log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
 
         return new ModelAndView("mypage/orderDetail")
-                .addObject("orderId", orderId)
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
-                .addObject("memberResponse", myPageOrderDetailResponse.memberResponse());
+                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto());
     }
+
 //    @GetMapping("/reviews")
 //    public ModelAndView getMyPageReviews() {
-//        // 현재 사용자의 리뷰 가져오기
-//        List<ReviewDetailResponse> myReviews = memberService.getMyPageReviews();
-//
-//        // 리뷰 데이터를 로깅
-//        log.info("myReviews: {}", myReviews);
-//
-//        // 뷰에 데이터 전달
 //        return new ModelAndView("mypage/reviews")
-//                .addObject("myReviews", myReviews)
-//                .addObject("memberResponse", memberService.getMember().getBody());
+//                .addObject("gradeDto", memberService.getMembersGrade().get());
 //    }
-
 }

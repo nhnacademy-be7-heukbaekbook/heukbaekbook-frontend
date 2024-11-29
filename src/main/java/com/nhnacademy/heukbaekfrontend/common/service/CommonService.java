@@ -23,10 +23,6 @@ public class CommonService {
         return formatter.format(price);
     }
 
-//    public String formatDate(Date date) {
-//        return dateFormat.format(date);
-//    }
-
     public BigDecimal calculateTotalPrice(BigDecimal salePrice, int quantity) {
         return salePrice.multiply(BigDecimal.valueOf(quantity));
     }

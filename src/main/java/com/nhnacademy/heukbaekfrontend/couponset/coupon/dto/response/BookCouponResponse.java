@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response;
 
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponStatus;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 
 import java.math.BigDecimal;
@@ -12,9 +13,11 @@ public record BookCouponResponse(
         String couponDescription,
         LocalDateTime couponCreatedAt,
         CouponStatus couponStatus,
+        Integer couponQuantity,
         int availableDuration,
         LocalDateTime couponTimeStart,
         LocalDateTime couponTimeEnd,
+        CouponType couponType,
 
         Long policyId,
         DiscountType discountType,

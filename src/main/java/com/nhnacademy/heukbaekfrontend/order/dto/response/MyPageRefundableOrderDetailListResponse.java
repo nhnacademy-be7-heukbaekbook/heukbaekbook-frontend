@@ -2,7 +2,9 @@ package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 
-public record MyPageRefundableOrderDetailResponse(
+import java.util.List;
+
+public record MyPageRefundableOrderDetailListResponse(
         MemberResponse memberResponse,
-        RefundableOrderDetailResponse order
+        List<RefundableOrderDetailResponse> orders
 ) {}

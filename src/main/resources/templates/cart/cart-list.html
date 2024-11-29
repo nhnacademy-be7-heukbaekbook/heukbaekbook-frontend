@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -67,11 +67,20 @@
         <div class="checkout-summary">
             <p id="total-selected-price" class="total-selected-price">총 상품 금액: 0원</p>
             <div class="checkout-buttons">
-                <button class="checkout-btn">주문하기</button>
-                <button class="guest-checkout-btn" th:onclick="'redirectToOrderPage()'">비회원 주문</button>
+                <button class="checkout-btn"
+                        th:onclick="'redirectToOrderPage()'"
+                        sec:authorize="isAuthenticated()">
+                    주문하기
+                </button>
+                <button class="guest-checkout-btn"
+                        th:onclick="'redirectToOrderPage()'"
+                        sec:authorize="!isAuthenticated()">
+                    비회원 주문
+                </button>
                 <a href="/" class="continue-shopping-btn">쇼핑 계속하기</a>
             </div>
         </div>
+
     </section>
 
     <script>
