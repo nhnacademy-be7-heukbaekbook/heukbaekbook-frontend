@@ -1,17 +1,9 @@
 package com.nhnacademy.heukbaekfrontend.couponset.coupon.controller;
 
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponStatus;
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CategoryCouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponPageResponse;
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
-import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
-import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
-import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

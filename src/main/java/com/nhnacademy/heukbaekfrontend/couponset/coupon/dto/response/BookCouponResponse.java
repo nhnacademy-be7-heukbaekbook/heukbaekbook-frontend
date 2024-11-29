@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record BookCouponResponse(
-        Long couponId,
+        Long bookCouponId,
         String couponName,
         String couponDescription,
         LocalDateTime couponCreatedAt,
