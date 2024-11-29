@@ -98,10 +98,10 @@
     <!-- 오른쪽 콘텐츠 영역 -->
     <section id="content-area">
         <h3 class="content-title">환불 가능한 주문 목록</h3>
-        <div th:if="${myPageResponse.orders.size() == 0}">
+        <div th:if="${orders.size() == 0}">
             <p>환불 가능한 주문이 없습니다.</p>
         </div>
-        <div th:if="${myPageResponse.orders.size() > 0}">
+        <div th:if="${orders.size() > 0}">
             <table class="refund-table">
                 <thead>
                 <tr>
@@ -124,7 +124,7 @@
                 </thead>
 
                 <tbody>
-                <tr th:each="order : ${myPageResponse.orders}">
+                <tr th:each="order : ${orders}">
                     <!-- <td th:text="${order.orderId}"></td>-->
                     <td th:text="${order.customerName}"></td>
                     <td th:text="${order.recipient}"></td>
@@ -139,7 +139,7 @@
                     <td th:text="${order.totalPrice}"></td>
                     <!-- <td th:text="${order.status}"></td>-->
                     <td>
-                        <a th:href="@{'/refund/request/' + ${order.orderId}}" class="submit-button">환불 신청</a>
+                        <a th:href="@{'/refunds/refundable-orders/' + ${order.orderId}}" class="submit-button">환불 신청</a>
                     </td>
                 </tr>
                 </tbody>
