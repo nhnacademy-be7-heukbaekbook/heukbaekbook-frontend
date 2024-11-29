@@ -9,11 +9,9 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.client.DeliveryFeeClient;
 import com.nhnacademy.heukbaekfrontend.order.client.OrderClient;
+import com.nhnacademy.heukbaekfrontend.order.client.WrappingPaperClient;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailListResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import com.nhnacademy.heukbaekfrontend.util.Utils;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +42,8 @@ public class OrderServiceImpl implements OrderService {
 
     private final MemberClient memberClient;
 
+    private final WrappingPaperClient wrappingPaperClient;
+
     @Override
     public OrderFormResponse createOrderFormResponse(String sessionId, List<Long> bookIds, Integer quantity) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -64,13 +64,17 @@ public class OrderServiceImpl implements OrderService {
 
         log.info("memberDetailResponse: {}", memberDetailResponse);
 
+        List<WrappingPaperResponse> wrappingPapers = wrappingPaperClient.getAllWrappingPapers();
+
         return new OrderFormResponse(
                 memberDetailResponse,
                 books,
                 totalBookPrice,
                 totalBookDiscountAmount,
                 commonService.formatPrice(deliveryFee),
-                commonService.formatPrice(totalPrice));
+                commonService.formatPrice(totalPrice),
+                wrappingPapers
+        );
     }
 
     List<Book> fetchBooks(String sessionId, List<Long> bookIds, Integer quantity) {
@@ -88,6 +92,7 @@ public class OrderServiceImpl implements OrderService {
                         bookSummaryResponse.id(),
                         bookSummaryResponse.title(),
                         bookSummaryResponse.isPackable(),
+                        bookSummaryResponse.wrappingPaperId(),
                         commonService.formatPrice(bookSummaryResponse.price()),
                         commonService.formatPrice(bookSummaryResponse.salePrice()),
                         bookSummaryResponse.discountRate(),

@@ -5,6 +5,7 @@ import com.nhnacademy.heukbaekfrontend.order.dto.request.RefundCreateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailListResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.RefundCreateResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import com.nhnacademy.heukbaekfrontend.order.service.RefundService;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,7 @@ public class RefundController {
 
     @PostMapping
     public String createRefund(@ModelAttribute RefundCreateRequest request, Model model) {
+        RefundCreateResponse response = refundService.createRefund(request);
         return null;
     }
 }
