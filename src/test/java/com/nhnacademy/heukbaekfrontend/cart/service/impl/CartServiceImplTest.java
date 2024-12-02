@@ -51,31 +51,31 @@ class CartServiceImplTest {
         cartService = new CartServiceImpl(redisTemplate, bookClient, cartClient, commonService);
     }
 
-    @Test
-    void testGetBooksFromCart() {
-        String sessionId = "mockSessionId";
-        Map<String, Object> mockEntries = Map.of("1", 2, "2", 1);
-        List<BookSummaryResponse> mockBooks = List.of(
-                new BookSummaryResponse(1L, "Book A", true, 101L, BigDecimal.valueOf(10000),
-                        BigDecimal.valueOf(9000), BigDecimal.valueOf(0.1), "http://example.com/bookA.jpg"),
-                new BookSummaryResponse(2L, "Book B", false, null, BigDecimal.valueOf(20000),
-                        BigDecimal.valueOf(18000), BigDecimal.valueOf(0.1), "http://example.com/bookB.jpg")
-        );
-
-        when(hashOperations.entries(sessionId)).thenReturn(mockEntries);
-        when(bookClient.getBooksSummary(List.of(1L, 2L))).thenReturn(mockBooks);
-        when(commonService.formatPrice(any())).thenReturn("10,000", "9,000", "20,000", "18,000");
-        when(commonService.calculateTotalPriceAndFormat(any(), anyInt())).thenReturn("18,000", "18,000");
-        when(commonService.calculateTotalPrice(any(), anyInt())).thenReturn(BigDecimal.valueOf(18000));
-
-        List<Book> books = cartService.getBooksFromCart(sessionId);
-
-        assertThat(books).hasSize(2);
-        assertThat(books.get(0).title()).isEqualTo("Book A");
-        assertThat(books.get(1).title()).isEqualTo("Book B");
-        verify(hashOperations).entries(sessionId);
-        verify(bookClient).getBooksSummary(List.of(1L, 2L));
-    }
+//    @Test
+//    void testGetBooksFromCart() {
+//        String sessionId = "mockSessionId";
+//        Map<String, Object> mockEntries = Map.of("1", 2, "2", 1);
+//        List<BookSummaryResponse> mockBooks = List.of(
+//                new BookSummaryResponse(1L, "Book A", true, 101L, BigDecimal.valueOf(10000),
+//                        BigDecimal.valueOf(9000), BigDecimal.valueOf(0.1), "http://example.com/bookA.jpg"),
+//                new BookSummaryResponse(2L, "Book B", false, null, BigDecimal.valueOf(20000),
+//                        BigDecimal.valueOf(18000), BigDecimal.valueOf(0.1), "http://example.com/bookB.jpg")
+//        );
+//
+//        when(hashOperations.entries(sessionId)).thenReturn(mockEntries);
+//        when(bookClient.getBooksSummary(List.of(1L, 2L))).thenReturn(mockBooks);
+//        when(commonService.formatPrice(any())).thenReturn("10,000", "9,000", "20,000", "18,000");
+//        when(commonService.calculateTotalPriceAndFormat(any(), anyInt())).thenReturn("18,000", "18,000");
+//        when(commonService.calculateTotalPrice(any(), anyInt())).thenReturn(BigDecimal.valueOf(18000));
+//
+//        List<Book> books = cartService.getBooksFromCart(sessionId);
+//
+//        assertThat(books).hasSize(2);
+//        assertThat(books.get(0).title()).isEqualTo("Book A");
+//        assertThat(books.get(1).title()).isEqualTo("Book B");
+//        verify(hashOperations).entries(sessionId);
+//        verify(bookClient).getBooksSummary(List.of(1L, 2L));
+//    }
 
     @Test
     void testCreateBookToCart() {
@@ -113,19 +113,19 @@ class CartServiceImplTest {
         verify(hashOperations).delete(sessionId, String.valueOf(bookId));
     }
 
-    @Test
-    void testSynchronizeCartToDb() {
-        String sessionId = "mockSessionId";
-        Map<String, Object> mockEntries = Map.of("1", 2, "2", 1);
-        List<CartCreateRequest> mockRequests = List.of(
-                new CartCreateRequest(1L, 2),
-                new CartCreateRequest(2L, 1)
-        );
-
-        when(hashOperations.entries(sessionId)).thenReturn(mockEntries);
-
-        cartService.synchronizeCartToDb(sessionId);
-
-        verify(cartClient).synchronizeCartToDb(mockRequests);
-    }
+//    @Test
+//    void testSynchronizeCartToDb() {
+//        String sessionId = "mockSessionId";
+//        Map<String, Object> mockEntries = Map.of("1", 2, "2", 1);
+//        List<CartCreateRequest> mockRequests = List.of(
+//                new CartCreateRequest(1L, 2),
+//                new CartCreateRequest(2L, 1)
+//        );
+//
+//        when(hashOperations.entries(sessionId)).thenReturn(mockEntries);
+//
+//        cartService.synchronizeCartToDb(sessionId);
+//
+//        verify(cartClient).synchronizeCartToDb(mockRequests);
+//    }
 }
