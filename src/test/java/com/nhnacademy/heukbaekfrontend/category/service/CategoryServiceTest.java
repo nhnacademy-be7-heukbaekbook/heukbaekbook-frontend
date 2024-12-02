@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.category.service;
 
 import com.nhnacademy.heukbaekfrontend.category.client.CategoryAdmin;
+import com.nhnacademy.heukbaekfrontend.category.client.CategoryClient;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryCreateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.request.CategoryUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.*;
@@ -28,6 +29,9 @@ class CategoryServiceTest {
 
     @Mock
     private CategoryAdmin categoryAdmin;
+
+    @Mock
+    private CategoryClient categoryClient;
 
     @BeforeEach
     void setUp() {
@@ -106,4 +110,39 @@ class CategoryServiceTest {
         assertThat(result.getBody().message()).isEqualTo("Category deleted successfully");
         verify(categoryAdmin, times(1)).deleteCategory(1L);
     }
+
+    @Test
+    void testGetTopCategories() {
+        List<CategorySummaryResponse> mockTopCategories = List.of(
+                new CategorySummaryResponse(1L, "Category A", List.of(
+                        new CategorySummaryResponse(2L, "Subcategory A1", List.of())
+                )),
+                new CategorySummaryResponse(3L, "Category B", List.of())
+        );
+
+        when(categoryClient.getTopCategories()).thenReturn(mockTopCategories);
+
+        List<CategorySummaryResponse> result = categoryService.getTopCategories();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0).name()).isEqualTo("Category A");
+        assertThat(result.get(0).subCategorySummaryResponses()).hasSize(1);
+        assertThat(result.get(1).name()).isEqualTo("Category B");
+        verify(categoryClient, times(1)).getTopCategories();
+    }
+
+    @Test
+    void testGetCategoryPaths() {
+        List<String> mockPaths = List.of("Category A > Subcategory A1", "Category B > Subcategory B1");
+
+        when(categoryAdmin.getCategoryPaths()).thenReturn(ResponseEntity.ok(mockPaths));
+
+        List<String> result = categoryService.getCategoryPaths();
+
+        assertThat(result).hasSize(2);
+        assertThat(result.get(0)).isEqualTo("Category A > Subcategory A1");
+        assertThat(result.get(1)).isEqualTo("Category B > Subcategory B1");
+        verify(categoryAdmin, times(1)).getCategoryPaths();
+    }
+
 }
