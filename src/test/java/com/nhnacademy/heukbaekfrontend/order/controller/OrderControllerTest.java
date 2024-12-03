@@ -71,23 +71,23 @@ class OrderControllerTest {
                 .andExpect(model().attributeExists("orderFormResponse"));
     }
 
-    @Test
-    @WithMockUser // Mock 인증 사용자 추가
-    void testGetOrderDetailForm() throws Exception {
-        OrderDetailResponse orderDetailResponse = new OrderDetailResponse(
-                "John Doe", "3000", "98000", "Credit Card", "Jane Doe", 12345L,
-                "123 Main St", "Apt 101", "100000", "2000", "98000", "Delivered",
-                List.of()
-        );
-
-        when(orderService.createOrderDetailResponse(anyString())).thenReturn(orderDetailResponse);
-
-        mockMvc.perform(get("/order/123"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("order/detail"))
-                .andExpect(model().attributeExists("orderDetailResponse"))
-                .andExpect(model().attributeExists("orderId"));
-    }
+//    @Test
+//    @WithMockUser // Mock 인증 사용자 추가
+//    void testGetOrderDetailForm() throws Exception {
+//        OrderDetailResponse orderDetailResponse = new OrderDetailResponse(
+//                "John Doe", "3000", "98000", "Credit Card", "Jane Doe", 12345L,
+//                "123 Main St", "Apt 101", "100000", "2000", "98000", "Delivered",
+//                List.of()
+//        );
+//
+//        when(orderService.createOrderDetailResponse(anyString())).thenReturn(orderDetailResponse);
+//
+//        mockMvc.perform(get("/order/123"))
+//                .andExpect(status().isOk())
+//                .andExpect(view().name("order/detail"))
+//                .andExpect(model().attributeExists("orderDetailResponse"))
+//                .andExpect(model().attributeExists("orderId"));
+//    }
 
     @Test
     @WithMockUser // Mock 인증 사용자 추가

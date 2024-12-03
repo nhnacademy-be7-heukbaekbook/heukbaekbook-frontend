@@ -8,10 +8,7 @@ import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @FeignClient(value = "orderClient", url = "http://localhost:8082/api/orders")
 public interface OrderClient {
@@ -30,4 +27,7 @@ public interface OrderClient {
             @RequestParam(name = "customer-id") String customerId,
             @PathVariable(name = "order-id") Long orderId
     );
+
+    @DeleteMapping("/{orderId}")
+    ResponseEntity<Void> deleteOrder(@PathVariable String orderId);
 }

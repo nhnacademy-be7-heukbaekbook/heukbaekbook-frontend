@@ -101,6 +101,7 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
         log.info("sessionId: {}", sessionId);
 
         cartService.synchronizeCartToDb(sessionId);
+        cartService.synchronizeCartFromDb(sessionId);
 
         response.sendRedirect(getSuccessRedirectUrl());
     }
