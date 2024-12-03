@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.book.controller;
 
-import com.nhnacademy.heukbaekfrontend.book.dto.response.BookDetailResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookViewResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
@@ -8,24 +7,18 @@ import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
-import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
-
-import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
 
 @Controller
 @RequiredArgsConstructor
@@ -38,8 +31,6 @@ public class BookController {
     private final CategoryService categoryService;
 
     private final BookCategoryService bookCategoryService;
-
-    private final CookieUtil cookieUtil;
 
     @GetMapping("/category")
     public ModelAndView viewBooksByCategory(@RequestParam Long categoryId,
@@ -59,8 +50,6 @@ public class BookController {
     @GetMapping("/detail")
     public ModelAndView viewBookDetail(HttpServletRequest request, @RequestParam Long bookId) {
         log.info("bookId : {}", bookId);
-        String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
-        boolean isLogin = accessToken != null;
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
@@ -69,8 +58,9 @@ public class BookController {
 
         modelAndView
                 .addObject("book", bookViewResponse)
-                .addObject("isLogin", isLogin)
-                .addObject("categories", parentCategoryResponses);
+                .addObject("categories", parentCategoryResponses)
+                .addObject("availableCoupons", List.of());
+        ;
         return modelAndView;
     }
 }
