@@ -7,6 +7,7 @@ import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -55,5 +56,13 @@ public class OrderController {
         log.info("orderCreateRequest = {}", orderCreateRequest);
 
         return orderService.createOrder(orderCreateRequest);
+    }
+
+    @DeleteMapping("/{orderId}")
+    @ResponseStatus(code = HttpStatus.NO_CONTENT)
+    public ResponseEntity<Void> deleteOrder(@PathVariable String orderId) {
+        log.info("orderId = {}", orderId);
+
+        return orderService.deleteOrder(orderId);
     }
 }

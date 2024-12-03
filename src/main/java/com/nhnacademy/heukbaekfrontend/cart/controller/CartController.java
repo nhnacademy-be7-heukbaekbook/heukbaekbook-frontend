@@ -1,11 +1,10 @@
 package com.nhnacademy.heukbaekfrontend.cart.controller;
 
-import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
+import com.nhnacademy.heukbaekfrontend.cart.dto.CartResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.List;
 
 /**
  * 장바구니 컨트롤러
@@ -37,9 +35,10 @@ public class CartController {
     public ModelAndView getBooksFromCart(HttpSession session) {
         String sessionId = session.getId();
         log.info("sessionId : {}", sessionId);
-        List<Book> cart = cartService.getBooksFromCart(sessionId);
+        CartResponse cartResponse = cartService.getBooksFromCart(sessionId);
 
-        return new ModelAndView("cart/cart-list").addObject("cart", cart);
+        return new ModelAndView("cart/cart-list")
+                .addObject("cart", cartResponse);
     }
 
     // 장바구니에 책 담기

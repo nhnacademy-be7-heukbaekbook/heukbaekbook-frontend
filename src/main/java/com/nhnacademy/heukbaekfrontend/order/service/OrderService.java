@@ -19,4 +19,6 @@ public interface OrderService {
     MyPageRefundableOrderDetailListResponse getRefundableOrders();
 
     MyPageRefundableOrderDetailResponse getRefundableOrderDetail(Long orderId);
+
+    ResponseEntity<Void> deleteOrder(String orderId);
 }

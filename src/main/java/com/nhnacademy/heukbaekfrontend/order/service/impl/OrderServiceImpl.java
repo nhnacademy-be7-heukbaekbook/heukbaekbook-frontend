@@ -127,4 +127,9 @@ public class OrderServiceImpl implements OrderService {
         String customerId = Utils.getCustomerId();
         return orderClient.getRefundableOrderDetail(customerId, orderId).getBody();
     }
+
+    @Override
+    public ResponseEntity<Void> deleteOrder(String orderId) {
+        return orderClient.deleteOrder(orderId);
+    }
 }
