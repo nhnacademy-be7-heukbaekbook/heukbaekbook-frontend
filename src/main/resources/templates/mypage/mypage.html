@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>흑백문고</title>
+<!--  <title th:text="${pageTitle}">마이페이지</title>-->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+  <span class="header-title" >마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+
+  <!-- 왼쪽 사이드바 -->
+  <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+  <!-- 오른쪽 콘텐츠 영역 -->
+  <section id="content-area">
+    <h3 class="content-title">최근 주문내역</h3>
+    <!-- 주문 내역이 없을 경우 -->
+    <p class="content-description" th:if="${#lists.isEmpty(myPageResponse.orderResponse.orderSummaryResponseList)}">최근 주문 내역이 없습니다.</p>
+
+    <!-- 주문 내역이 있을 경우 -->
+    <table th:if="${!#lists.isEmpty(myPageResponse.orderResponse.orderSummaryResponseList)}" class="order-table">
+      <thead>
+      <tr>
+        <th>주문일자</th>
+        <th>주문번호</th>
+        <th>주문내역</th>
+        <th>주문상태</th>
+        <th>배송</th>
+      </tr>
+      </thead>
+      <tbody style="font-size: 12px">
+      <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponseList}">
+        <td th:text="${order.createdAt}"></td>
+        <td>
+          <a th:href="@{/members/mypage/order/detail(orderId=${order.tossOrderId})}"
+             th:text="${order.tossOrderId}"
+             style="font-weight: bold; color: #1a1a1a">
+          </a>
+        </td>
+        <td th:text="${order.title}"></td>
+        <td th:text="${order.status}"></td>
+        <td>
+          <a th:if="${order.delivery != null}" href="#" class="link-button">조회</a>
+          <span th:if="${order.delivery == null}"></span>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>

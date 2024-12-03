@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 출판사 등록</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f4f4;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+        }
+        .form-group input[type="text"]:focus {
+            border-color: #000000;
+            outline: none;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 12px 20px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        .form-container button:hover {
+            background-color: #333333;
+        }
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #7f8c8d;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+
+<main>
+    <section class="form-container">
+        <h2>출판사 등록</h2>
+        <div th:if="${success}">
+            <p class="success-message">출판사가 성공적으로 등록되었습니다.</p>
+        </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}"></p>
+        </div>
+        <form th:action="@{/admin/publishers}" th:object="${publisherCreateRequest}" method="post">
+            <!-- 출판사 이름 필드 -->
+            <div class="form-group">
+                <label for="name">출판사 이름</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="출판사 이름을 입력하세요" required />
+                <!-- Validation Error Message -->
+                <div th:if="${#fields.hasErrors('name')}" class="error-message">
+                    <p th:errors="*{name}">출판사 이름 오류</p>
+                </div>
+            </div>
+
+            <!-- 폼 액션 버튼 -->
+            <button type="submit">등록하기</button>
+            <a th:href="@{/admin/publishers}" class="back-button">목록으로 돌아가기</a>
+        </form>
+    </section>
+</main>
+
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>

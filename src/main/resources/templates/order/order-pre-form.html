@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 주문서 작성 및 결제</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- Toss Payments 결제 위젯 SDK (v2) -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <style>
+        /* 공통 스타일 */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 화면 전체 높이를 채우기 위해 설정 */
+            margin: 0;
+        }
+
+        .container {
+            flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .column form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        div {
+            margin-bottom: 10px; /* 전체 div 간격 */
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .address-container {
+            display: flex; /* 요소를 가로로 배치 */
+            align-items: center; /* 세로 가운데 정렬 */
+            margin-bottom: 8px; /* 필드 간격 */
+        }
+        #postcode {
+            width: 120px; /* 우편번호 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        #roadAddress, #detailAddress {
+            width: 100%; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            /*input[type="tel"] {*/
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            /*margin-bottom: 2px;*/
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .sms-info {
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+
+        .table-header {
+            background-color: #f4f4f4; /* 헤더 배경색 */
+            color: #333; /* 헤더 텍스트 색 */
+            font-weight: bold; /* 텍스트 굵게 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            text-align: center; /* 가로 가운데 정렬 */
+            vertical-align: middle; /* 세로 가운데 정렬 */
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .book-image {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .name-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 200px;
+        }
+
+        .email-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 300px;
+        }
+
+        .phone-input-group {
+            display: flex; /* 가로로 정렬 */
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px; /* 요소 간 간격 */
+        }
+
+        .phone-input-group label {
+            font-weight: bold; /* 레이블 강조 */
+        }
+
+        .phone-input {
+            width: 60px; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center; /* 입력값 가운데 정렬 */
+            font-size: 14px; /* 입력 필드 글자 크기 */
+            line-height: 1.5;
+            position: relative; /* 위치 조정 활성화 */
+            top: -4px;
+        }
+
+        .separator {
+            font-size: 16px; /* 하이픈 크기 */
+            font-weight: normal; /* 하이픈 굵기 */
+            color: #333; /* 하이픈 색상 */
+            line-height: 1; /* 텍스트 높이 초기화 */
+            position: relative; /* 위치 조정을 위한 상대 위치 */
+            top: -4px; /* 하이픈을 위로 약간 이동 */
+            left: 4px;
+        }
+
+        .payment-info-container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.5fr;
+            background-color: #eaf3fc;
+            border: 1px solid #d3e2f1;
+            border-radius: 10px;
+            overflow: hidden;
+            align-items: stretch;
+        }
+
+        .payment-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #d3e2f1;
+            height: 100%;
+        }
+
+        .payment-box:last-child {
+            border-right: none;
+        }
+
+        .payment-box h3 {
+            font-size: 16px;
+            color: #555;
+            margin: 0;
+        }
+
+        .payment-box .amount {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .payment-box .currency {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* 최종 결제 금액 강조 */
+        .final-box {
+            background-color: #f8e9ef;
+            color: #8b1c3d;
+        }
+
+        .final-box .amount {
+            color: #8b1c3d;
+        }
+
+        /* 디테일 정보 */
+        .detail-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+
+        .detail-info .item {
+            margin-bottom: 5px;
+        }
+
+        .detail-info .item span {
+            font-weight: bold;
+        }
+
+        .payment-form {
+            display: flex;
+            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+            margin-top: 20px; /* 버튼과 위 내용 간의 간격 */
+        }
+
+        .payment-button {
+            padding: 30px 45px; /* 버튼 크기 */
+            background: #d9534f; /* 버튼 배경색 */
+            color: #fff; /* 텍스트 색상 */
+            font-size: 18px; /* 텍스트 크기 */
+            font-weight: bold; /* 텍스트 굵기 */
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 8px; /* 모서리를 둥글게 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+            transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+        }
+
+        .payment-button:hover {
+            background: #c9302c; /* 호버 시 버튼 색상 변경 */
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+            .payment-info {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header>
+    <a href="/">
+        <img src="/images/logo.png" alt="흑백문고 로고" class="logo">
+    </a>
+    <h1>흑백문고</h1>
+    <nav>
+        <ul>
+            <li><a href="/categories">카테고리</a></li>
+            <li><a href="/cart">장바구니</a></li>
+            <li><a href="/members/mypage">마이페이지</a></li>
+            <li><a href="/login">로그인</a></li>
+        </ul>
+    </nav>
+</header>
+
+<div class="container">
+    <h2>상품 확인</h2>
+    <!-- 상품 확인 -->
+    <div class="section">
+        <table>
+            <colgroup>
+                <col style="width: 60%;"> <!-- 상품 정보 열 -->
+                <col style="width: 10%;"> <!-- 정가 열 -->
+                <col style="width: 10%;"> <!-- 할인가 열 -->
+                <col style="width: 10%;"> <!-- 수량 열 -->
+                <col style="width: 10%;"> <!-- 합계 열 -->
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>상품명</th>
+                <th>정가</th>
+                <th>할인가</th>
+                <th>수량</th>
+                <th>합계</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="book : ${books}">
+                <td style="display: flex; align-items: center; gap: 10px;">
+                    <img th:src="@{${book.thumbnailUrl}}" alt="썸네일" class="book-image" style="width: 75px; height: 100px; object-fit: cover; border-radius: 5px;">
+                    <span th:text="${book.title}" style="font-weight: bold;">도서 제목</span>
+                </td>
+                <td th:text="${book.price} + '원'">15,000원</td>
+                <td th:text="${book.salePrice} + '원'">13,500원</td>
+                <td th:text="${book.quantity}">1</td>
+                <td th:text="${book.formattedTotalPrice} + '원'">13,500원</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 배송 및 주문자 정보 -->
+    <h2>배송 주소</h2>
+    <div class="flex-container">
+        <!-- 배송 정보 -->
+        <div class="column">
+            <form id="order-form">
+                <div>
+                    <label>배송방법</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="delivery" value="일반택배" checked> 일반택배</label>
+                        <label><input type="radio" name="delivery" value="해외배송"> 해외배송</label>
+                        <label><input type="radio" name="delivery" value="편의점픽업"> 편의점픽업</label>
+                    </div>
+                </div>
+
+                <div class="name-input-group">
+                    <label for="recipientName">이름</label>
+                    <input type="text" id="recipientName" name="recipientName" placeholder="수령인 이름 입력" required>
+                </div>
+
+                <div>
+                    <label>배송주소</label>
+                    <div class="address-container">
+                        <label for="postcode"></label><input type="text" id="postcode" name="postcode" placeholder="우편번호" readonly required>
+                        <button type="button" class="btn" id="find-address-btn">주소 찾기</button>
+                    </div>
+                    <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly required>
+                    <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" required>
+                </div>
+
+                <script>
+                    // "주소 찾기" 버튼 클릭 이벤트
+                    document.getElementById('find-address-btn').addEventListener('click', function () {
+                        new daum.Postcode({
+                            oncomplete: function(data) {
+                                // 검색 결과에서 필요한 데이터를 가져와서 출력
+                                document.getElementById('postcode').value = data.zonecode; // 우편번호
+                                document.getElementById('roadAddress').value = data.roadAddress; // 도로명 주소
+
+                                // 상세 주소 입력 필드로 포커스 이동
+                                document.getElementById('detailAddress').focus();
+                            }
+                        }).open(); // 팝업창 열기
+                    });
+                </script>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <label for="recipientPhone1"></label><input type="tel" id="recipientPhone1" name="recipientPhone1" placeholder="010" class="phone-input" maxlength="3" required>
+                    <span class="separator">-</span>
+                    <label for="recipientPhone2"></label><input type="tel" id="recipientPhone2" name="recipientPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
+                    <span class="separator">-</span>
+                    <label for="recipientPhone3"></label><input type="tel" id="recipientPhone3" name="recipientPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
+                </div>
+            </form>
+        </div>
+
+        <!-- 주문 고객 정보 -->
+        <div class="column">
+            <h2>주문 고객</h2>
+            <form id="customer-form">
+                <div class="radio-group">
+                    <label><input type="radio" name="customerOption" value="새로입력" checked> 새로입력</label>
+                    <label><input type="radio" name="customerOption" value="배송정보와 동일"> 배송정보와 동일</label>
+                </div>
+
+                <div class="name-input-group">
+                    <label for="customerName">이름</label>
+                    <input type="text" id="customerName" name="customerName" placeholder="주문자 이름 입력" required>
+                </div>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <label for="customerPhone1"></label><input type="tel" id="customerPhone1" name="customerPhone1" placeholder="010" class="phone-input" maxlength="3" required>
+                    <span class="separator">-</span>
+                    <label for="customerPhone2"></label><input type="tel" id="customerPhone2" name="customerPhone2" placeholder="1234" class="phone-input" maxlength="4" required>
+                    <span class="separator">-</span>
+                    <label for="customerPhone3"></label><input type="tel" id="customerPhone3" name="customerPhone3" placeholder="5678" class="phone-input" maxlength="4" required>
+                </div>
+                <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
+
+                <div class="email-input-group">
+                    <label for="customerEmail">이메일</label>
+                    <input type="email" id="customerEmail" name="customerEmail" placeholder="이메일 주소 입력" required>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 결제 정보 -->
+    <h2>결제 정보</h2>
+    <div class="payment-info-container">
+        <div class="payment-info">
+            <div class="payment-box">
+                <h3>총 상품금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount" th:attr="data-final-price=${totalPrice}" th:text="${totalPrice} + '원'">25,200원</div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>즉시할인</span>:
+                        <span th:text="${totalDiscountAmount} + '원'">2,800원</span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 추가금액</h3>
+                <div class="amount">0<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <!-- 추가 금액 정보 -->
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 할인금액</h3>
+                <div class="amount">0<span class="currency">원</span></div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>쿠폰</span>: 사용하지 않음
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box final-box">
+                <h3>최종 결제금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount" th:attr="data-final-price=${totalPrice}" th:text="${totalPrice} + '원'">25,200원</div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>기본적립 포인트</span>: 500
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결제 방법 및 약관 -->
+        <div id="payment-method"></div>
+        <div id="agreement"></div>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <div class="section">
+        <form id="complete-order-form" method="post">
+            <div class="payment-form">
+                <button type="button" id="payment-button" class="payment-button">결제하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer>
+    <p>&copy; 2024 흑백문고</p>
+    <nav>
+        <a href="/about">회사 소개</a> |
+        <a href="/contact">문의하기</a> |
+        <a href="/terms">이용 약관</a>
+    </nav>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        main();
+    });
+
+    async function main() {
+        const button = document.getElementById("payment-button");
+        const customerEmailInput = document.getElementById("customerEmail");
+        const customerNameInput = document.getElementById("customerName");
+        const customerPhone1 = document.getElementById("customerPhone1");
+        const customerPhone2 = document.getElementById("customerPhone2");
+        const customerPhone3 = document.getElementById("customerPhone3");
+        const finalPriceElement = document.querySelector('.amount[data-final-price]');
+        const finalPriceText = finalPriceElement ? finalPriceElement.getAttribute('data-final-price') : "0";
+        const totalPrice = parseInt(finalPriceText.replace(/,/g, '')) || 0;
+
+        console.log("Final Price Text:", finalPriceText);
+        console.log("Total Price:", totalPrice);
+
+        // ------  결제위젯 초기화 ------
+        const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 테스트용 클라이언트 키
+        const tossPayments = TossPayments(clientKey);
+
+        // 회원 결제
+        const customerKey = "1i62MTY0QWEM0mcl54uNp"; // 고객 식별 키
+        const widgets = tossPayments.widgets({
+            customerKey,
+        });
+
+        // ------ 주문의 결제 금액 설정 ------
+        let amount = totalPrice; // 결제 금액 서버에서 받아온 최종 금액
+
+        console.log("Amount before setting:", amount);
+
+        // 결제 금액 설정 함수
+        async function setPaymentAmount() {
+            await widgets.setAmount({
+                currency: "KRW",
+                value: amount,
+            });
+            console.log("Payment amount set to:", amount);
+        }
+
+        await setPaymentAmount();
+
+        // ------  결제 UI 렌더링 ------
+        await Promise.all([
+            widgets.renderPaymentMethods({
+                selector: "#payment-method",
+                variantKey: "DEFAULT",
+            }),
+            widgets.renderAgreement({
+                selector: "#agreement",
+                variantKey: "AGREEMENT",
+            }),
+        ]);
+
+        // ------ '결제하기' 버튼 클릭 시 결제 요청 ------
+        button.addEventListener("click", async function () {
+            const orderName = "흑백문고 주문"; // 주문명 고정 또는 동적으로 설정 가능
+            const orderId = generateOrderId();
+            const customerEmail = customerEmailInput.value.trim();
+            const customerName = customerNameInput.value.trim();
+            const customerPhone = `${customerPhone1.value.trim()}${customerPhone2.value.trim()}${customerPhone3.value.trim()}`;
+
+            console.log("Order Details:");
+            console.log("Order Name:", orderName);
+            console.log("Order ID:", orderId);
+            console.log("Customer Email:", customerEmail);
+            console.log("Customer Name:", customerName);
+            console.log("Customer Phone:", customerPhone);
+            console.log("Amount:", amount);
+
+            // 입력값 검증
+            if (!customerEmail || !customerName || !customerPhone1.value.trim() || !customerPhone2.value.trim() || !customerPhone3.value.trim()) {
+                alert("이메일, 고객명, 전화번호를 모두 입력해주세요.");
+                return;
+            }
+
+            if (amount <= 0) {
+                console.log("Amount is zero or negative:", amount);
+                alert("결제 금액을 확인해주세요.");
+                return;
+            }
+
+            await widgets.requestPayment({
+                orderId: orderId, // 랜덤으로 생성된 orderId
+                orderName: orderName, // 주문명
+                successUrl: window.location.origin + "/payment/success", // 결제 성공 시 리디렉션될 URL
+                failUrl: window.location.origin + "/payment/fail", // 결제 실패 시 리디렉션될 URL
+                customerEmail: customerEmail, // 입력받은 이메일
+                customerName: customerName, // 입력받은 고객명
+                customerMobilePhone: customerPhone, // 입력받은 전화번호
+            });
+        });
+
+        // orderId 생성 함수
+        function generateOrderId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+            const length = Math.floor(Math.random() * (64 - 6 + 1)) + 6; // 6에서 64 사이 길이
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+    }
+</script>
+
+</body>
+</html>

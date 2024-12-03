@@ -11,5 +11,4 @@ public class HeukbaekFrontendApplication {
     public static void main(String[] args) {
         SpringApplication.run(HeukbaekFrontendApplication.class, args);
     }
-
 }

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 홈 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-page-container">
+
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <section id="content-area">
+        <h3 class="content-title">관리자 홈 화면</h3>
+        <p class="content-description"> </p>
+        <hr />
+    </section>
+</main>
+
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

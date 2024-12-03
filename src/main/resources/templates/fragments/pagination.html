@@ -1,0 +1,32 @@
+<!-- fragments/pagination.html -->
+<ul class="pagination" th:fragment="pagination(page)">
+    <!-- 첫 페이지로 이동 -->
+    <li th:classappend="${page.first} ? 'disabled'">
+        <a th:href="@{|?page=0|}" th:if="${!page.first}">«</a>
+        <span th:if="${page.first}">«</span>
+    </li>
+
+    <!-- 이전 페이지 -->
+    <li th:if="${page.number != -1}" th:classappend="${!page.hasPrevious()} ? 'disabled'">
+        <a th:href="@{|?page=${page.number - 1}|}" th:if="${page.hasPrevious()}">‹</a>
+        <span th:if="${!page.hasPrevious()}">‹</span>
+    </li>
+
+    <!-- 페이지 번호 -->
+    <li th:if="${page.number != -1}" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+        th:classappend="${i == page.number} ? 'active'">
+        <a th:href="@{|?page=${i}&size=${page.size}|}" th:text="${i + 1}"></a>
+    </li>
+
+    <!-- 다음 페이지 -->
+    <li th:if="${page.number != -1}" th:classappend="${!page.hasNext()} ? 'disabled'">
+        <a th:href="@{|?page=${page.number + 1}|}" th:if="${page.hasNext()}">›</a>
+        <span th:if="${!page.hasNext()}">›</span>
+    </li>
+
+    <!-- 마지막 페이지로 이동 -->
+    <li th:if="${page.number != -1}" th:classappend="${page.last} ? 'disabled'">
+        <a th:href="@{|?page=${page.totalPages - 1}|}" th:if="${!page.last}">»</a>
+        <span th:if="${page.last}">»</span>
+    </li>
+</ul>

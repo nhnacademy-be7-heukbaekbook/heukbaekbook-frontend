@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 주문하기</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* 기존 스타일 그대로 사용 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .order-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .order-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .order-summary {
+            margin-bottom: 30px;
+        }
+        .order-summary p {
+            font-size: 1.1em;
+            color: #2c3e50;
+            line-height: 1.5;
+        }
+        #payment-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        #payment-button:hover {
+            background-color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus {
+            border-color: #000;
+            outline: none;
+        }
+        @media (max-width: 768px) {
+            .order-container {
+                padding: 20px;
+            }
+        }
+    </style>
+    <!-- Toss Payments 결제 위젯 SDK (v2) -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+</head>
+<body>
+
+<header th:replace="~{layout :: header}"></header>
+
+<main class="order-container">
+    <h2>주문하기</h2>
+    <div class="order-summary">
+        <p>주문하실 상품을 확인해주세요.</p>
+        <!-- 주문 상품 정보 표시 영역 -->
+    </div>
+
+    <!-- 주문명 및 가격 입력 -->
+    <div class="form-group">
+        <label for="orderName">주문 상품명</label>
+        <input type="text" id="orderName" name="orderName" required />
+    </div>
+    <div class="form-group">
+        <label for="amount">결제 금액 (원)</label>
+        <input type="number" id="amount" name="amount" min="0" required />
+    </div>
+
+    <!-- 이메일, 고객명, 전화번호 입력 -->
+    <div class="form-group">
+        <label for="customerEmail">이메일</label>
+        <input type="email" id="customerEmail" name="customerEmail" required />
+    </div>
+    <div class="form-group">
+        <label for="customerName">고객명</label>
+        <input type="text" id="customerName" name="customerName" required />
+    </div>
+    <div class="form-group">
+        <label for="customerPhone">전화번호</label>
+        <input type="tel" id="customerPhone" name="customerPhone" required />
+    </div>
+
+    <!-- 결제 수단 UI 영역 -->
+    <div id="payment-method"></div>
+    <!-- 이용약관 UI 영역 -->
+    <div id="agreement"></div>
+
+    <!-- 결제하기 버튼 -->
+    <button id="payment-button">결제하기</button>
+</main>
+
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    main();
+
+    async function main() {
+        const button = document.getElementById("payment-button");
+        const orderNameInput = document.getElementById("orderName");
+        const amountInput = document.getElementById("amount");
+        const customerEmailInput = document.getElementById("customerEmail");
+        const customerNameInput = document.getElementById("customerName");
+        const customerPhoneInput = document.getElementById("customerPhone");
+
+        // ------  결제위젯 초기화 ------
+        const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 테스트용 클라이언트 키
+        const tossPayments = TossPayments(clientKey);
+
+        // 회원 결제
+        const customerKey = "1i62MTY0QWEM0mcl54uNp"; // 고객 식별 키
+        const widgets = tossPayments.widgets({
+            customerKey,
+        });
+
+        // ------ 주문의 결제 금액 설정 ------
+        let amount = 0; // 결제 금액
+
+        // 결제 금액 설정 함수
+        async function setPaymentAmount() {
+            amount = parseInt(amountInput.value);
+            if (isNaN(amount) || amount < 0) {
+                amount = 0;
+            }
+            await widgets.setAmount({
+                currency: "KRW",
+                value: amount,
+            });
+        }
+
+        await setPaymentAmount();
+
+        // ------  결제 UI 렌더링 ------
+        await Promise.all([
+            widgets.renderPaymentMethods({
+                selector: "#payment-method",
+                variantKey: "DEFAULT",
+            }),
+            widgets.renderAgreement({
+                selector: "#agreement",
+                variantKey: "AGREEMENT",
+            }),
+        ]);
+
+        amountInput.addEventListener("input", async function () {
+            await setPaymentAmount();
+        });
+
+        // ------ '결제하기' 버튼 클릭 시 결제 요청 ------
+        button.addEventListener("click", async function () {
+            const orderName = orderNameInput.value || "주문 상품명";
+            const orderId = generateOrderId();
+            const customerEmail = customerEmailInput.value;
+            const customerName = customerNameInput.value;
+            const customerPhone = customerPhoneInput.value;
+
+            // 입력값 검증
+            if (!customerEmail || !customerName || !customerPhone) {
+                alert("이메일, 고객명, 전화번호를 모두 입력해주세요.");
+                return;
+            }
+
+            if (amount <= 0) {
+                alert("결제 금액을 입력해주세요.");
+                return;
+            }
+
+            await widgets.requestPayment({
+                orderId: orderId, // 랜덤으로 생성된 orderId
+                orderName: orderName, // 입력받은 주문명
+                successUrl: window.location.origin + "/toss/success", // 결제 성공 시 리디렉션될 URL
+                failUrl: window.location.origin + "/toss/fail", // 결제 실패 시 리디렉션될 URL
+                customerEmail: customerEmail, // 입력받은 이메일
+                customerName: customerName, // 입력받은 고객명
+                customerMobilePhone: customerPhone, // 입력받은 전화번호
+            });
+        });
+
+        // orderId 생성 함수
+        function generateOrderId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+            const length = Math.floor(Math.random() * (64 - 6 + 1)) + 6; // 6에서 64 사이 길이
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+    }
+</script>
+
+</body>
+</html>

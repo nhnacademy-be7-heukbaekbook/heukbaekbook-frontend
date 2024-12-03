@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 검색</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* Additional styles specific to the search results table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #555;
+        }
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .search-container form {
+            display: flex;
+            width: 50%;
+        }
+        .search-container input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px 0 0 5px;
+            font-size: 1em;
+        }
+        .search-container button {
+            padding: 10px 20px;
+            border: none;
+            background-color: #000;
+            color: #fff;
+            border-radius: 0 5px 5px 0;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .search-container button:hover {
+            background-color: #333;
+        }
+        .results-section {
+            padding: 0 2em;
+        }
+        .register-button {
+            padding: 8px 16px;
+            background-color: #000; /* Green color */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s;
+        }
+        .register-button:hover {
+            background-color: #000;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 24px;
+            background-color: #2980b9;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .back-button:hover {
+            background-color: #1f618d;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main>
+    <!-- 검색 폼 -->
+    <section class="search-container">
+        <form th:action="@{/admin/aladin}" method="POST">
+            <input type="text" id="query" name="title" placeholder="책 제목을 입력해주세요." required>
+            <button type="submit">검색</button>
+        </form>
+    </section>
+
+    <!-- "목록으로 돌아가기" 버튼 추가 -->
+    <section style="text-align: center;">
+        <a th:href="@{/admin/books}" class="back-button">목록으로 돌아가기</a>
+    </section>
+
+    <!-- 검색 결과 -->
+    <section class="results-section" th:if="${responses != null}">
+        <h2>검색 결과</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>표지</th>
+                <th>제목</th>
+                <th>설명</th>
+                <th>기여자</th>
+                <th>카테고리</th>
+                <th>출판사</th>
+                <th>출판일</th>
+                <th>ISBN</th>
+                <th>정가</th>
+                <th>할인가</th>
+                <th>등록하기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:if="${responses.isEmpty()}">
+                <td colspan="11" class="no-results">제목과 일치하는 도서를 찾을 수 없습니다.</td>
+            </tr>
+            <tr th:each="result : ${responses}">
+                <td>
+                    <img th:src="@{${result.cover}}" alt="No image" style="width:100px; height:auto;">
+                </td>
+                <td th:text="${result.title}">제목</td>
+                <td th:text="${result.description}">설명</td>
+                <td th:text="${result.author}">기여자</td>
+                <td th:text="${result.category}">카테고리</td>
+                <td th:text="${result.publisher}">출판사</td>
+                <td th:text="${result.pubDate}">출판일</td>
+                <td th:text="${result.isbn}">ISBN</td>
+                <td th:text="${result.standardPrice}">정가</td>
+                <td th:text="${result.salesPrice}">할인가</td>
+                <td>
+                    <!-- Register Button as a Form -->
+                    <form th:action="@{/admin/aladin/register}" method="POST">
+                        <input type="hidden" name="title" th:value="${result.title}" />
+                        <input type="hidden" name="description" th:value="${result.description}" />
+                        <input type="hidden" name="publishedAt" th:value="${result.pubDate}" />
+                        <input type="hidden" name="isbn" th:value="${result.isbn}" />
+                        <input type="hidden" name="imageUrl" th:value="${result.cover}" />
+                        <input type="hidden" name="isPackable" value=false>
+                        <input type="hidden" name="stock" th:value="0" />
+                        <input type="hidden" name="standardPrice" th:value="${result.standardPrice}" />
+                        <input type="hidden" name="discountRate"
+                               th:value="${((result.standardPrice - result.salesPrice) / result.standardPrice) * 100.0}" />
+                        <input type="hidden" name="publisher" th:value="${result.publisher}" />
+                        <input type="hidden" name="categories" th:value="${result.category}" />
+                        <input type="hidden" name="authors" th:value="${result.author}" />
+                        <button type="submit" class="register-button">등록하기</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

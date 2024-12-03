@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <!-- Toss Payments 결제 위젯 SDK (v2) -->
+    <script src="https://js.tosspayments.com/v2/standard"></script>
+    <style>
+        /* 공통 스타일 */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* 화면 전체 높이를 채우기 위해 설정 */
+            margin: 0;
+        }
+
+        .container {
+            flex: 1; /* 페이지 콘텐츠가 푸터를 밀어내도록 설정 */
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .column {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .column form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        div {
+            margin-bottom: 10px; /* 전체 div 간격 */
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .address-container {
+            display: flex; /* 요소를 가로로 배치 */
+            align-items: center; /* 세로 가운데 정렬 */
+            margin-bottom: 8px; /* 필드 간격 */
+        }
+
+        #postcode {
+            width: 120px; /* 우편번호 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .btn {
+            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button {
+            margin-left: 8px; /* 버튼과 우편번호 필드 간격 */
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        #roadAddress, #detailAddress {
+            width: 100%; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            /*input[type="tel"] {*/
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            /*margin-bottom: 2px;*/
+        }
+
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .radio-group input {
+            margin-right: 5px;
+        }
+
+        .sms-info {
+            color: #007bff;
+            font-size: 0.9rem;
+        }
+
+        .table-header {
+            background-color: #f4f4f4; /* 헤더 배경색 */
+            color: #333; /* 헤더 텍스트 색 */
+            font-weight: bold; /* 텍스트 굵게 */
+            text-align: center; /* 텍스트 가운데 정렬 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            text-align: center; /* 가로 가운데 정렬 */
+            vertical-align: middle; /* 세로 가운데 정렬 */
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .book-image {
+            width: 50px;
+            height: 75px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .name-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 200px;
+        }
+
+        .email-input-group {
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px;
+            width: 300px;
+        }
+
+        .phone-input-group {
+            display: flex; /* 가로로 정렬 */
+            align-items: center; /* 모든 요소 수직 중앙 정렬 */
+            gap: 8px; /* 요소 간 간격 */
+        }
+
+        .phone-input-group label {
+            font-weight: bold; /* 레이블 강조 */
+        }
+
+        .phone-input {
+            width: 60px; /* 입력 필드 너비 */
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center; /* 입력값 가운데 정렬 */
+            font-size: 14px; /* 입력 필드 글자 크기 */
+            line-height: 1.5;
+            position: relative; /* 위치 조정 활성화 */
+            top: -4px;
+        }
+
+        .separator {
+            font-size: 16px; /* 하이픈 크기 */
+            font-weight: normal; /* 하이픈 굵기 */
+            color: #333; /* 하이픈 색상 */
+            line-height: 1; /* 텍스트 높이 초기화 */
+            position: relative; /* 위치 조정을 위한 상대 위치 */
+            top: -4px; /* 하이픈을 위로 약간 이동 */
+            left: 4px;
+        }
+
+        .payment-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1.5fr;
+            background-color: #eaf3fc;
+            border: 1px solid #d3e2f1;
+            border-radius: 10px;
+            overflow: hidden;
+            align-items: stretch;
+        }
+
+        .payment-box {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            border-right: 1px solid #d3e2f1;
+            height: 100%;
+        }
+
+        .payment-box:last-child {
+            border-right: none;
+        }
+
+        .payment-box h3 {
+            font-size: 16px;
+            color: #555;
+            margin: 0;
+        }
+
+        .payment-box .amount {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .payment-box .currency {
+            font-size: 16px;
+            color: #555;
+        }
+
+        /* 최종 결제 금액 강조 */
+        .final-box {
+            background-color: #f8e9ef;
+            color: #8b1c3d;
+        }
+
+        .final-box .amount {
+            color: #8b1c3d;
+        }
+
+        /* 디테일 정보 */
+        .detail-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #555;
+            text-align: center;
+        }
+
+        .detail-info .item {
+            margin-bottom: 5px;
+        }
+
+        .detail-info .item span {
+            font-weight: bold;
+        }
+
+        .payment-form {
+            display: flex;
+            justify-content: flex-end; /* 버튼을 오른쪽으로 정렬 */
+            margin-top: 20px; /* 버튼과 위 내용 간의 간격 */
+        }
+
+        .payment-button {
+            padding: 30px 45px; /* 버튼 크기 */
+            background: #d9534f; /* 버튼 배경색 */
+            color: #fff; /* 텍스트 색상 */
+            font-size: 18px; /* 텍스트 크기 */
+            font-weight: bold; /* 텍스트 굵기 */
+            border: none; /* 기본 테두리 제거 */
+            border-radius: 8px; /* 모서리를 둥글게 */
+            cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+            transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+        }
+
+        .payment-button:hover {
+            background: #c9302c; /* 호버 시 버튼 색상 변경 */
+        }
+
+        /* 모바일 반응형 */
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+
+            .payment-info {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        h2 {
+            text-align: left; /* 텍스트를 왼쪽으로 정렬 */
+        }
+
+        .common-container {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .delivery-header {
+            display: flex; /* 플렉스 레이아웃 설정 */
+            align-items: center; /* 세로 가운데 정렬 */
+            gap: 8px; /* 제목과 부제목 간 간격 */
+        }
+
+        .delivery-title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .delivery-subtitle {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .delivery-options {
+            display: flex;
+            gap: 10px; /* 버튼 간격 */
+        }
+
+        .delivery-button {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .delivery-button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .delivery-button.active {
+            background-color: #4285F4;
+            color: #fff;
+            border-color: #4285F4;
+        }
+
+        #roadAddress, #detailAddress {
+            width: 400px; /* 원하는 너비값으로 설정하세요 */
+        }
+
+        /* 모달 창 배경 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* 사진처럼 배경을 밝은 검정으로 설정 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* 모달 창이 다른 요소 위로 오도록 설정 */
+        }
+
+        /* 모달 창 콘텐츠 */
+        .modal-content {
+            background-color: #f9f9f9; /* 사진처럼 밝은 회색 배경 */
+            padding: 20px;
+            border-radius: 8px; /* 모서리를 약간 더 둥글게 설정 */
+            width: 20%; /* 가로 길이를 40%로 설정 */
+            min-width: 400px; /* 최소 너비를 조금 더 넓게 설정 */
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* 더 뚜렷한 그림자 효과 */
+            text-align: center;
+            position: relative;
+            border: 1px solid #ddd; /* 사진처럼 약간의 테두리 추가 */
+        }
+
+        /* 닫기 버튼 */
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* 숨겨진 상태 */
+        .modal[hidden] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{layout :: header}"></header>
+
+<div class="container">
+    <h2>상품 확인</h2>
+    <!-- 상품 확인 -->
+    <div class="section">
+        <table>
+            <colgroup>
+                <col style="width: 4%;"> <!-- 포장 여부 열 -->
+                <col style="width: 50%;"> <!-- 상품 정보 열 -->
+                <col style="width: 10%;"> <!-- 정가 열 -->
+                <col style="width: 10%;"> <!-- 할인가 열 -->
+                <col style="width: 4%;"> <!-- 수량 열 -->
+                <col style="width: 12%;"> <!-- 포장지 선택 열 -->
+                <col style="width: 10%;"> <!-- 합계 열 -->
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>포장 여부</th>
+                <th>상품명</th>
+                <th>정가</th>
+                <th>할인가</th>
+                <th>수량</th>
+                <th>포장지 선택</th>
+                <th>합계</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="book : ${orderFormResponse.books}">
+                <td>
+                    <!-- 포장 여부 체크박스 -->
+                    <label>
+                        <input type="checkbox"
+                               th:id="'wrapCheck_' + ${book.id}"
+                               th:name="|book[${book.id}].isWrapped|"
+                               th:disabled="!${book.isPackable}"
+                               th:attr="onclick=|toggleWrappingOption(this, '${book.id}')|">
+                    </label>
+                </td>
+                <td style="text-align: left; vertical-align: middle;">
+                    <div style="display: flex; align-items: center;">
+                        <!-- 이미지 -->
+                        <img th:src="@{${book.thumbnailUrl}}"
+                             alt="썸네일"
+                             class="book-image"
+                             style="width: 90px; height: 120px; object-fit: cover; border-radius: 5px; margin-right: 15px;">
+                        <!-- 도서 제목 -->
+                        <span th:text="${book.title}"
+                              style="font-weight: bold; text-align: left; font-size: 16px;">도서 제목</span>
+                    </div>
+                </td>
+                <td th:text="${book.price} + '원'">정가</td>
+                <td th:text="${book.salePrice} + '원'">할인/td>
+                <td th:text="${book.quantity}">수량</td>
+                <td>
+                    <!-- 선택된 포장지 표시 -->
+                    <div style="text-align: center; margin-top: 10px;">
+                        <!-- 선택된 포장지 이미지 -->
+                        <img th:id="'selectedWrapImage_' + ${book.id}"
+                             th:src="@{/default-image.jpg}"
+                             alt="선택된 포장지 이미지"
+                             style="width: 75px; height: 75px; object-fit: cover; border-radius: 5px; display: none;">
+
+                        <!-- 선택된 포장지 이름 -->
+                        <span th:id="'selectedWrapPrice_' + ${book.id}" style="display: block; margin-top: 5px;"></span>
+
+                        <!-- 선택된 포장지 이름 -->
+                        <span th:id="'wrapOption_' + ${book.id}" style="display: none"></span>
+                    </div>
+
+                    <!-- 선택된 포장지 값을 서버로 전송하기 위한 숨겨진 필드 -->
+                    <input type="hidden" th:id="'wrapOption_' + ${book.id}"
+                           th:name="|book[${book.id}].wrappingOption|"
+                           th:value="${book.wrappingPaperId()}"/>
+
+                    <!-- 포장지 선택 버튼 -->
+                    <label>
+                        <button type="button" class="btn btn-primary"
+                                th:id="'wrapOptionBtn_' + ${book.id}"
+                                th:attr="onclick='openWrappingModal(' + ${book.id} + ')'" disabled>선택
+                        </button>
+                    </label>
+                </td>
+                <td th:id="'bookTotalPrice_' + ${book.id}"
+                    th:attr="data-base-price=${book.formattedTotalPrice}"
+                    th:text="${book.formattedTotalPrice} + '원'">
+                    합계
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 포장지 선택 모달 -->
+    <div id="wrappingModal" class="modal" hidden>
+        <div class="modal-content">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>번호</th>
+                    <th>이미지</th>
+                    <th>이름</th>
+                    <th>가격</th>
+                    <th>선택</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="wrappingPaper, iterStat : ${orderFormResponse.wrappingPapers}">
+                    <td th:text="${iterStat.index + 1}">1</td>
+                    <td>
+                        <img th:src="@{${wrappingPaper.imageUrl}}" style="width: 75px; height: 75px; object-fit: cover; border-radius: 5px;" alt="">
+                    </td>
+                    <td th:text="${wrappingPaper.name}">이름</td>
+                    <td th:text="${wrappingPaper.price}">가격</td>
+                    <td>
+                        <button type="button" class="btn btn-primary"
+                                th:data-id="${wrappingPaper.id}"
+                                th:data-name="${wrappingPaper.name}"
+                                th:data-price="${wrappingPaper.price}"
+                                th:data-image-url="@{${wrappingPaper.imageUrl}}"
+                                onclick="selectWrapping(this)">
+                            선택
+                        </button>
+                    </td> <!-- 선택 버튼 -->
+                </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-secondary" onclick="closeWrappingModal()">닫기</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleWrappingOption(checkbox, bookId) {
+            console.log(`Checkbox ID: ${checkbox.id}, Book ID: ${bookId}`);
+            // 포장지 선택 버튼 찾기
+            const wrapOptionBtn = document.getElementById(`wrapOptionBtn_${bookId}`);
+
+            // 체크 여부에 따라 버튼 활성화/비활성화
+            if (checkbox.checked) {
+                wrapOptionBtn.removeAttribute("disabled");
+            } else {
+                wrapOptionBtn.setAttribute("disabled", true);
+            }
+        }
+
+        // 모달 열기
+        function openWrappingModal(bookId) {
+            const modal = document.getElementById("wrappingModal");
+            modal.setAttribute("data-book-id", bookId); // 현재 bookId 저장
+            modal.hidden = false; // 모달 보이기
+        }
+
+        // 모달 닫기
+        function closeWrappingModal() {
+            const modal = document.getElementById("wrappingModal");
+            modal.hidden = true; // 모달 숨기기
+        }
+
+        // 포장지 선택
+        function selectWrapping(button) {
+            const selectedId = button.getAttribute("data-id");
+            const selectedName = button.getAttribute("data-name");
+            const selectedPrice = parseFloat(button.getAttribute("data-price"));
+            const selectedImage = button.getAttribute("data-image-url"); // 이미지 URL 가져오기
+            const modal = document.getElementById("wrappingModal");
+            const bookId = modal.getAttribute("data-book-id");
+
+            // 책의 기존 합계 가져오기
+            const bookTotalPriceElement = document.getElementById(`bookTotalPrice_${bookId}`);
+            const bookTotalPriceString = bookTotalPriceElement.getAttribute("data-base-price");
+
+            // 쉼표 제거 후 숫자로 변환
+            const bookTotalPrice = parseFloat(bookTotalPriceString.replace(/,/g, ""));
+
+            // 합계 계산
+            const totalPriceWithWrapping = bookTotalPrice + selectedPrice;
+
+            const formattedSelectedPrice = selectedPrice.toLocaleString();
+            const formattedTotalPrice = totalPriceWithWrapping.toLocaleString();
+
+            // 합계 업데이트
+            bookTotalPriceElement.textContent = `${formattedTotalPrice}원`;
+
+
+            // 선택된 포장지 이름 업데이트
+            const wrapOptionPrice = document.getElementById(`selectedWrapPrice_${bookId}`);
+            wrapOptionPrice.textContent = `가격: ${formattedSelectedPrice}원`;
+
+
+            // 선택된 포장지 이미지 업데이트
+            const wrapOptionImage = document.getElementById(`selectedWrapImage_${bookId}`);
+            wrapOptionImage.src = selectedImage; // 이미지 URL 설정
+            wrapOptionImage.style.display = "inline"; // 이미지 표시
+
+            // 숨겨진 필드 업데이트
+            const wrapOptionInput = document.getElementById(`wrapOption_${bookId}`);
+            wrapOptionInput.value = selectedId;
+
+            // 총 상품금액 업데이트
+            updateTotalPrice(selectedPrice);
+            // 모달 닫기
+            closeWrappingModal();
+        }
+
+        function updateTotalPrice(selectedPrice) {
+            const totalBookPriceElement = document.getElementById("totalBookPrice");
+            const amountElement = document.getElementById("amount");
+
+            // 기존 총 상품금액 가져오기
+            const currentTotalPrice = parseFloat(totalBookPriceElement.getAttribute("data-final-price").replace(/,/g, ""));
+            const currentAmount = parseFloat(amountElement.getAttribute("data-amount").replace(/,/g, ""));
+
+            // 새로운 총 상품금액 계산
+            const newTotalPrice = currentTotalPrice + selectedPrice;
+            const newCurrentAmount = currentAmount + selectedPrice;
+
+            // 업데이트: 데이터 속성과 화면 표시 내용
+            totalBookPriceElement.setAttribute("data-final-price", newTotalPrice.toLocaleString());
+            amountElement.setAttribute("data-amount", newCurrentAmount.toLocaleString());
+
+            totalBookPriceElement.textContent = `${newTotalPrice.toLocaleString()}원`;
+            amountElement.textContent = `${newCurrentAmount.toLocaleString()}원`;
+        }
+    </script>
+
+    <!-- 배송 및 주문자 정보 -->
+    <h2>배송 주소</h2>
+    <div class="flex-container">
+        <!-- 배송 정보 -->
+        <div class="column">
+            <form id="order-form">
+                <div>
+                    <label>배송방법</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="delivery" value="일반택배" checked> 일반택배</label>
+                    </div>
+                </div>
+
+                <div th:if="${orderFormResponse.memberDetailResponse() != null}">
+                    <label>배송지</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="deliveryAddress" value="주소록" onclick="openAddressModal()"> 주소록
+                        </label>
+                        <label>
+                            <input type="radio" name="deliveryAddress" value="새로입력" onclick="enableAddressInput()"> 새로입력
+                        </label>
+                    </div>
+                </div>
+
+                <!-- 모달 창 -->
+                <div id="addressModal" class="modal" hidden>
+                    <div class="modal-content">
+                        <span class="close" onclick="closeAddressModal()">&times;</span>
+                        <h3>주소록</h3>
+                        <table border="1" style="width: 100%; text-align: left;">
+                            <thead>
+                            <tr>
+                                <th>선택</th>
+                                <th>수령지</th>
+                                <th>우편번호</th>
+                                <th>도로명주소</th>
+                                <th>상세주소</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!-- Thymeleaf로 주소 데이터를 렌더링 -->
+                            <tr th:each="address : ${orderFormResponse.memberDetailResponse()?.memberAddresses()}"
+                                th:if="${orderFormResponse.memberDetailResponse() != null}">
+                                <td>
+                                    <input type="radio" name="selectedAddress"
+                                           th:value="${address.addressId}"
+                                           th:attr="data-postal-code=${address.postalCode},
+                                                    data-road-name-address=${address.roadNameAddress},
+                                                    data-detail-address=${address.detailAddress}">
+                                </td>
+                                <td th:text="${address.alias}"></td>
+                                <td th:text="${address.postalCode}"></td>
+                                <td th:text="${address.roadNameAddress}"></td>
+                                <td th:text="${address.detailAddress}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <button onclick="selectAddress()">선택 완료</button>
+                    </div>
+                </div>
+
+                <!-- 선택된 주소를 표시할 입력창 -->
+                <div class="name-input-group">
+                    <label for="recipientName">이름</label>
+                    <input type="text" id="recipientName" name="recipientName" placeholder="수령인 이름 입력" required>
+                </div>
+
+                <div>
+                    <label>배송주소</label>
+                    <div class="address-container">
+                        <label for="postcode"></label><input type="text" id="postcode" name="postcode"
+                                                             placeholder="우편번호" readonly required>
+                        <button type="button" class="btn" id="find-address-btn">주소 찾기</button>
+                    </div>
+                    <input type="text" id="roadAddress" name="roadAddress" placeholder="도로명 주소" readonly required>
+                    <input type="text" id="detailAddress" name="detailAddress" placeholder="상세 주소" required>
+                </div>
+
+                <script>
+                    function openAddressModal() {
+                        document.getElementById("addressModal").hidden = false;
+                    }
+
+                    function closeAddressModal() {
+                        document.getElementById("addressModal").hidden = true;
+                    }
+
+                    function enableAddressInput() {
+                        // 입력 필드 활성화
+                        document.getElementById("postcode").readOnly = false;
+                        document.getElementById("roadAddress").readOnly = false;
+                        document.getElementById("detailAddress").readOnly = false;
+
+                        // 입력 필드 초기화
+                        document.getElementById("postcode").value = "";
+                        document.getElementById("roadAddress").value = "";
+                        document.getElementById("detailAddress").value = "";
+                    }
+
+                    function selectAddress() {
+                        const selectedAddress = document.querySelector('input[name="selectedAddress"]:checked');
+                        if (selectedAddress) {
+                            // 선택된 주소의 데이터 속성 가져오기
+                            const postalCode = selectedAddress.getAttribute("data-postal-code");
+                            const roadNameAddress = selectedAddress.getAttribute("data-road-name-address");
+                            const detailAddress = selectedAddress.getAttribute("data-detail-address");
+
+                            // 입력창에 값 설정
+                            document.getElementById("postcode").value = postalCode;
+                            document.getElementById("roadAddress").value = roadNameAddress;
+                            document.getElementById("detailAddress").value = detailAddress;
+
+                            // 모달 창 닫기
+                            closeAddressModal();
+                        } else {
+                            alert("주소를 선택해주세요.");
+                        }
+                    }
+                </script>
+
+                <script>
+                    // "주소 찾기" 버튼 클릭 이벤트
+                    document.getElementById('find-address-btn').addEventListener('click', function () {
+                        new daum.Postcode({
+                            oncomplete: function (data) {
+                                // 검색 결과에서 필요한 데이터를 가져와서 출력
+                                document.getElementById('postcode').value = data.zonecode; // 우편번호
+                                document.getElementById('roadAddress').value = data.roadAddress; // 도로명 주소
+
+                                // 상세 주소 입력 필드로 포커스 이동
+                                document.getElementById('detailAddress').focus();
+                            }
+                        }).open(); // 팝업창 열기
+                    });
+                </script>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <label for="recipientPhone1"></label><input type="tel" id="recipientPhone1" name="recipientPhone1"
+                                                                placeholder="010" class="phone-input" maxlength="3"
+                                                                required>
+                    <span class="separator">-</span>
+                    <label for="recipientPhone2"></label><input type="tel" id="recipientPhone2" name="recipientPhone2"
+                                                                placeholder="1234" class="phone-input" maxlength="4"
+                                                                required>
+                    <span class="separator">-</span>
+                    <label for="recipientPhone3"></label><input type="tel" id="recipientPhone3" name="recipientPhone3"
+                                                                placeholder="5678" class="phone-input" maxlength="4"
+                                                                required>
+                </div>
+            </form>
+        </div>
+
+        <!-- 주문 고객 정보 -->
+        <div class="column">
+            <h3>주문 고객</h3>
+            <form id="customer-form">
+                <div class="radio-group">
+                    <label><input type="radio" name="customerOption" value="새로입력" checked> 새로입력</label>
+                    <label><input type="radio" name="customerOption" value="배송정보와 동일"> 배송정보와 동일</label>
+                </div>
+
+                <div class="name-input-group">
+                    <label for="customerName">이름</label>
+                    <!-- 숨겨진 필드 -->
+                    <input type="hidden" id="customerId"
+                           th:if="${orderFormResponse.memberDetailResponse != null}"
+                           th:value="${orderFormResponse.memberDetailResponse.id}">
+                    <input type="text" id="customerName" name="customerName" placeholder="주문자 이름 입력"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? orderFormResponse.memberDetailResponse.customerName : ''}"
+                           required>
+                </div>
+
+                <div class="phone-input-group">
+                    <label>휴대폰</label>
+                    <!-- 첫 번째 필드 -->
+                    <label for="customerPhone1"></label>
+                    <input type="tel" id="customerPhone1" name="customerPhone1"
+                           placeholder="010" class="phone-input" maxlength="3"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[0] : ''}"
+                           required>
+                    <span class="separator">-</span>
+
+                    <!-- 두 번째 필드 -->
+                    <label for="customerPhone2"></label>
+                    <input type="tel" id="customerPhone2" name="customerPhone2"
+                           placeholder="1234" class="phone-input" maxlength="4"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[1] : ''}"
+                           required>
+                    <span class="separator">-</span>
+
+                    <!-- 세 번째 필드 -->
+                    <label for="customerPhone3"></label>
+                    <input type="tel" id="customerPhone3" name="customerPhone3"
+                           placeholder="5678" class="phone-input" maxlength="4"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[2] : ''}"
+                           required>
+                </div>
+                <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
+
+                <div class="email-input-group">
+                    <label for="customerEmail">이메일</label>
+                    <input type="email" id="customerEmail" name="customerEmail" placeholder="이메일 주소 입력"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? orderFormResponse.memberDetailResponse.customerEmail : ''}"
+                           required>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="common-container">
+        <div class="delivery-header">
+            <div class="delivery-title">배송일 선택</div>
+            <div class="delivery-subtitle">(도착 예상일)</div>
+        </div>
+        <div class="delivery-options" id="delivery-options"></div>
+    </div>
+
+    <script
+            th:src="@{/js/order-form.js}">
+    </script>
+    <script>
+        let selectedDate = null; // 선택된 날짜를 저장하는 변수
+
+        // 날짜 계산 함수
+        function generateDates() {
+            const optionsContainer = document.getElementById('delivery-options');
+
+            if (!optionsContainer) {
+                console.error("Element with ID 'delivery-options' not found!");
+                return;
+            }
+
+            const today = new Date(); // 현재 날짜
+            const dayNames = ['일', '월', '화', '수', '목', '금', '토']; // 요일 이름 배열
+
+            // 버튼 생성 (오늘 + 4일)
+            for (let i = 1; i <= 5; i++) {
+                const date = new Date();
+                date.setDate(today.getDate() + i); // i일 후 날짜 계산
+
+                const dayName = dayNames[date.getDay()]; // 요일 이름 가져오기
+                const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`; // "MM/DD" 형식
+                const isoDate = date.toISOString().split('T')[0]; // "YYYY-MM-DD" 형식
+
+                // 버튼 생성
+                const button = document.createElement('button');
+                button.className = `delivery-button ${i === 1 ? 'active' : ''}`; // 첫 번째 버튼은 기본 선택
+                button.textContent = `${i === 1 ? '내일' : dayName} (${formattedDate})`;
+                button.setAttribute('data-date', isoDate); // ISO 형식 날짜를 data-date에 저장
+                button.onclick = () => selectDelivery(button);
+
+                // 버튼을 컨테이너에 추가
+                optionsContainer.appendChild(button);
+
+                // 기본 선택 날짜 설정
+                if (i === 1) {
+                    selectedDate = isoDate;
+                }
+            }
+        }
+
+        // 버튼 선택 함수
+        function selectDelivery(button) {
+            const buttons = document.querySelectorAll('.delivery-button');
+            buttons.forEach(btn => btn.classList.remove('active')); // 모든 버튼의 active 클래스 제거
+            button.classList.add('active'); // 클릭된 버튼에 active 클래스 추가
+
+            // 선택된 날짜 가져오기
+            const selectedDate = button.getAttribute('data-date'); // ISO 형식 날짜 가져오기
+            console.log("Selected Delivery Date:", selectedDate);
+        }
+
+        // 선택된 날짜 가져오기
+        function getSelectedDate() {
+            return selectedDate;
+        }
+
+        generateDates();
+    </script>
+
+
+    <!-- 결제 정보 -->
+    <h2>결제 정보</h2>
+    <div class="common-container">
+        <div th:if="${orderFormResponse.memberDetailResponse != null}">
+            <div>
+                <h3>포인트</h3>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="text" id="usePoint"
+                       min="0"
+                       th:attr="max=${orderFormResponse.memberDetailResponse.point}"
+                       placeholder="포인트 입력"
+                       style="width: 90px; height: 20px; font-size: 16px; padding: 5px;">
+                <button type="button" onclick="applyPoints()">적용</button>
+            </div>
+            <div>
+                <span id="remainingPoints" th:text="'잔여 포인트 : ' + ${orderFormResponse.memberDetailResponse.point} + 'P'">
+                    잔여 포인트 : 0P
+                </span>
+            </div>
+        </div>
+        <div class="payment-info">
+            <div class="payment-box">
+                <h3>총 상품금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount"
+                     id="totalBookPrice"
+                     th:attr="data-final-price=${orderFormResponse.totalBookPrice}"
+                     th:text="${orderFormResponse.totalBookPrice} + '원'">상품금액
+                </div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>즉시할인</span>:
+                        <span th:text="${orderFormResponse.totalBookDiscountAmount}">할인금액</span>
+                        <span class="currency">원</span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 추가금액</h3>
+                <div class="amount" id="deliveryFee">
+                    <span th:text="${orderFormResponse.deliveryFee}"></span><span>원</span>
+                </div>
+                <div class="detail-info">
+                    <div class="item">
+                        <span>배송비</span>:
+                        <span th:text="${orderFormResponse.deliveryFee} + '원'"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box">
+                <h3>총 할인금액</h3>
+                <div class="amount" id="discountAmount">0<span>원</span>
+                </div>
+                <div class="detail-info">
+                    <div class="item">
+                    </div>
+                </div>
+            </div>
+            <div class="payment-box final-box">
+                <h3>최종 결제금액</h3>
+                <!-- `th:attr`을 사용하여 `data-final-price` 속성 설정 -->
+                <div class="amount"
+                     id="amount"
+                     th:attr="data-amount=${orderFormResponse.totalPrice}"
+                     th:text="${orderFormResponse.totalPrice} + '원'">결제금액
+                </div>
+                <div class="detail-info">
+                    <div class="item">
+                        <!--                        <span>기본적립 포인트</span>: 500-->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 결제 방법 및 약관 -->
+        <div id="payment-method"></div>
+        <div id="agreement"></div>
+    </div>
+
+    <!-- 결제 버튼 -->
+    <div class="section">
+        <form id="complete-order-form" method="post">
+            <div class="payment-form">
+                <button type="button" id="payment-button" class="payment-button">결제하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+<script>
+    function applyPoints() {
+        // HTML 요소 참조
+        const usePointInput = document.getElementById('usePoint');
+        const discountAmountElement = document.getElementById('discountAmount');
+        const amountElement = document.getElementById('amount');
+        const remainingPointsElement = document.getElementById('remainingPoints');
+
+        // 사용 가능한 포인트와 입력값 가져오기
+        const availablePoints = parseFloat(remainingPointsElement.innerText.replace('잔여 포인트 : ', '').replace('P', ''), 10);
+        let usePoints = parseFloat(usePointInput.value) || 0;
+
+        // 현재 결제 금액
+        const initialAmount = parseFloat(amountElement.textContent.replace(",", ""));
+
+        // 유효성 검사
+        if (usePoints > availablePoints) {
+            alert("입력한 포인트가 사용 가능한 포인트를 초과했습니다.");
+            usePointInput.value = ''; // 입력값 초기화
+            return;
+        }
+
+        // 잔여 포인트 계산
+        const remainingPoints = availablePoints - usePoints;
+
+        // 최종 결제 금액 계산
+        let finalAmount = initialAmount - usePoints;
+        finalAmount = finalAmount.toLocaleString();
+
+        // 화면에 반영
+        remainingPointsElement.innerText = `잔여 포인트 : ${remainingPoints}P`;
+        amountElement.innerText = `${finalAmount}원`;
+        usePointInput.value = '';
+
+        usePoints = usePoints.toLocaleString();
+
+        // 할인 금액 업데이트
+        discountAmountElement.innerHTML = `${usePoints}
+        <span class="currency">원</span>`;
+
+        // 업데이트: 데이터 속성과 화면 표시 내용
+        amountElement.setAttribute("data-amount", finalAmount.toLocaleString());
+
+        // amountElement.textContent = `${finalAmount.toLocaleString()}원`;
+    }
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        main();
+    });
+
+    async function main() {
+        const button = document.getElementById("payment-button");
+        const customerEmailInput = document.getElementById("customerEmail");
+        const customerNameInput = document.getElementById("customerName");
+        const customerPhone1 = document.getElementById("customerPhone1");
+        const customerPhone2 = document.getElementById("customerPhone2");
+        const customerPhone3 = document.getElementById("customerPhone3");
+        let finalPriceElement = document.getElementById("amount");
+        let finalPriceText = finalPriceElement.getAttribute("data-amount");
+        let totalPrice = parseFloat(finalPriceText.replace(/,/g, '')) || 0;
+        let amount = totalPrice;
+
+
+        button.addEventListener("click", async function () {
+            // 결제 버튼 클릭 시 최신 값을 가져옴
+            finalPriceElement = document.getElementById("amount");
+            finalPriceText = finalPriceElement.getAttribute("data-amount");
+            totalPrice = parseFloat(finalPriceText.replace(/,/g, '')) || 0;
+            amount = totalPrice;
+
+            await setPaymentAmount();
+
+            console.log("Updated Final Price Text:", finalPriceText);
+            console.log("Updated Total Price:", totalPrice);
+        });
+
+        // ------  결제위젯 초기화 ------
+        const clientKey = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm"; // 테스트용 클라이언트 키
+        const tossPayments = TossPayments(clientKey);
+
+        // 회원 결제
+        const customerKey = "1i62MTY0QWEM0mcl54uNp"; // 고객 식별 키
+        const widgets = tossPayments.widgets({
+            customerKey,
+        });
+
+        console.log("Amount before setting:", amount);
+
+        // 결제 금액 설정 함수
+        async function setPaymentAmount() {
+            await widgets.setAmount({
+                currency: "KRW",
+                value: amount,
+            });
+            console.log("Payment amount set to:", amount);
+        }
+
+        await setPaymentAmount();
+
+        // ------  결제 UI 렌더링 ------
+        await Promise.all([
+            widgets.renderPaymentMethods({
+                selector: "#payment-method",
+                variantKey: "DEFAULT",
+            }),
+            widgets.renderAgreement({
+                selector: "#agreement",
+                variantKey: "AGREEMENT",
+            }),
+        ]);
+
+        // ------ '결제하기' 버튼 클릭 시 결제 요청 ------
+        button.addEventListener("click", async function () {
+            const orderName = "흑백문고 주문"; // 주문명 고정 또는 동적으로 설정 가능
+            const orderId = generateOrderId();
+            const customerEmail = customerEmailInput.value.trim();
+            const customerName = customerNameInput.value.trim();
+            const customerPhone = `${customerPhone1.value.trim()}${customerPhone2.value.trim()}${customerPhone3.value.trim()}`;
+
+            console.log("Order Details:");
+            console.log("Order Name:", orderName);
+            console.log("Order ID:", orderId);
+            console.log("Customer Email:", customerEmail);
+            console.log("Customer Name:", customerName);
+            console.log("Customer Phone:", customerPhone);
+            console.log("Amount:", amount);
+
+            // 입력값 검증
+            if (!customerEmail || !customerName || !customerPhone1.value.trim() || !customerPhone2.value.trim() || !customerPhone3.value.trim()) {
+                alert("이메일, 고객명, 전화번호를 모두 입력해주세요.");
+                return;
+            }
+
+            if (amount <= 0) {
+                console.log("Amount is zero or negative:", amount);
+                alert("결제 금액을 확인해주세요.");
+                return;
+            }
+
+            const customerPhoneNumber = customerPhone1.value + "-" + customerPhone2.value + "-" + customerPhone3.value;
+
+            const customerIdInput = document.getElementById('customerId');
+            let customerId = null;
+            if (customerIdInput) {
+                customerId = customerIdInput.value;
+                console.log(`Customer ID: ${customerId}`);
+            } else {
+                console.log('No customer ID available.');
+            }
+
+            const recipientName = document.getElementById('recipientName').value;
+            const postcode = document.getElementById('postcode').value;
+            const roadAddress = document.getElementById('roadAddress').value;
+            const detailAddress = document.getElementById('detailAddress').value;
+            const recipientPhone1 = document.getElementById("recipientPhone1").value;
+            const recipientPhone2 = document.getElementById("recipientPhone2").value;
+            const recipientPhone3 = document.getElementById("recipientPhone3").value;
+            const deliveryFeeText = document.getElementById("deliveryFee").textContent;
+            const deliveryFee = parseFloat(deliveryFeeText.replace('원', ''));
+            const deliveryDate = getSelectedDate();
+            const usedPoint = document.getElementById('discountAmount').textContent;
+
+            const recipientPhoneNumber = recipientPhone1 + "-" + recipientPhone2 + "-" + recipientPhone3;
+
+            console.log(deliveryDate);
+
+            // 주문서 데이터를 생성
+            const orderCreateRequest = {
+                customerId: customerId,
+                totalPrice: finalPriceText,
+                customerEmail: customerEmail,
+                customerName: customerName,
+                customerPhoneNumber: customerPhoneNumber,
+                tossOrderId: orderId,
+                recipient: recipientName,
+                postalCode: postcode,
+                roadNameAddress: roadAddress,
+                detailAddress: detailAddress,
+                recipientPhoneNumber: recipientPhoneNumber,
+                deliveryFee: deliveryFee,
+                usedPoint: usedPoint,
+                orderBookRequests: Array.from(document.querySelectorAll("tbody tr"))
+                    .filter(row => row.querySelector("input[type='checkbox']"))
+                    .map(row => {
+                        const checkbox = row.querySelector("input[type='checkbox']");
+
+                        const bookId = checkbox.id.split('_')[1]; // ID에서 bookId 추출
+                        const isWrapped = checkbox.checked; // 체크 여부
+                        const wrappingPaperId = document.getElementById(`wrapOption_${bookId}`)?.value || null;
+                        const salePrice = row.querySelector("td:nth-child(4)")?.textContent.replace("원", "").trim() || null;
+                        const quantity = row.querySelector("td:nth-child(5)")?.textContent.trim() || null;
+
+
+                        return {
+                            bookId: bookId,
+                            isWrapped: isWrapped,
+                            wrappingPaperId: wrappingPaperId,
+                            salePrice: salePrice,
+                            quantity: parseInt(quantity) || 0
+                        };
+                    })
+            };
+
+            console.log("orderRequest : ", orderCreateRequest);
+
+            // 주문서를 서버에 POST 요청
+            try {
+                const response = await fetch("/order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(orderCreateRequest)
+                });
+
+                if (response.ok) {
+                    console.log("Order successfully sent to server.");
+                    // 결제 요청 실행
+                    await widgets.requestPayment({
+                        orderId: orderId,
+                        orderName: orderName,
+                        successUrl: window.location.origin + "/payment/success",
+                        failUrl: window.location.origin + "/payment/fail",
+                        customerEmail: customerEmail,
+                        customerName: customerName,
+                        customerMobilePhone: customerPhone
+                    });
+                } else {
+                    console.error("Failed to send order to server:", response.status);
+                    alert("주문서 전송에 실패했습니다. 다시 시도해주세요.");
+                }
+            } catch (error) {
+                console.error("Error sending order to server:", error);
+                alert("서버와의 통신에 실패했습니다. 다시 시도해주세요.");
+            }
+        });
+
+        // orderId 생성 함수
+        function generateOrderId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+            const length = Math.floor(Math.random() * (64 - 6 + 1)) + 6; // 6에서 64 사이 길이
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+    }
+</script>
+
+</body>
+</html>

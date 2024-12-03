@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>환불 내역</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        #content-area {
+            background-color: #ffffff;
+            padding: 15px 30px 30px 30px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding-bottom: 10px;
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #bfbfbf;
+        }
+
+        .refund-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .refund-table th, .refund-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        .refund-table th {
+            background-color: #f2f2f2;
+            text-align: left;
+        }
+
+        .submit-button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<header th:replace="~{layout :: header}"></header>
+
+<div id="mypage-header">
+    <span class="header-title">마이페이지</span>
+</div>
+
+<main class="mypage-container">
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+    <section id="content-area">
+        <h3 class="content-title">환불 내역</h3>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="/refunds/refundable-orders" class="submit-button">환불 신청하기</a>
+        </div>
+        <div th:if="${refunds.size() == 0}">
+            <p>환불 내역이 없습니다.</p>
+        </div>
+        <div th:if="${refunds.size() > 0}">
+            <ul>
+                <li th:each="refund : ${refunds}">
+                    <h4>환불 ID: <span th:text="${refund.refundId}"></span></h4>
+                    <table class="refund-table">
+                        <tr>
+                            <th>환불 사유</th>
+                            <td th:text="${refund.reason}"></td>
+                        </tr>
+                        <tr>
+                            <th>환불 요청일</th>
+                            <td th:text="${refund.requestedAt}"></td>
+                        </tr>
+                        <tr>
+                            <th>환불 승인일</th>
+                            <td th:text="${refund.approvedAt}"></td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+<footer th:replace="~{layout :: footer}"></footer>
+</body>
+</html>

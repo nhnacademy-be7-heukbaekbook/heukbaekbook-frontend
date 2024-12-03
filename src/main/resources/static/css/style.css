@@ -12,6 +12,7 @@ body {
     background-color: #f5f5f5; /* 흰색 배경 */
     margin: 0;
     padding: 0;
+    overflow-x: hidden;
 }
 
 /* 헤더와 푸터 스타일 */
@@ -108,6 +109,11 @@ nav ul li a {
 }
 
 /* 검색 창 스타일 */
+#search-bar {
+    max-width: 600px; /* 검색창 및 정렬바의 고정 너비 */
+    margin: 0 auto; /* 가운데 정렬 */
+}
+
 #search-bar form {
     display: flex;
     justify-content: center;
@@ -129,6 +135,34 @@ nav ul li a {
     border-radius: 0 5px 5px 0;
     cursor: pointer;
 }
+
+/* 정렬 바 스타일 */
+.sort-bar {
+    max-width: 600px; /* 검색창과 동일한 너비 */
+    margin: 10px auto; /* 가운데 정렬 */
+    display: flex;
+    justify-content: space-around;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.sort-option {
+    cursor: pointer;
+    padding: 5px 10px;
+    color: #333;
+    text-decoration: none;
+}
+
+.sort-option:hover {
+    text-decoration: underline;
+    color: #000;
+}
+
+.sort-option.active {
+    font-weight: bold;
+    border-bottom: 2px solid #333;
+}
+
 
 /* 섹션 제목 스타일 */
 h2 {
@@ -159,11 +193,11 @@ h2 {
     transform: scale(1.05);
 }
 
-.book-item img {
-    max-width: 100%;
-    border-radius: 5px;
-    margin-bottom: 10px;
-}
+/*.book-item img {*/
+/*    max-width: 100%;*/
+/*    border-radius: 5px;*/
+/*    margin-bottom: 10px;*/
+/*}*/
 
 .book-item h3, .book-item p, .book-item a {
     color: #000;
@@ -184,4 +218,547 @@ footer nav a {
 
 footer nav a:hover {
     color: #fff;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 20px 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    color: #000000;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.pagination a:hover {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+/*.pagination .active {*/
+/*    background-color: #000;*/
+/*    color: white;*/
+/*    border-color: #007bff;*/
+/*}*/
+
+.pagination .disabled {
+    color: #ccc;
+    border-color: #ddd;
+    cursor: not-allowed;
+}
+
+#all-books {
+    width: 100%;
+    padding: 20px;
+    background-color: #f0f0f0; /* 연한 회색 배경 */
+}
+
+.book-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.book-item {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fff;
+    width: 850px; /* 전체 너비를 더 넓힘 */
+    text-align: left;
+    transition: transform 0.3s;
+    margin: 15px 0;
+}
+
+.book-rank {
+    position: absolute;
+    left: -40px; /* 도서 항목의 왼쪽 바깥으로 약간 이동 */
+    top: 50%;
+    transform: translateY(-50%); /* 수직 중앙 정렬 */
+    font-size: 30px;
+    font-weight: bold;
+    color: #333;
+    width: 30px; /* 번호 영역의 너비 */
+    text-align: center;
+}
+
+
+.book-image {
+    max-width: 150px; /* 원하는 크기로 설정 */
+    width: 100%; /* 컨테이너 너비에 맞게 조정 */
+    height: auto; /* 이미지 비율 유지 */
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 30px;
+}
+
+.book-image img {
+    max-width: 250px; /* 이미지 크기를 크게 설정 */
+    height: auto; /* 비율을 유지하면서 크기를 조정 */
+    border-radius: 5px;
+}
+
+.book-details {
+    flex: 1;
+}
+
+/*.book-title {*/
+/*    font-size: 20px;*/
+/*    font-weight: bold;*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+.book-actions {
+    display: flex;
+    flex-direction: column; /* 버튼을 세로로 정렬 */
+    align-items: flex-end; /* 오른쪽 끝 정렬 */
+    gap: 10px;
+    margin-left: 10px; /* 콘텐츠와의 간격 추가 */
+}
+
+.cart-btn,
+.buy-now-btn,
+.delete-now-button {
+    padding: 8px 12px;
+    font-size: 15px;
+    border: 1px solid #333;
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #000; /* 배경색을 검정으로 설정 */
+    color: #fff; /* 글씨를 하얗게 설정 */
+    transition: background-color 0.3s, color 0.3s;
+    width: 100px; /* 버튼 크기 고정 */
+}
+
+.cart-btn:hover, .buy-now-btn:hover {
+    background-color: #555; /* 호버 시 더 밝은 검정색 */
+    color: #fff; /* 호버 시 글씨는 하얗게 유지 */
+}
+
+.book-item-link {
+    text-decoration: none; /* 링크 밑줄 제거 */
+    color: inherit; /* 텍스트 색상 상속 */
+    display: block; /* 링크가 전체 영역을 차지하도록 설정 */
+}
+
+.book-title a {
+    text-decoration: none; /* 기본 상태에서 밑줄 제거 */
+    color: inherit; /* 링크의 텍스트 색상을 상속받도록 설정 */
+}
+
+.book-title a:hover {
+    text-decoration: underline; /* 커서를 올렸을 때 밑줄 추가 */
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+}
+
+.quantity-btn,
+.quantity-input {
+    box-sizing: border-box;
+    width: 35px; /* 가로 크기를 줄임 */
+    height: 30px;
+    border: 1px solid #ddd; /* 연한 회색 테두리 */
+    background-color: #fafafa; /* 더 밝은 배경색 */
+    font-size: 16px; /* 버튼 내부 글씨 크기 조정 */
+    text-align: center;
+    cursor: pointer;
+    border-radius: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #888; /* 연한 텍스트 색상 */
+    transition: background-color 0.2s;
+}
+
+.quantity-btn:first-of-type {
+    border-radius: 5px 0 0 5px;
+}
+
+.quantity-btn:last-of-type {
+    border-radius: 0 5px 5px 0;
+}
+
+.quantity-btn:hover {
+    background-color: #f0f0f0; /* 호버 시 더 연한 회색 */
+}
+
+.quantity-input {
+    width: 30px; /* 입력 필드의 너비 */
+    height: 30px;
+    padding: 0;
+    text-align: center;
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: none;
+    border-right: none;
+    font-size: 16px;
+    color: #333;
+}
+
+.original-price {
+    text-decoration: line-through;
+    color: #888; /* 취소된 가격을 회색으로 표시 */
+    margin-right: 5px; /* 오른쪽 간격 추가 */
+}
+
+/* 체크박스 크기 조정 */
+.book-checkbox {
+    transform: scale(1.5); /* 원하는 크기로 조정 */
+    margin-right: 10px; /* 책 이미지와의 간격 */
+}
+
+.update-quantity-btn {
+    padding: 6px 12px; /* 버튼 크기 줄임 */
+    font-size: 13px; /* 글씨 크기 줄임 */
+    font-weight: bold; /* 글씨 두께 */
+    color: #ffffff; /* 텍스트 색상 (흰색) */
+    background-color: #000000; /* 기본 배경색 (검정색) */
+    border: none; /* 테두리 제거 */
+    border-radius: 4px; /* 약간 둥근 모서리 */
+    cursor: pointer; /* 마우스 커서 변경 */
+    transition: background-color 0.3s ease; /* 배경색 전환 효과 */
+    margin-top: 8px;
+}
+
+.checkout-summary {
+    margin-top: 20px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.total-selected-price {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.checkout-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px; /* 버튼 사이 간격 */
+}
+
+.checkout-btn, .guest-checkout-btn, .continue-shopping-btn {
+    width: 150px; /* 모든 버튼의 너비를 동일하게 설정 */
+    padding: 12px 0; /* 위아래 여백 */
+    font-size: 16px; /* 글씨 크기 확대 */
+    font-weight: bold;
+    background-color: #000000; /* 검정색 배경 */
+    color: #fff; /* 흰색 텍스트 */
+    border: none; /* 테두리 제거 */
+    border-radius: 5px; /* 모서리 둥글게 */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center; /* 텍스트 가운데 정렬 */
+    margin-bottom: 8px;
+    text-decoration: none;
+}
+
+.select-all-container {
+    display: flex;
+    margin-top: 30px;
+    padding-left: 31%;
+}
+
+.select-all-container label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333; /* 텍스트 색상 */
+    display: flex;
+    align-items: center;
+}
+
+/* 전체 선택 체크박스 스타일 */
+#select-all {
+    transform: scale(1.5); /* 크기 조정 */
+    margin-right: 10px; /* 텍스트와의 간격 */
+    cursor: pointer; /* 포인터 커서로 변경 */
+}
+
+.link-button {
+    background: none;
+    border: none;
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0;
+    font-size: 1em;
+}
+
+/* footer가 항상 화면 맨 밑에 고정되도록 설정 */
+footer {
+    text-align: center;
+}
+
+/* style.css */
+
+.mypage-container {
+    width: 60%;
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto; /* 중앙 정렬 및 여백 */
+    padding: 20px;
+}
+
+.admin-page-container {
+    width: 80%;
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto; /* 중앙 정렬 및 여백 */
+    padding: 20px;
+}
+
+/* 오른쪽 콘텐츠 영역 스타일 */
+#content-area {
+    width: 80%;
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 0 auto; /* 가운데 정렬 */
+    min-height: 70vh; /* 페이지 전체 높이를 채워주기 위해 */
+}
+/* style.css */
+
+
+
+/* 마이페이지 헤더 영역 스타일 */
+#mypage-header {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.header-title {
+    margin: 0 auto;
+    width: 250px;
+    font-size: 2.3em;
+    font-weight: bold;
+    color: #000;
+}
+
+.header-greeting {
+    width: 100%;
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* 콘텐츠 제목 및 설명 스타일 */
+.content-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.content-description {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* 콘텐츠 박스 스타일 */
+.content-box {
+    border: 1px solid #d0d0d0;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.order-summary {
+    padding: 15px;
+    border-bottom: 1px solid #d0d0d0;
+    color: #333;
+    font-size: 0.9em;
+}
+
+.content-links {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+html, body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+main {
+    flex: 1;
+}
+
+/* Flexbox로 메인 콘텐츠를 왼쪽 카테고리와 오른쪽 콘텐츠로 나눔 */
+#content-container {
+    display: flex;
+}
+
+#category-section {
+    width: 200px; /* 원하는 너비로 설정 */
+    padding: 20px;
+    background-color: #f5f5f5; /* 배경색 설정 */
+}
+
+#category-section ul {
+    list-style-type: none; /* 기본 리스트 스타일 제거 */
+    padding: 0;
+}
+
+#category-section button {
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+    padding: 2px 5px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+#category-section a {
+    font-weight: bold;
+    color: #000; /* 검정색으로 설정 */
+    text-decoration: none;
+}
+
+#category-section a:hover {
+    text-decoration: underline; /* 커서가 올라갔을 때만 밑줄 표시 */
+}
+
+#category-section ul li {
+    margin: 8px 0; /* 위아래 8px 간격 */
+}
+
+#all-books {
+    flex: 1;
+    padding: 20px;
+}
+
+.toastui-editor-toolbar .tui-svg-icon {
+    fill: #d0d0d0; /* 원하는 색상으로 변경 */
+}
+
+.order-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed; /* 열 너비 고정 */
+}
+
+.order-table th, .order-table td {
+    border: 1px solid #ddd;
+    text-align: center;
+    padding: 10px;
+    word-wrap: break-word;
+}
+
+.order-table th {
+    background-color: #f8f8f8;
+    font-weight: bold;
+}
+
+/* 열 너비 설정 */
+.order-table th:nth-child(1),
+.order-table td:nth-child(1) {
+    width: 10%; /* 첫 번째 열 */
+}
+
+.order-table th:nth-child(2),
+.order-table td:nth-child(2) {
+    width: 30%; /* 두 번째 열 */
+}
+
+.order-table th:nth-child(3),
+.order-table td:nth-child(3) {
+    width: 45%; /* 세 번째 열 */
+}
+
+.order-table th:nth-child(4),
+.order-table td:nth-child(4) {
+    width: 10%; /* 네 번째 열 */
+}
+
+.order-table th:nth-child(5),
+.order-table td:nth-child(5) {
+    width: 5%; /* 네 번째 열 */
+}
+
+.table-header {
+    background-color: #f4f4f4; /* 헤더 배경색 */
+    color: #333; /* 헤더 텍스트 색 */
+    font-weight: bold; /* 텍스트 굵게 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+th, td {
+    text-align: center; /* 가로 가운데 정렬 */
+    vertical-align: middle; /* 세로 가운데 정렬 */
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.button-container {
+    text-align: right;
+}
+
+.review-button,
+.order-cancel-button {
+    padding: 8px 12px; /* 버튼 크기 */
+    /*background: #ffffff; !* 버튼 배경색 *!*/
+    color: #1a1a1a; /* 텍스트 색상 */
+    font-size: 12px; /* 텍스트 크기 */
+    font-weight: bold; /* 텍스트 굵기 */
+    border: none; /* 기본 테두리 제거 */
+    border-radius: 8px; /* 모서리를 둥글게 */
+    cursor: pointer; /* 마우스 커서를 포인터로 변경 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 버튼에 그림자 추가 */
+    transition: background-color 0.3s ease; /* 호버 효과 부드럽게 전환 */
+}
+
+.underline-on-hover {
+    text-decoration: none;
+    font-weight: bold;
+    color: #1a1a1a;
+}
+
+.underline-on-hover:hover {
+    text-decoration: underline;
+}
+
+.btn:disabled {
+    background-color: #6c757d; /* 어두운 회색 */
+    color: #ffffff; /* 텍스트 색상 */
+    border-color: #6c757d; /* 테두리 색상 */
+    cursor: not-allowed; /* 비활성화된 커서 */
+    opacity: 0.65; /* 약간 투명하게 */
 }

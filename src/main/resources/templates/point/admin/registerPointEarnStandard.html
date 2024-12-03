@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>포인트 규정 등록 - 흑백문고</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+<div class="admin-page-container">
+  <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+  <main>
+    <h2>포인트 규정 등록</h2>
+    <section class="form-container">
+      <form th:action="@{/admin/point-earn-standard}" method="post">
+        <label for="name">규정 이름</label>
+        <input type="text" id="name" name="name" placeholder="규정 이름" required>
+        <label for="point">포인트</label>
+        <input type="number" id="point" name="point" placeholder="포인트" min="0" required>
+        <label for="triggerEvent">포인트 적립 적용 시점</label>
+        <select id="triggerEvent" name="pointEarnEventId" required>
+          <option th:each="event : ${triggerEvents}" th:value="${event.id}" th:text="${event.displayName}"></option>
+        </select>
+        <label for="pointEarnType">포인트 적립 유형</label>
+        <select id="pointEarnType" name="pointEarnType" required>
+          <option th:each="type : ${pointEarnTypes}" th:value="${type}" th:text="${type}"></option>
+        </select>
+        <label for="pointEarnStart">적립 시작일</label>
+        <input type="datetime-local" id="pointEarnStart" name="pointEarnStart" required>
+        <label for="pointEarnEnd">적립 종료일</label>
+        <input type="datetime-local" id="pointEarnEnd" name="pointEarnEnd">
+        <button type="submit">등록</button>
+      </form>
+    </section>
+  </main>
+</div>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>흑백문고 - 도서 목록</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 테이블 기본 스타일 */
+        .book-table {
+            width: 100%;
+            border-collapse: collapse; /* 셀 간격 제거 */
+            margin-top: 20px;
+            background-color: #fff;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 테이블 그림자 */
+        }
+
+        .book-table thead th {
+            background-color: #f5f5f5; /* 헤더 배경 */
+            color: #333;
+            font-weight: bold;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 2px solid #ddd; /* 헤더 아래 테두리 */
+        }
+
+        .book-table tbody td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #eee; /* 셀 사이 테두리 */
+            vertical-align: middle; /* 내용 중간 정렬 */
+        }
+
+        /* 행 교차 색상 */
+        .book-table tbody tr:nth-child(odd) {
+            background-color: #f9f9f9; /* 밝은 회색 */
+        }
+
+        .book-table tbody tr:nth-child(even) {
+            background-color: #fff; /* 흰색 */
+        }
+
+        /* 행 호버 효과 */
+        .book-table tbody tr:hover {
+            background-color: #f1f1f1; /* 마우스를 올렸을 때 강조 */
+            cursor: pointer;
+        }
+
+        /* 썸네일 이미지 */
+        .book-thumbnail {
+            width: 50px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        /* 버튼 스타일 */
+        .action-buttons {
+            display: flex; /* 버튼을 가로로 나열 */
+            gap: 8px; /* 버튼 간격 */
+            justify-content: center; /* 버튼 중앙 정렬 */
+            align-items: center; /* 버튼 수직 정렬 */
+        }
+
+        .action-buttons .button {
+            display: inline-block;
+            padding: 10px 8px; /* 버튼 안쪽 여백 (위/아래, 좌/우) */
+            font-size: 0.85em; /* 버튼 글꼴 크기 */
+            border-radius: 4px;
+            text-align: center;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            /* 버튼 높이 및 너비 조정 */
+            height: 36px; /* 동일한 높이 */
+            min-width: 60px; /* 최소 너비 설정 */
+            box-sizing: border-box; /* 패딩 포함 */
+        }
+
+        /* 수정 버튼 스타일 */
+        .action-buttons .button.edit {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .action-buttons .button.edit:hover {
+            background-color: #777;
+            transform: scale(1.01); /* 확대 효과 */
+        }
+
+        /* 삭제 버튼 스타일 */
+        .action-buttons .button.delete {
+            background-color: #d9534f; /* 빨간색 */
+            color: #fff;
+        }
+
+        .action-buttons .button.delete:hover {
+            background-color: #c9302c;
+            transform: scale(1.01); /* 확대 효과 */
+        }
+
+        /* 쿠폰 추가 버튼 스타일 */
+        .action-buttons .button.coupon {
+            background-color: #0275d8; /* 파란색 */
+            color: #fff;
+        }
+
+        .action-buttons .button.coupon:hover {
+            background-color: #025aa5; /* 진한 파란색 */
+            transform: scale(1.01); /* 확대 효과 */
+        }
+
+        /* 추가: 버튼 텍스트 줄바꿈 방지 */
+        .action-buttons .button {
+            white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+        }
+
+        /* 반응형 디자인: 작은 화면에서 버튼 크기 조정 */
+        @media (max-width: 600px) {
+            .action-buttons {
+                flex-direction: column; /* 버튼을 세로로 배열 */
+            }
+
+            .action-buttons .button {
+                width: 100%; /* 버튼을 전체 너비로 확장 */
+                min-width: unset; /* 최소 너비 해제 */
+            }
+        }
+
+        /* src/main/resources/static/css/edit-modal.css */
+
+        /* 모달 배경 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        /* 모달 콘텐츠 */
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 닫기 버튼 */
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        /* 수량 섹션 */
+        .quantity-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+
+        .unlimited-quantity {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .unlimited-quantity label {
+            font-weight: normal;
+        }
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-top: 10px;
+        }
+
+        .modal-content input, .modal-content select {
+            margin-bottom: 15px;
+            width: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            width: auto;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-page-container">
+
+    <!-- 사이드바 -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h3 class="content-title">도서 목록</h3>
+        <p class="content-description">등록된 도서 목록입니다.</p>
+
+        <!-- 도서 목록 테이블 -->
+        <section class="results-section" th:if="${books != null}">
+            <table class="book-table">
+                <thead>
+                <tr>
+                    <th>이미지</th>
+                    <th>제목</th>
+                    <th>저자</th>
+                    <th>카테고리</th>
+                    <th>출판사</th>
+                    <th>정가</th>
+                    <th>상태</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="book : ${books.content}" th:onclick="|location.href='/admin/books/' + ${book.id}|">
+                    <td><img th:src="${book.thumbnailImageUrl}" alt="도서 표지" class="book-thumbnail"></td>
+                    <td th:text="${book.title}">도서 제목</td>
+                    <td th:text="${#strings.arrayJoin(book.authors, ', ')}">저자</td>
+                    <td th:text="${#strings.arrayJoin(book.categories, ', ')}">카테고리</td>
+                    <td th:text="${book.publisher}">출판사</td>
+                    <td th:text="${book.standardPrice} + '원'">정가</td>
+                    <td th:switch="${book.bookStatus}">
+                        <span th:case="'IN_STOCK'">재고 있음</span>
+                        <span th:case="'OUT_OF_STOCK'">품절</span>
+                        <span th:case="'DISCONTINUED'">절판</span>
+                        <span th:case="*">알 수 없음</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <a th:href="@{/admin/books/{bookId}/edit(bookId=${book.id})}" class="button edit">수정</a>
+                            <form th:action="@{/admin/books/{bookId}(bookId=${book.id})}" method="post"
+                                  class="button-form delete-form">
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <button type="submit" class="button delete">삭제</button>
+                            </form>
+                            <!-- 쿠폰 추가 버튼 시작 -->
+                            <button type="button"
+                                    th:data-id="${book.id}"
+                                    th:data-title="${book.title}"
+                                    class="button coupon" onclick="openRegisterModal(this)">쿠폰 추가</button>
+                            <!-- 쿠폰 추가 버튼 끝 -->
+
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <!-- 페이지네이션 컨트롤 -->
+            <div th:replace="~{fragments/pagination :: pagination(${books})}"></div>
+        </section>
+
+        <div id="registerModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeRegisterModal()">&times;</span>
+                <h3>쿠폰 등록</h3>
+                <form id="registerForm" th:action="@{/admin/coupons}" method="post">
+                    <input type="hidden" id="book-id" name="bookId">
+                    <!-- 등록 폼 필드 -->
+                    <label for="register-policyId">쿠폰 정책</label>
+                    <select id="register-policyId" name="policyId" required>
+                        <option th:each="policy : ${couponPolicyList}"
+                                th:value="${policy.id}"
+                                th:text="${policy.discountType.name() == 'PERCENTAGE' ? policy.discountAmount + '%' : policy.discountAmount + '원'}">
+                        </option>
+                    </select>
+
+                    <label for="register-couponType">쿠폰 유형</label>
+                    <input type="text" id="register-couponType" name="couponType" th:value="${couponType}" required readonly>
+
+                    <label for="register-couponName">쿠폰 이름</label>
+                    <input type="text" id="register-couponName" name="couponName" placeholder="쿠폰 이름 (최대 100자)"
+                           maxlength="100" required>
+
+                    <label for="register-couponDescription">쿠폰 설명</label>
+                    <textarea id="register-couponDescription" name="couponDescription" placeholder="쿠폰 설명 (최대 500자)"
+                              maxlength="500" required></textarea>
+
+                    <label for="register-availableDuration">유효 기간 (일)</label>
+                    <input type="number" id="register-availableDuration" name="availableDuration" placeholder="유효 기간"
+                           required min="1">
+
+                    <label for="register-couponTimeStart">시작일</label>
+                    <input type="datetime-local" id="register-couponTimeStart" name="couponTimeStart" required>
+
+                    <label for="register-couponTimeEnd">종료일</label>
+                    <input type="datetime-local" id="register-couponTimeEnd" name="couponTimeEnd">
+
+                    <div class="quantity-section">
+                        <label for="register-couponQuantity" class="quantity-label">쿠폰 수량</label>
+                        <div class="unlimited-quantity" style="float: right">
+                            <label for="register-unlimitedQuantity">무제한</label>
+                            <input style="margin-bottom: 3px" type="checkbox" id="register-unlimitedQuantity"
+                                   name="quantityType" value="">
+                        </div>
+                        <input type="number" id="register-couponQuantity" name="couponQuantity" placeholder="수량을 입력하세요"
+                               min="1" value="">
+                    </div>
+
+                    <button type="submit">등록</button>
+                    <button type="button" onclick="closeRegisterModal()">취소</button>
+                </form>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteForms = document.querySelectorAll(".delete-form");
+
+        deleteForms.forEach(function (form) {
+            // 삭제 버튼 클릭 이벤트 처리
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                if (confirm("정말 삭제하시겠습니까?")) {
+                    form.submit();
+                }
+            });
+
+            const deleteButton = form.querySelector(".button.delete");
+            deleteButton.addEventListener("click", function (event) {
+                event.stopPropagation();
+            });
+        });
+
+        // 쿠폰 받기 버튼 기본 동작 차단 및 이벤트 처리
+        const couponButtons = document.querySelectorAll(".button.coupon");
+
+        couponButtons.forEach(function (button) {
+            button.addEventListener("click", function (event) {
+                event.preventDefault(); // 기본 동작 차단
+                event.stopPropagation(); // 상위 이벤트 전파 차단
+
+                // 쿠폰 등록 모달 열기
+                openRegisterModal(button);
+            });
+        });
+    });
+
+
+    function closeRegisterModal() {
+        const modal = document.getElementById("registerModal");
+        modal.style.display = "none";
+    }
+
+    function openRegisterModal(button) {
+        const modal = document.getElementById("registerModal");
+        modal.style.display = "block";
+
+        // 폼 초기화
+        const form = document.getElementById("registerForm");
+        form.reset();
+
+        const bookId = button.getAttribute("data-id");
+        const bookTitle = button.getAttribute("data-title");
+
+        const id = document.getElementById("book-id");
+        const title = document.getElementById("register-couponName")
+
+        id.value = bookId;
+        title.value = "[도서] "+bookTitle;
+
+        form.action = "/admin/coupons";
+
+        console.log("Button element:", button);
+        console.log("Book ID:", bookId);
+        console.log("Book Title:", bookTitle);
+
+
+        // 수량 필드 초기화
+        const unlimitedCheckbox = document.getElementById('register-unlimitedQuantity');
+        const couponQuantityInput = document.getElementById('register-couponQuantity');
+
+        function updateRegisterCouponQuantityField() {
+            if (unlimitedCheckbox.checked) {
+                couponQuantityInput.value = null;
+                couponQuantityInput.placeholder = "무제한 수량";
+                couponQuantityInput.readOnly = true;
+                couponQuantityInput.required = false;
+            } else {
+                couponQuantityInput.placeholder = "수량을 입력하세요";
+                couponQuantityInput.readOnly = false;
+                couponQuantityInput.required = true;
+            }
+        }
+
+        // 체크박스 클릭 시 동작
+        unlimitedCheckbox.addEventListener('change', function () {
+            updateRegisterCouponQuantityField();
+        });
+
+        // 초기 상태 설정
+        updateRegisterCouponQuantityField();
+    }
+
+    window.onclick = function (event) {
+        const modal = document.getElementById("registerModal");
+        if (event.target === modal) {
+            closeRegisterModal();
+        }
+    }
+
+</script>
+</body>
+</html>

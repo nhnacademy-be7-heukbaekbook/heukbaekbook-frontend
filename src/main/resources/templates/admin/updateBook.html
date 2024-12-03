@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 도서 수정</title>
+    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+KR&display=swap" rel="stylesheet">
+    <!-- Flatpickr CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <!-- Toast UI Editor CSS -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        /* 기존 스타일 유지 */
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f4f6f8; /* 배경색 추가 */
+            margin: 0;
+            padding: 0;
+        }
+        .form-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            color: #34495e;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #34495e;
+        }
+        .form-group input[type="text"],
+        .form-group input[type="number"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+            color: #2c3e50;
+            transition: border-color 0.3s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #000000;
+            outline: none;
+        }
+        .form-group input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        /* 수정된 버튼 스타일 */
+        .form-button {
+            padding: 12px 20px;
+            background-color: #000000;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .form-button:hover {
+            background-color: #333333;
+        }
+
+        .remove-button {
+            padding: 6px 12px;
+            background-color: #e74c3c;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-left: 10px;
+            transition: background-color 0.3s;
+        }
+        .remove-button:hover {
+            background-color: #c0392b;
+        }
+        .success-message {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .back-button {
+            display: inline-block;
+            margin: 20px 0;
+            padding: 12px 24px;
+            background-color: #7f8c8d;
+            color: #ffffff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .back-button:hover {
+            background-color: #95a5a6;
+        }
+        .dynamic-field {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .dynamic-field input[type="text"],
+        .dynamic-field select {
+            flex: 1;
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+            .dynamic-field {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .dynamic-field .remove-button {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+        }
+    </style>
+    <!-- Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <!-- Toast UI Editor JS -->
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+<header th:replace="~{admin/layout :: header}"></header>
+
+<main>
+    <section class="form-container">
+        <h2>도서 수정</h2>
+        <div th:if="${success}">
+            <p class="success-message">도서가 성공적으로 수정되었습니다.</p>
+        </div>
+        <div th:if="${error}">
+            <p class="error-message" th:text="${error}">에러 메시지</p>
+        </div>
+        <form th:action="@{/admin/books/{book-id}(book-id=${bookId})}" th:object="${bookUpdateRequest}" method="post">
+            <input type="hidden" name="_method" value="PUT"/>
+            <!-- 기존 폼 그룹들 -->
+            <div class="form-group">
+                <label for="title">제목</label>
+                <input type="text" th:field="*{title}" id="title" required />
+            </div>
+            <div class="form-group">
+                <label for="index">목차</label>
+                <textarea th:field="*{index}" id="index" style="display: none;"></textarea>
+                <div id="indexEditor"></div>
+            </div>
+            <div class="form-group">
+                <label for="description">설명</label>
+                <textarea th:field="*{description}" id="description" style="display: none;"></textarea>
+                <div id="descriptionEditor"></div>
+            </div>
+            <div class="form-group">
+                <label for="publishedAt">출판일</label>
+                <input type="date" th:field="*{publishedAt}" id="publishedAt" required />
+            </div>
+            <div class="form-group">
+                <label for="isbn">ISBN</label>
+                <input type="text" th:field="*{isbn}" id="isbn" readonly />
+            </div>
+
+            <div class="form-group">
+                <label for="thumbnailImageUrl">썸네일 이미지</label>
+                <input type="text" th:field="*{thumbnailImageUrl}" id="thumbnailImageUrl" />
+            </div>
+            <div class="form-group">
+                <label>상세 이미지 URL</label>
+                <div id="imageUrls-container">
+                    <div th:each="imageUrl, iterStat : *{detailImageUrls}" class="dynamic-field">
+                        <input type="text" th:field="*{detailImageUrls[__${iterStat.index}__]}" />
+                        <button type="button" class="remove-button" onclick="removeImageUrl(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-imageUrl-button" class="form-button">이미지 URL 추가</button>
+            </div>
+            <div class="form-group">
+                <label>
+                    포장 가능 여부
+                    <input type="hidden" name="_isPackable" value="false">
+                    <input type="checkbox" th:field="*{packable}" id="isPackable" value="true"/>
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="stock">재고</label>
+                <input type="number" th:field="*{stock}" id="stock" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="standardPrice">정가</label>
+                <input type="number" th:field="*{standardPrice}" id="standardPrice" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="discountRate">할인율(%)</label>
+                <input type="number" th:field="*{discountRate}" id="discountRate" step="0.1" min="0" />
+            </div>
+            <div class="form-group">
+                <label for="bookStatus">도서 상태</label>
+                <select th:field="*{bookStatus}" id="bookStatus">
+                    <option value="IN_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'IN_STOCK'}">재고 있음</option>
+                    <option value="OUT_OF_STOCK" th:selected="${bookUpdateRequest.bookStatus == 'OUT_OF_STOCK'}">품절</option>
+                    <option value="DISCONTINUED" th:selected="${bookUpdateRequest.bookStatus == 'DISCONTINUED'}">절판됨</option>
+                    <option value="DELETED" th:selected="${bookUpdateRequest.bookStatus == 'DELETED'}">삭제됨</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="publisher">출판사</label>
+                <input type="text" th:field="*{publisher}" id="publisher" />
+            </div>
+            <div class="form-group">
+                <label>카테고리</label>
+                <div id="categories-container">
+                    <div class="dynamic-field" th:each="category, iterStat : *{categories}">
+                        <select th:field="*{categories[__${iterStat.index}__]}" required>
+                            <option value="" disabled>카테고리를 선택하세요</option>
+                            <option th:each="path : ${categoryPaths}"
+                                    th:value="${path}"
+                                    th:text="${path}"
+                                    th:selected="${path} == ${category}"></option>
+                        </select>
+                        <button type="button" class="remove-button" onclick="removeCategory(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-category-button" class="form-button">카테고리 추가</button>
+            </div>
+
+            <!-- 태그 폼 그룹 수정: 기존 텍스트 입력에서 선택 가능한 select 요소로 변경 -->
+            <div class="form-group">
+                <label>태그</label>
+                <div id="tags-container">
+                    <div class="dynamic-field" th:each="tag, iterStat : *{tags}">
+                        <select th:field="*{tags[__${iterStat.index}__]}" required>
+                            <option value="" disabled>태그를 선택하세요</option>
+                            <option th:each="availableTag : ${availableTags}"
+                                    th:value="${availableTag}"
+                                    th:text="${availableTag}"
+                                    th:selected="${availableTag} == ${tag}"></option>
+                        </select>
+                        <button type="button" class="remove-button" onclick="removeTag(this)">삭제</button>
+                    </div>
+                </div>
+                <button type="button" id="add-tag-button" class="form-button">태그 추가</button>
+            </div>
+
+            <div class="form-group">
+                <label for="authors">저자</label>
+                <input type="text" th:field="*{authors}" id="authors"/>
+            </div>
+            <button type="submit" class="form-button">수정하기</button>
+            <a th:href="@{/admin/books}" class="back-button">목록으로 돌아가기</a>
+        </form>
+    </section>
+</main>
+
+<!-- JavaScript 섹션 시작 -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Thymeleaf 변수를 JavaScript 변수로 전달
+    var categoryPaths = [[${categoryPaths}]];
+    var availableTags = [[${availableTags}]]; // 기존 태그 목록 전달 (올바른 변수명)
+    console.log('Available Tags:', availableTags); // 디버깅을 위한 로그
+    /*]]>*/
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Flatpickr 초기화
+        flatpickr("#published", {
+            dateFormat: "Y-m-d", // yyyy-MM-dd 형식
+            maxDate: "today"     // 오늘 날짜까지 선택 가능
+        });
+
+        // Toast UI Editor 초기화
+        const indexEditor = new toastui.Editor({
+            el: document.querySelector('#indexEditor'),
+            height: '300px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.getElementById('index').value,
+            events: {
+                change: function() {
+                    document.getElementById('index').value = indexEditor.getHTML();
+                }
+            }
+        });
+
+        const descriptionEditor = new toastui.Editor({
+            el: document.querySelector('#descriptionEditor'),
+            height: '300px',
+            initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            initialValue: document.getElementById('description').value,
+            events: {
+                change: function() {
+                    document.getElementById('description').value = descriptionEditor.getHTML();
+                }
+            }
+        });
+
+        // 상세 이미지 URL 제거 함수
+        window.removeImageUrl = function(button) {
+            const container = document.getElementById('imageUrls-container');
+            container.removeChild(button.parentNode);
+            updateDetailImageUrlsNames();
+        }
+
+        // 상세 이미지 URL 추가 버튼 이벤트
+        document.getElementById('add-imageUrl-button').addEventListener('click', function() {
+            const container = document.getElementById('imageUrls-container');
+            const index = container.children.length;
+
+            const newDiv = document.createElement('div');
+            newDiv.className = 'dynamic-field';
+
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.name = `detailImageUrls[${index}]`;
+            newInput.id = `detailImageUrls_${index}`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerText = '삭제';
+            removeBtn.className = 'remove-button'; // 'form-button' 클래스는 제거
+            removeBtn.onclick = function() {
+                removeImageUrl(this);
+            };
+
+            newDiv.appendChild(newInput);
+            newDiv.appendChild(removeBtn);
+            container.appendChild(newDiv);
+        });
+
+        // 카테고리 제거 함수
+        window.removeCategory = function(button) {
+            const container = document.getElementById('categories-container');
+            container.removeChild(button.parentNode);
+            updateCategoriesNames();
+        }
+
+        // 카테고리 추가 버튼 이벤트
+        document.getElementById('add-category-button').addEventListener('click', function() {
+            const container = document.getElementById('categories-container');
+            const index = container.children.length;
+
+            const newDiv = document.createElement('div');
+            newDiv.className = 'dynamic-field';
+
+            // 새로운 select 요소 생성
+            const newSelect = document.createElement('select');
+            newSelect.name = `categories[${index}]`;
+            newSelect.required = true;
+
+            // 기본 옵션 추가
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            defaultOption.textContent = '카테고리를 선택하세요';
+            newSelect.appendChild(defaultOption);
+
+            // categoryPaths를 사용하여 옵션 추가
+            categoryPaths.forEach(function(path) {
+                const option = document.createElement('option');
+                option.value = path;
+                option.textContent = path;
+                newSelect.appendChild(option);
+            });
+
+            // 삭제 버튼 생성
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerText = '삭제';
+            removeBtn.className = 'remove-button'; // 'form-button' 클래스는 제거
+            removeBtn.onclick = function() {
+                removeCategory(this);
+            };
+
+            // 요소들 추가
+            newDiv.appendChild(newSelect);
+            newDiv.appendChild(removeBtn);
+            container.appendChild(newDiv);
+        });
+
+        // 태그 제거 함수
+        window.removeTag = function(button) {
+            const container = document.getElementById('tags-container');
+            container.removeChild(button.parentNode);
+            updateTagsNames();
+        }
+
+        // 태그 추가 버튼 이벤트 수정: 텍스트 입력 대신 select 요소 생성
+        document.getElementById('add-tag-button').addEventListener('click', function() {
+            const container = document.getElementById('tags-container');
+            const index = container.children.length;
+
+            const newDiv = document.createElement('div');
+            newDiv.className = 'dynamic-field';
+
+            // 새로운 select 요소 생성
+            const newSelect = document.createElement('select');
+            newSelect.name = `tags[${index}]`;
+            newSelect.required = true;
+
+            // 기본 옵션 추가
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.disabled = true;
+            defaultOption.selected = true;
+            defaultOption.textContent = '태그를 선택하세요';
+            newSelect.appendChild(defaultOption);
+
+            // 기존 태그 목록을 사용하여 옵션 추가
+            availableTags.forEach(function(tag) {
+                const option = document.createElement('option');
+                option.value = tag;
+                option.textContent = tag;
+                newSelect.appendChild(option);
+            });
+
+            // 삭제 버튼 생성
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerText = '삭제';
+            removeBtn.className = 'remove-button';
+            removeBtn.onclick = function() {
+                removeTag(this);
+            };
+
+            newDiv.appendChild(newSelect);
+            newDiv.appendChild(removeBtn);
+            container.appendChild(newDiv);
+        });
+
+        // 저자 제거 함수 (필요 시 추가)
+        window.removeAuthor = function(button) {
+            const container = document.getElementById('authors-container');
+            container.removeChild(button.parentNode);
+            updateAuthorsNames();
+        }
+
+        // 저자 추가 버튼 이벤트 (필요 시 추가)
+        document.getElementById('add-author-button').addEventListener('click', function() {
+            const container = document.getElementById('authors-container');
+            const index = container.children.length;
+
+            const newDiv = document.createElement('div');
+            newDiv.className = 'dynamic-field';
+
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.name = `authors[${index}]`;
+            newInput.id = `authors_${index}`;
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.innerText = '삭제';
+            removeBtn.className = 'remove-button'; // 'form-button' 클래스는 제거
+            removeBtn.onclick = function() {
+                removeAuthor(this);
+            };
+
+            newDiv.appendChild(newInput);
+            newDiv.appendChild(removeBtn);
+            container.appendChild(newDiv);
+        });
+
+        // 이름 업데이트 함수들 (폼 제출 시 올바른 인덱스 유지)
+        function updateDetailImageUrlsNames() {
+            const container = document.getElementById('imageUrls-container');
+            Array.from(container.children).forEach((child, index) => {
+                const input = child.querySelector('input[type="text"]');
+                input.name = `detailImageUrls[${index}]`;
+                input.id = `detailImageUrls_${index}`;
+            });
+        }
+
+        function updateCategoriesNames() {
+            const container = document.getElementById('categories-container');
+            Array.from(container.children).forEach((child, index) => {
+                const select = child.querySelector('select');
+                select.name = `categories[${index}]`;
+            });
+        }
+
+        function updateTagsNames() {
+            const container = document.getElementById('tags-container');
+            Array.from(container.children).forEach((child, index) => {
+                const select = child.querySelector('select');
+                select.name = `tags[${index}]`;
+            });
+        }
+
+        function updateAuthorsNames() {
+            const container = document.getElementById('authors-container');
+            Array.from(container.children).forEach((child, index) => {
+                const input = child.querySelector('input[type="text"]');
+                input.name = `authors[${index}]`;
+                input.id = `authors_${index}`;
+            });
+        }
+    });
+</script>
+
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

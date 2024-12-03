@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 출판사 목록</title>
+    <!-- 기존 스타일 시트 유지 -->
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .table-responsive {
+            overflow-x: auto;
+            max-width: 80%; /* 테이블의 최대 너비를 80%로 제한 */
+            margin: 0 auto; /* 화면 중앙 정렬 */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            table-layout: auto;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        th {
+            background-color: #444;
+            color: #fff;
+            text-align: center;
+            min-width: 100px; /* 열의 최소 너비 */
+        }
+
+        td {
+            text-align: center; /* 텍스트를 중앙 정렬 */
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .add-publisher-button {
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .add-publisher-button:hover {
+            background-color: #333;
+        }
+
+        /* 페이지네이션 중앙 정렬 */
+        .pagination {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .pagination ul {
+            list-style: none;
+            padding: 0;
+            display: inline-block;
+        }
+
+        .pagination li {
+            display: inline;
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* 모든 버튼을 수직 중앙 정렬 */
+            gap: 5px; /* 버튼 간격 */
+        }
+
+        .action-button {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9em;
+            text-decoration: none;
+            text-align: center;
+            width: 120px; /* 버튼의 고정된 너비 설정 */
+            box-sizing: border-box;
+        }
+
+        .back-to-home-button {
+            padding: 10px 20px;
+            background-color: #2980b9;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            text-decoration: none;
+            margin: 10px 0;
+            display: inline-block;
+        }
+
+        .action-button:hover {
+            background-color: #333;
+        }
+
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center; /* 버튼들이 수평으로 중앙 정렬 */
+            }
+            .action-button {
+                margin-right: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-home-container">
+    <!-- "출판사 추가하기" 버튼 -->
+    <section style="text-align: center;">
+        <a th:href="@{/admin/publishers/register}" class="add-publisher-button">출판사 추가하기</a>
+    </section>
+
+    <section style="text-align: center;">
+        <a th:href="@{/admin/home}" class="back-to-home-button">홈으로 돌아가기</a>
+    </section>
+
+    <!-- 출판사 목록 -->
+    <section class="results-section" th:if="${publishers != null}">
+        <h2>출판사 목록</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                <tr>
+                    <th>출판사 ID</th>
+                    <th>출판사 이름</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${publishers.isEmpty}">
+                    <td colspan="3" class="no-results">등록된 출판사가 없습니다.</td>
+                </tr>
+                <tr th:each="publisher : ${publishers.content}">
+                    <td th:text="${publisher.id}">출판사 ID</td>
+                    <td th:text="${publisher.name}">출판사 이름</td>
+                    <td>
+                        <div class="action-buttons">
+                            <!-- 수정 버튼 -->
+                            <a th:href="@{/admin/publishers/{publisherId}/update(publisherId=${publisher.id})}" class="action-button">수정</a>
+                            <!-- 삭제 버튼 -->
+                            <form th:action="@{/admin/publishers/{publisherId}(publisherId=${publisher.id})}" method="post" style="display:inline;">
+                                <input type="hidden" name="_method" value="DELETE"/>
+                                <button type="submit" class="action-button">삭제</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 페이지네이션 -->
+        <div class="pagination">
+            <ul>
+                <li th:if="${publishers.hasPrevious()}">
+                    <a th:href="@{/admin/publishers(page=${publishers.number - 1}, size=${publishers.size})}">이전</a>
+                </li>
+                <li th:each="pageNum : ${#numbers.sequence(0, publishers.totalPages - 1)}"
+                    th:classappend="${pageNum == publishers.number} ? 'active'">
+                    <a th:href="@{/admin/publishers(page=${pageNum}, size=${publishers.size})}"
+                       th:text="${pageNum + 1}">1</a>
+                </li>
+                <li th:if="${publishers.hasNext()}">
+                    <a th:href="@{/admin/publishers(page=${publishers.number + 1}, size=${publishers.size})}">다음</a>
+                </li>
+            </ul>
+        </div>
+    </section>
+</main>
+
+<!-- 푸터 불러오기 -->
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

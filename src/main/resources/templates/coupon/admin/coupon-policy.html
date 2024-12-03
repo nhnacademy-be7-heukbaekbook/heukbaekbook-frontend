@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>쿠폰 정책 관리 - 흑백문고</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .form-container, .list-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+            margin-bottom: 50px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header, footer {
+            background-color: #000;
+            color: #fff;
+            padding: 10px 20px;
+        }
+
+        main {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1600px;
+            min-width: 50%;
+        }
+        .contents{
+            width: 80%;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 10px;
+
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #000;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        #main-header{
+            text-align: left;
+            padding: 20px;
+        }
+
+        .register-input{
+            width: 96%;
+        }
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        input, select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        button {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #777;
+        }
+
+        table {
+            width: 100%;
+            background-color: #fff;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+            font-weight: bold;
+            border-bottom: 2px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .action-button.modify {
+            background-color: #555;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.modify:hover {
+            background-color: #777;
+        }
+
+        .action-button.delete {
+            background-color: #d9534f;
+            color: #fff;
+            border: none;
+            padding: 5px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: background-color 0.3s;
+            margin: 0 5px;
+            display: inline-block;
+            width: 60px;
+        }
+
+        .action-button.delete:hover {
+            background-color: #c9302c;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 10px;
+            width: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-content label {
+            margin-top: 10px;
+        }
+
+        .modal-content input, .modal-content select {
+            margin-bottom: 15px;
+            width: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .modal-content button {
+            width: auto;
+            padding: 10px 15px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 불러오기 -->
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 메인 콘텐츠 -->
+<main class="admin-page-container">
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 쿠폰 정책 등록 -->
+    <section class="contents">
+        <h3 id="main-header">쿠폰 정책 관리</h3>
+
+        <section class="form-container">
+            <h3>쿠폰 정책 등록</h3>
+            <form th:action="@{/admin/coupons/policy}" method="post">
+                <label for="discountType">할인 유형</label>
+                <select id="discountType" name="discountType" required>
+                    <option th:each="type : ${policyTypes}" th:value="${type}" th:text="${type}"></option>
+                </select>
+
+                <label for="discountAmount">할인 금액</label>
+                <input type="number" id="discountAmount" name="discountAmount" placeholder="할인 금액" step="0.01" class="register-input" required>
+
+                <label for="minimumPurchaseAmount">최소 구매 금액</label>
+                <input type="number" id="minimumPurchaseAmount" name="minimumPurchaseAmount" placeholder="최소 구매 금액" class="register-input"
+                       step="0.01" required>
+
+                <label for="maximumPurchaseAmount">최대 할인 금액</label>
+                <input type="number" id="maximumPurchaseAmount" name="maximumPurchaseAmount" placeholder="최대 할인 금액" class="register-input"
+                       step="0.01">
+
+                <button type="submit">등록</button>
+            </form>
+        </section>
+
+        <!-- 쿠폰 정책 목록 -->
+        <section class="list-container">
+            <h3>쿠폰 정책 목록</h3>
+            <table>
+                <thead>
+                <tr>
+                    <th>할인 유형</th>
+                    <th>할인 금액</th>
+                    <th>최소 구매 금액</th>
+                    <th>최대 할인 금액</th>
+                    <th>관리</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="policy : ${couponPolicies}">
+                    <td th:text="${policy.discountType}"></td>
+                    <td th:text="${policy.discountType.name().equals('PERCENTAGE') ? policy.discountAmount + '%' : policy.discountAmount + '원'}"></td>
+                    <td th:text="${policy.minimumPurchaseAmount}"></td>
+                    <td th:text="${policy.maximumPurchaseAmount != null ? policy.maximumPurchaseAmount : '-'}"></td>
+                    <td>
+                        <button type="button" class="action-button modify"
+                                th:data-id="${policy.id}"
+                                th:data-discount-type="${policy.discountType}"
+                                th:data-discount-amount="${policy.discountAmount}"
+                                th:data-minimum-purchase-amount="${policy.minimumPurchaseAmount}"
+                                th:data-maximum-purchase-amount="${policy.maximumPurchaseAmount}"
+                                onclick="openEditModal(this)">
+                            수정
+                        </button>
+                        <form th:action="@{/admin/coupons/policy/{id}(id=${policy.id})}" method="post"
+                              style="display:inline;">
+                            <input type="hidden" name="_method" value="delete">
+                            <button type="button" class="action-button delete" onclick="confirmDeletion()">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${couponPolicies.getContent().isEmpty()}">
+                    <td colspan="6">등록된 정책이 없습니다.</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 수정 모달 -->
+        <div id="editModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <h3>쿠폰 정책 수정</h3>
+                <form id="editForm" method="post">
+                    <input type="hidden" name="_method" value="put">
+                    <input type="hidden" id="edit-id" name="id">
+
+                    <label for="edit-discountType">할인 유형</label>
+                    <select id="edit-discountType" name="discountType" required>
+                        <option th:each="type : ${policyTypes}" th:value="${type}" th:text="${type}"></option>
+                    </select>
+
+                    <label for="edit-discountAmount">할인 금액</label>
+                    <input type="number" id="edit-discountAmount" name="discountAmount" step="0.01" required>
+
+                    <label for="edit-minimumPurchaseAmount">최소 구매 금액</label>
+                    <input type="number" id="edit-minimumPurchaseAmount" name="minimumPurchaseAmount" step="0.01"
+                           required>
+
+                    <label for="edit-maximumPurchaseAmount">최대 할인 금액</label>
+                    <input type="number" id="edit-maximumPurchaseAmount" name="maximumPurchaseAmount" step="0.01">
+
+                    <button type="submit">저장</button>
+                    <button type="button" onclick="closeModal()">취소</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <script>
+        function confirmDeletion() {
+            if (confirm("정말 삭제하시겠습니까?")) {
+                event.target.closest("form").submit();
+            }
+        }
+
+        function openEditModal(button) {
+            const id = button.getAttribute("data-id");
+            const discountType = button.getAttribute("data-discount-type");
+            const discountAmount = button.getAttribute("data-discount-amount");
+            const minimumPurchaseAmount = button.getAttribute("data-minimum-purchase-amount");
+            const maximumPurchaseAmount = button.getAttribute("data-maximum-purchase-amount");
+
+
+            const modal = document.getElementById("editModal");
+            const form = document.getElementById("editForm");
+
+            form.action = "/admin/coupons/policy/" + id;
+            const editDiscountTypeSelect = document.getElementById("edit-discountType");
+            const editMaximumPurchaseAmountInput = document.getElementById("edit-maximumPurchaseAmount");
+
+
+            document.getElementById("edit-id").value = id;
+            editDiscountTypeSelect.value = discountType;
+            document.getElementById("edit-discountAmount").value = discountAmount;
+            document.getElementById("edit-minimumPurchaseAmount").value = minimumPurchaseAmount;
+            document.getElementById("edit-maximumPurchaseAmount").value = maximumPurchaseAmount;
+
+            handleDiscountTypeChange(discountType, editMaximumPurchaseAmountInput)
+            modal.style.display = "block";
+        }
+
+
+        function closeModal() {
+            const modal = document.getElementById("editModal");
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            const modal = document.getElementById("editModal");
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
+        document.addEventListener("DOMContentLoaded", function () {
+            const discountTypeSelect = document.getElementById("discountType");
+            const maximumPurchaseAmountInput = document.getElementById("maximumPurchaseAmount");
+
+            // 할인 유형 변경 시 동작
+            discountTypeSelect.addEventListener("change", function () {
+                handleDiscountTypeChange(discountTypeSelect.value, maximumPurchaseAmountInput);
+            });
+
+            // 페이지 로드 시 기본 설정
+            handleDiscountTypeChange(discountTypeSelect.value, maximumPurchaseAmountInput);
+
+            // 수정 모달에서도 동일한 로직 적용
+            const editDiscountTypeSelect = document.getElementById("edit-discountType");
+            const editMaximumPurchaseAmountInput = document.getElementById("edit-maximumPurchaseAmount");
+
+            editDiscountTypeSelect.addEventListener("change", function () {
+                handleDiscountTypeChange(editDiscountTypeSelect.value, editMaximumPurchaseAmountInput);
+            });
+        });
+
+        // 할인 유형 변경에 따라 최대 할인 금액 필드 속성 업데이트
+        function handleDiscountTypeChange(discountType, maximumPurchaseAmountInput) {
+            if (discountType === "PERCENTAGE") {
+                maximumPurchaseAmountInput.required = true;
+                maximumPurchaseAmountInput.readOnly = false;
+                maximumPurchaseAmountInput.placeholder = "최대 할인 금액 입력";
+            } else if (discountType === "FIXED") {
+                maximumPurchaseAmountInput.required = false;
+                maximumPurchaseAmountInput.readOnly = true;
+                maximumPurchaseAmountInput.placeholder = "--고정 할인 금액--";
+                maximumPurchaseAmountInput.value = ""; // 고정 할인일 경우 값을 비워둠
+            } else {
+                // 기본 상태
+                maximumPurchaseAmountInput.required = false;
+                maximumPurchaseAmountInput.readOnly = false;
+                maximumPurchaseAmountInput.placeholder = "최대 할인 금액 입력";
+            }
+        }
+
+    </script>
+</main>
+<footer th:replace="~{admin/layout :: footer}"></footer>
+</body>
+</html>
