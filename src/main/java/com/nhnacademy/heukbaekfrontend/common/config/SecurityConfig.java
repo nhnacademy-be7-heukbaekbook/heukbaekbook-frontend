@@ -40,7 +40,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
@@ -132,9 +131,9 @@ public class SecurityConfig {
 
         http
                 .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
+                                exceptionHandling
                                 .accessDeniedHandler(accessDeniedHandler())
-                                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/?error=true"))
+                                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
                 );
 
         http.addFilterBefore(reissueFilter(), UsernamePasswordAuthenticationFilter.class);
@@ -161,7 +160,6 @@ public class SecurityConfig {
         accessDeniedHandler.setErrorPage("/error/403");
         return accessDeniedHandler;
     }
-
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
