@@ -1,117 +1,122 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.controller;
 
-import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberCreateRequest;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Optional;
+import java.sql.Date;
+import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SignupController.class)
 class SignupControllerTest {
 
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private MemberService memberService;
 
-    @MockBean
-    private CookieUtil cookieUtil;
+    private MemberCreateRequest validSignupRequest;
 
     @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new SignupController(memberService))
-                .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                .build();
+    void setup() {
+        validSignupRequest = new MemberCreateRequest(
+                "john123",
+                "Password1!",
+                Date.valueOf(LocalDate.of(1990, 1, 1)),
+                "홍길동",
+                "010-1234-5678",
+                "john.doe@example.com",
+                12345L,
+                "서울특별시 강남구",
+                "101호",
+                "우리집"
+        );
     }
 
-//    @Test
-//    void testGetSignUpForm() throws Exception {
-//        mockMvc.perform(get("/signup"))
-//                .andExpect(status().isOk())
-//                .andExpect(model().attributeExists("signupForm"))
-//                .andExpect(view().name("signup"));
-//    }
-//
-//    @Test
-//    void testDoSignup_Success() throws Exception {
-//        MemberResponse mockResponse = new MemberResponse(
-//                "John Doe", "010-1234-5678", "john.doe@example.com",
-//                "john_doe", null, null, null, null, null
-//        );
-//
-//        when(memberService.signup(any(MemberCreateRequest.class)))
-//                .thenReturn(Optional.of(mockResponse));
-//
-//        mockMvc.perform(post("/signup")
-//                        .param("loginId", "john_doe")
-//                        .param("password", "password1!")
-//                        .param("birth", "1990-01-01")
-//                        .param("name", "John Doe")
-//                        .param("phoneNumber", "010-1234-5678")
-//                        .param("email", "john.doe@example.com")
-//                        .param("postalCode", "12345")
-//                        .param("roadNameAddress", "Main Street 123")
-//                        .param("detailAddress", "Apartment 45")
-//                        .param("alias", "Home"))
-//                .andExpect(status().isOk())
-//                .andExpect(model().attribute("name", mockResponse.name()))
-//                .andExpect(view().name("signupSuccess"));
-//    }
+    @Test
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testGetSignUpForm() throws Exception {
+        mockMvc.perform(get("/signup"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("signup"))
+                .andExpect(model().attributeExists("signupForm"));
+    }
 
     @Test
-    void testDoSignup_BindingError() throws Exception {
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testDoSignup_InvalidRequest() throws Exception {
+        MemberCreateRequest invalidRequest = new MemberCreateRequest(
+                "abc", // Invalid loginId
+                "short", // Invalid password
+                null, // Missing birth
+                "J", // Invalid name
+                "010-123", // Invalid phoneNumber
+                "invalid-email", // Invalid email
+                null, // Missing postalCode
+                "", // Missing roadNameAddress
+                "Too long address exceeding limit....", // Invalid detailAddress
+                "invalidAlias123" // Invalid alias
+        );
+
         mockMvc.perform(post("/signup")
-                        .param("loginId", "")
-                        .param("password", "")
-                        .param("birth", "")
-                        .param("name", "")
-                        .param("phoneNumber", "")
-                        .param("email", "")
-                        .param("postalCode", "")
-                        .param("roadNameAddress", "")
-                        .param("detailAddress", "")
-                        .param("alias", ""))
+                        .with(csrf())
+                        .flashAttr("memberCreateRequest", invalidRequest))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attributeExists("signupForm"))
-                .andExpect(flash().attributeExists("error"))
-                .andExpect(redirectedUrl("/signup"));
+                .andExpect(redirectedUrl("/signup"))
+                .andExpect(flash().attributeExists("error"));
     }
 
     @Test
-    void testCheckLoginIdDuplicate() throws Exception {
-        when(memberService.existsLoginId("john_doe"))
-                .thenReturn(ResponseEntity.ok(true));
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testCheckLoginIdDuplicate_True() throws Exception {
+        when(memberService.existsLoginId("existingId")).thenReturn(ResponseEntity.ok(true));
 
-        mockMvc.perform(get("/signup/check-duplicate/loginId/john_doe"))
+        mockMvc.perform(get("/signup/check-duplicate/loginId/existingId"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
     }
 
     @Test
-    void testCheckEmailDuplicate() throws Exception {
-        when(memberService.existsEmail("john.doe@example.com"))
-                .thenReturn(ResponseEntity.ok(true));
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testCheckLoginIdDuplicate_False() throws Exception {
+        when(memberService.existsLoginId("newId")).thenReturn(ResponseEntity.ok(false));
 
-        mockMvc.perform(get("/signup/check-duplicate/email/john.doe@example.com"))
+        mockMvc.perform(get("/signup/check-duplicate/loginId/newId"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testCheckEmailDuplicate_True() throws Exception {
+        when(memberService.existsEmail("existing@example.com")).thenReturn(ResponseEntity.ok(true));
+
+        mockMvc.perform(get("/signup/check-duplicate/email/existing@example.com"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("true"));
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "USER")
+    void testCheckEmailDuplicate_False() throws Exception {
+        when(memberService.existsEmail("new@example.com")).thenReturn(ResponseEntity.ok(false));
+
+        mockMvc.perform(get("/signup/check-duplicate/email/new@example.com"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
     }
 }
-
