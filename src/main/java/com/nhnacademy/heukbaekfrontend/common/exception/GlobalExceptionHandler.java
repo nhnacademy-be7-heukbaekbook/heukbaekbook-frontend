@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.http.HttpStatus;
+import org.thymeleaf.exceptions.TemplateInputException;
 
 import java.util.Objects;
 
@@ -73,6 +74,18 @@ public class GlobalExceptionHandler {
         model.addAttribute("statusName", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
         model.addAttribute("errorMessage", Objects.isNull(ex.getMessage())
                 ? "서버에 오류가 발생했습니다." : ex.getMessage());
+
+        return "error/error-page";
+    }
+
+
+    @ExceptionHandler(TemplateInputException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleThymeleafException(Exception ex, Model model) {
+        model.addAttribute("statusCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        model.addAttribute("statusName", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        model.addAttribute("errorMessage", Objects.isNull(ex.getMessage())
+                ? "템플릿 처리 중 오류가 발생했습니다." : ex.getMessage());
 
         return "error/error-page";
     }

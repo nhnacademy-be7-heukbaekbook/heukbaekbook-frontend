@@ -2,6 +2,7 @@ package com.nhnacademy.heukbaekfrontend.common.config;
 
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
+import com.nhnacademy.heukbaekfrontend.common.entrypoint.CustomAuthenticationEntryPoint;
 import com.nhnacademy.heukbaekfrontend.common.filter.AdminLoginFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.MemberLoginFilter;
 import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
@@ -37,6 +38,9 @@ import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequest
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.AccessDeniedHandlerImpl;
+import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
@@ -82,10 +86,11 @@ public class SecurityConfig {
                                         .requestMatchers("/login", "/admin/login", "/signup/**", "/cart/**").permitAll()
                                         .requestMatchers("/", "/payment/**", "/order/**", "/search", "/books/**").permitAll()
                                         .requestMatchers("/members/**").hasRole("MEMBER")
-                                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                                         .requestMatchers("/logout").hasAnyRole("ADMIN", "MEMBER")
                                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
                                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
+                                        .requestMatchers("/error/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 
@@ -125,6 +130,13 @@ public class SecurityConfig {
                 .permitAll()
         );
 
+        http
+                .exceptionHandling(exceptionHandling ->
+                        exceptionHandling
+                                .accessDeniedHandler(accessDeniedHandler())
+                                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/?error=true"))
+                );
+
         http.addFilterBefore(reissueFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilterAfter(tokenAuthenticationFilter(), ReissueFilter.class);
         http.addFilterAt(memberLoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
@@ -142,6 +154,14 @@ public class SecurityConfig {
     public AdminLoginFilter adminLoginFilter(AuthenticationManager authenticationManager) {
         return new AdminLoginFilter(authenticationManager, loginClient, cookieUtil, cartService);
     }
+
+    @Bean
+    public AccessDeniedHandler accessDeniedHandler() {
+        AccessDeniedHandlerImpl accessDeniedHandler = new AccessDeniedHandlerImpl();
+        accessDeniedHandler.setErrorPage("/error/403");
+        return accessDeniedHandler;
+    }
+
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
