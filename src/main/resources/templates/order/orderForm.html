@@ -812,7 +812,7 @@
                     <label for="customerPhone1"></label>
                     <input type="tel" id="customerPhone1" name="customerPhone1"
                            placeholder="010" class="phone-input" maxlength="3"
-                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[0] : ''}"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[0] : ''}"
                            required>
                     <span class="separator">-</span>
 
@@ -820,7 +820,7 @@
                     <label for="customerPhone2"></label>
                     <input type="tel" id="customerPhone2" name="customerPhone2"
                            placeholder="1234" class="phone-input" maxlength="4"
-                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[1] : ''}"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[1] : ''}"
                            required>
                     <span class="separator">-</span>
 
@@ -828,7 +828,7 @@
                     <label for="customerPhone3"></label>
                     <input type="tel" id="customerPhone3" name="customerPhone3"
                            placeholder="5678" class="phone-input" maxlength="4"
-                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.setSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[2] : ''}"
+                           th:value="${orderFormResponse.memberDetailResponse != null ? #strings.listSplit(orderFormResponse.memberDetailResponse.customerPhoneNumber, '-')[2] : ''}"
                            required>
                 </div>
                 <p class="sms-info">이 번호로 주문 과정이 SMS로 안내됩니다.</p>
@@ -935,10 +935,6 @@
                     잔여 포인트 : 0P
                 </span>
             </div>
-            <div>
-                <h3>최종 결제 금액</h3>
-                <span id="finalAmount" th:text="${orderFormResponse.totalPrice} + '원'">0원</span>
-            </div>
         </div>
         <div class="payment-info">
             <div class="payment-box">
@@ -952,14 +948,16 @@
                 <div class="detail-info">
                     <div class="item">
                         <span>즉시할인</span>:
-                        <span th:text="${orderFormResponse.totalBookDiscountAmount} + '원'">할인금액</span>
+                        <span th:text="${orderFormResponse.totalBookDiscountAmount}">할인금액</span>
+                        <span class="currency">원</span>
                     </div>
                 </div>
             </div>
             <div class="payment-box">
                 <h3>총 추가금액</h3>
-                <div class="amount" id="deliveryFee" th:text="${orderFormResponse.deliveryFee}"><span
-                        class="currency">원</span></div>
+                <div class="amount" id="deliveryFee">
+                    <span th:text="${orderFormResponse.deliveryFee}"></span><span>원</span>
+                </div>
                 <div class="detail-info">
                     <div class="item">
                         <span>배송비</span>:
@@ -969,7 +967,8 @@
             </div>
             <div class="payment-box">
                 <h3>총 할인금액</h3>
-                <div class="amount" id="discountAmount">0<span class="currency">원</span></div>
+                <div class="amount" id="discountAmount">0<span>원</span>
+                </div>
                 <div class="detail-info">
                     <div class="item">
                     </div>
@@ -1048,6 +1047,11 @@
         // 할인 금액 업데이트
         discountAmountElement.innerHTML = `${usePoints}
         <span class="currency">원</span>`;
+
+        // 업데이트: 데이터 속성과 화면 표시 내용
+        amountElement.setAttribute("data-amount", finalAmount.toLocaleString());
+
+        // amountElement.textContent = `${finalAmount.toLocaleString()}원`;
     }
 </script>
 
@@ -1163,7 +1167,8 @@
             const recipientPhone1 = document.getElementById("recipientPhone1").value;
             const recipientPhone2 = document.getElementById("recipientPhone2").value;
             const recipientPhone3 = document.getElementById("recipientPhone3").value;
-            const deliveryFee = document.getElementById("deliveryFee").textContent;
+            const deliveryFeeText = document.getElementById("deliveryFee").textContent;
+            const deliveryFee = parseFloat(deliveryFeeText.replace('원', ''));
             const deliveryDate = getSelectedDate();
             const usedPoint = document.getElementById('discountAmount').textContent;
 

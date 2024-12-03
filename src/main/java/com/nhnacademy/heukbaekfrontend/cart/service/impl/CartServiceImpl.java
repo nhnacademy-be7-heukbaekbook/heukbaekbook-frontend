@@ -1,22 +1,19 @@
 package com.nhnacademy.heukbaekfrontend.cart.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.book.domain.Book;
+import com.nhnacademy.heukbaekfrontend.book.dto.redis.BookInfo;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
+import com.nhnacademy.heukbaekfrontend.book.service.RedisBookService;
 import com.nhnacademy.heukbaekfrontend.cart.client.CartClient;
-import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
-import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateResponse;
+import com.nhnacademy.heukbaekfrontend.cart.dto.*;
 import com.nhnacademy.heukbaekfrontend.cart.service.CartService;
 import com.nhnacademy.heukbaekfrontend.book.client.BookClient;
 import com.nhnacademy.heukbaekfrontend.common.service.CommonService;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -29,39 +26,47 @@ public class CartServiceImpl implements CartService {
 
     private final HashOperations<String, String, Integer> hashOperations;
 
-    private final BookClient bookClient;
+    private final RedisBookService redisBookService;
 
     private final CartClient cartClient;
+
+    private final BookClient bookClient;
 
     private final CommonService commonService;
 
     public CartServiceImpl(RedisTemplate<String, Object> redisTemplate,
-                           BookClient bookClient,
+                           RedisBookService redisBookService,
                            CartClient cartClient,
+                           BookClient bookClient,
                            CommonService commonService) {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
+        this.redisBookService = redisBookService;
+        this.cartClient = cartClient;;
         this.bookClient = bookClient;
-        this.cartClient = cartClient;
         this.commonService = commonService;
     }
 
 
     @Override
-    public List<Book> getBooksFromCart(String sessionId) {
+    public CartResponse getBooksFromCart(String sessionId) {
         Map<String, Integer> entries = hashOperations.entries(sessionId);
         List<Long> bookIds = entries.keySet().stream()
                 .map(Long::parseLong)
                 .toList();
 
-        List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
+        log.info("bookIds : {}", bookIds);
 
-        return booksSummary.stream()
-                .map(bookSummaryResponse -> {
-                    Integer quantity = entries.get(bookSummaryResponse.id().toString());
-                    return createBook(bookSummaryResponse, quantity);
+        List<BookInfo> bookInfos = redisBookService.getBookInfos(bookIds);
+
+        List<CartBookResponse> cartBookResponses = bookInfos.stream()
+                .map(bookInfo -> {
+                    Integer quantity = entries.get(bookInfo.id().toString());
+                    return createCartBookResponse(bookInfo, quantity);
                 })
                 .toList();
+
+        return new CartResponse(cartBookResponses);
     }
 
     @Override
@@ -70,7 +75,6 @@ public class CartServiceImpl implements CartService {
         Map<String, Integer> entries = hashOperations.entries(sessionId);
 
         List<BookSummaryResponse> booksSummary = bookClient.getBooksSummary(bookIds);
-        log.info("booksSummary: {}", booksSummary);
 
         return booksSummary.stream()
                 .map(bookSummaryResponse -> {
@@ -78,6 +82,7 @@ public class CartServiceImpl implements CartService {
                     return createBook(bookSummaryResponse, quantity);
                 })
                 .toList();
+
     }
 
     @Override
@@ -89,8 +94,8 @@ public class CartServiceImpl implements CartService {
         if (o != null) {
             quantity += (Integer) o;
         }
-        hashOperations.put(sessionId, hashKey, quantity);
 
+        hashOperations.put(sessionId, hashKey, quantity);
         redisTemplate.expire(sessionId, Duration.ofDays(7));
 
         return new CartCreateResponse(bookId);
@@ -134,6 +139,34 @@ public class CartServiceImpl implements CartService {
         }
 
         cartClient.synchronizeCartToDb(cartCreateRequests);
+        redisTemplate.delete(sessionId);
+    }
+
+    @Override
+    public void synchronizeCartFromDb(String sessionId) {
+        List<CartBookSummaryResponse> cartBookSummaryResponses = cartClient.synchronizeCartFromDb();
+
+        if (cartBookSummaryResponses.isEmpty()) {
+            return;
+        }
+
+        for (CartBookSummaryResponse cartBookSummaryResponse : cartBookSummaryResponses) {
+            String bookId = cartBookSummaryResponse.bookId().toString();
+            hashOperations.put(sessionId, bookId, cartBookSummaryResponse.quantity());
+        }
+    }
+
+
+    private CartBookResponse createCartBookResponse(BookInfo bookInfo, int quantity) {
+        return new CartBookResponse(
+                bookInfo.id(),
+                bookInfo.thumbnailUrl(),
+                bookInfo.title(),
+                bookInfo.price(),
+                bookInfo.salePrice(),
+                bookInfo.discountRate(),
+                quantity
+        );
     }
 
     private Book createBook(BookSummaryResponse bookSummaryResponse, int quantity) {
