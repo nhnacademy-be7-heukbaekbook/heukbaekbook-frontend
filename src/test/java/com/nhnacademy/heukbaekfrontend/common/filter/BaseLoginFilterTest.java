@@ -109,7 +109,7 @@ class BaseLoginFilterTest {
         baseLoginFilter.unsuccessfulAuthentication(request, response, new BadCredentialsException("Authentication failed"));
 
         // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+        assertThat(response.getRedirectedUrl()).isEqualTo("/login");
     }
-
 }

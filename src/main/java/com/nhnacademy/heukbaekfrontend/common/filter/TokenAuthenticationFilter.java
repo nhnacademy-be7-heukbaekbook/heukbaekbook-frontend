@@ -10,7 +10,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -90,8 +89,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return path.startsWith("/css") ||
                 path.startsWith("/images") ||
                 path.startsWith("/js") ||
+                path.startsWith("/favicon") ||
                 path.equals("/login") ||
                 path.equals("/admin/login") ||
-                path.startsWith("/signup");
+                path.startsWith("/signup") ||
+                path.startsWith("/error");
     }
 }
