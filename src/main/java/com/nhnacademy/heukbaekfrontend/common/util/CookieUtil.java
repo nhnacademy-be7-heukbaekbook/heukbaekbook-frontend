@@ -1,5 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.common.util;
 
+import com.nhnacademy.heukbaekfrontend.common.exception.CookieSerializationException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -66,7 +67,7 @@ public class CookieUtil {
             objectStream.writeObject(object);
             return Base64.getUrlEncoder().encodeToString(byteStream.toByteArray());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to serialize object", e);
+            throw new CookieSerializationException("Failed to serialize object", e);
         }
     }
 
@@ -75,7 +76,7 @@ public class CookieUtil {
              ObjectInputStream objectStream = new ObjectInputStream(byteStream)) {
             return clazz.cast(objectStream.readObject());
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException("Failed to deserialize object", e);
+            throw new CookieSerializationException("Failed to deserialize object", e);
         }
     }
 }
