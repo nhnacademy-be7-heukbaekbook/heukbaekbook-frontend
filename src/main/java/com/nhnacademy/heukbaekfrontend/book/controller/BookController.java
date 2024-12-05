@@ -60,7 +60,7 @@ public class BookController {
                 .addObject("book", bookViewResponse)
                 .addObject("categories", parentCategoryResponses)
                 .addObject("availableCoupons", List.of());
-        ;
+
         return modelAndView;
     }
 }
