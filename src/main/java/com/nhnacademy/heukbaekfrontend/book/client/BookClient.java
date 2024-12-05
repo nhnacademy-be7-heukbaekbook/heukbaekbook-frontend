@@ -5,7 +5,6 @@ import com.nhnacademy.heukbaekfrontend.book.dto.response.BookDetailResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.book.dto.response.BookViewResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

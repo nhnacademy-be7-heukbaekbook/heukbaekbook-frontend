@@ -4,9 +4,7 @@ import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailListResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
-import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,7 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.contributor.service;
 
 import com.nhnacademy.heukbaekfrontend.contributor.client.ContributorAdmin;
-import com.nhnacademy.heukbaekfrontend.contributor.client.ContributorAdmin;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.ContributorCreateResponse;

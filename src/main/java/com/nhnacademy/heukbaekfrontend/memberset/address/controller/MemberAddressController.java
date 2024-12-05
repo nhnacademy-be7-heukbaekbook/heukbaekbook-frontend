@@ -4,7 +4,6 @@ import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressReques
 import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.address.service.MemberAddressService;
 import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
-import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

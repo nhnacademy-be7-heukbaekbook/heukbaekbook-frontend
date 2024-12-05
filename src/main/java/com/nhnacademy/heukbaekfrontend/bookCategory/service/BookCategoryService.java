@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.bookCategory.service;
 
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 
 import java.util.List;
