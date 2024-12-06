@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryAdmin categoryAdmin;
-    private final CategoryClient categoryClient;
+    private final RedisCategoryService redisCategoryService;
 
     public Page<CategoryDetailResponse> getAllCategories(Pageable pageable) {
         return categoryAdmin.getCategories(pageable);
@@ -44,7 +44,8 @@ public class CategoryService {
     }
 
     public List<CategorySummaryResponse> getTopCategories() {
-        return categoryClient.getTopCategories();
+//        return categoryClient.getTopCategories();
+        return redisCategoryService.getCategories();
     }
 
     public List<String> getCategoryPaths() {
