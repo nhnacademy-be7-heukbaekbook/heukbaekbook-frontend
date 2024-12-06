@@ -10,5 +10,5 @@ import java.util.List;
 public interface CategoryClient {
 
     @GetMapping
-    List<CategorySummaryResponse> getTopCategories();
+    List<CategorySummaryResponse> getCategories();
 }

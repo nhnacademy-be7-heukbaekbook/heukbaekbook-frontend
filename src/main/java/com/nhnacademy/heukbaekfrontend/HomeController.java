@@ -42,6 +42,7 @@ public class HomeController {
 
         ModelAndView modelAndView = new ModelAndView("home");
 
+
         Page<BookResponse> page = bookService.getBooks(pageable);
         List<CategorySummaryResponse> categories = categoryService.getTopCategories();
 

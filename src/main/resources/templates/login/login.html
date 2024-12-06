@@ -228,20 +228,16 @@
     <div id="guestOrderForm" class="form-content">
         <h2>비회원 주문확인</h2>
 
-        <!-- TODO path 확인, Security 권한 추가-->
+        <!-- TODO path 확인, Security 권한 추가 -->
 
-        <form id="orderCheckForm" th:action="@{/guest/order-check}" method="post">
+        <form id="orderCheckForm" th:action="@{/customers/mypage/order/detail}" method="get">
             <div class="form-group">
-                <label for="orderNumber">주문번호</label>
-                <input type="text" id="orderNumber" name="orderNumber" placeholder="주문번호를 입력하세요" required>
+                <label for="orderId">주문번호</label>
+                <input type="text" id="orderId" name="orderId" placeholder="주문번호를 입력하세요" required>
             </div>
             <div class="form-group">
                 <label for="email">이메일</label>
                 <input type="email" id="email" name="email" placeholder="주문 시 작성한 이메일을 입력하세요" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">전화번호 <span style="font-size: 0.9rem; color: #888;">(예: 010-0000-0000)</span></label>
-                <input type="text" id="phone" name="phone" placeholder="주문 시 작성한 전화번호를 입력하세요" required>
             </div>
             <button type="submit">확인</button>
         </form>

@@ -6,22 +6,20 @@
         <span th:if="${page.first}">«</span>
     </li>
 
-    <!-- 이전 페이지 -->
-    <li th:if="${page.number != -1}" th:classappend="${!page.hasPrevious()} ? 'disabled'">
-        <a th:href="@{|?page=${page.number - 1}|}" th:if="${page.hasPrevious()}">‹</a>
-        <span th:if="${!page.hasPrevious()}">‹</span>
+    <!-- 이전 페이지 그룹 -->
+    <li th:if="${(page.number / 5) > 0}">
+        <a th:href="@{|?page=${((page.number / 5) - 1) * 5}|}">‹</a>
     </li>
 
     <!-- 페이지 번호 -->
-    <li th:if="${page.number != -1}" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+    <li th:each="i : ${#numbers.sequence(page.number / 5 * 5, ((page.number / 5) * 5 + 4 < page.totalPages - 1 ? (page.number / 5) * 5 + 4 : page.totalPages - 1))}"
         th:classappend="${i == page.number} ? 'active'">
         <a th:href="@{|?page=${i}&size=${page.size}|}" th:text="${i + 1}"></a>
     </li>
 
-    <!-- 다음 페이지 -->
-    <li th:if="${page.number != -1}" th:classappend="${!page.hasNext()} ? 'disabled'">
-        <a th:href="@{|?page=${page.number + 1}|}" th:if="${page.hasNext()}">›</a>
-        <span th:if="${!page.hasNext()}">›</span>
+    <!-- 다음 페이지 그룹 -->
+    <li th:if="${page.totalPages > ((page.number / 5) + 1) * 5}">
+        <a th:href="@{|?page=${((page.number / 5) + 1) * 5}|}">›</a>
     </li>
 
     <!-- 마지막 페이지로 이동 -->

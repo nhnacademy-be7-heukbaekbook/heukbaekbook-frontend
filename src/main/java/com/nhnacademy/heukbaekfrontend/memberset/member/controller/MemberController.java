@@ -5,12 +5,17 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.CustomerService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,8 +37,10 @@ public class MemberController {
     public static final String MEMBER_RESPONSE = "memberResponse";
 
     @GetMapping
-    public String getMyPageHome(Model model) {
-        MyPageResponse myPageResponse = memberService.createMyPageResponse();
+    public String getMyPageHome(Model model,
+                                @PageableDefault Pageable pageable) {
+        log.info("pageable: {}", pageable);
+        MyPageResponse myPageResponse = memberService.createMyPageResponse(pageable);
 //        MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute("gradeDto", myPageResponse.gradeDto());
         model.addAttribute("myPageResponse", myPageResponse);
@@ -93,8 +100,9 @@ public class MemberController {
     }
 
     @GetMapping("/orders")
-    public ModelAndView getMyPageOrders() {
-        MyPageResponse myPageResponse = memberService.createMyPageResponse();
+    public ModelAndView getMyPageOrders(@PageableDefault Pageable pageable) {
+        log.info("pageable: {}", pageable);
+        MyPageResponse myPageResponse = memberService.createMyPageResponse(pageable);
         log.info("myPageResponse: {}", myPageResponse);
 
         return new ModelAndView("mypage/orders")
@@ -106,7 +114,6 @@ public class MemberController {
     public ModelAndView getMyPageOrderDetail(@RequestParam String orderId) {
         log.info("orderId: {}", orderId);
         MyPageOrderDetailResponse myPageOrderDetailResponse = memberService.getMyPageOrderDetail(orderId);
-        log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
 
         return new ModelAndView("mypage/orderDetail")
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)

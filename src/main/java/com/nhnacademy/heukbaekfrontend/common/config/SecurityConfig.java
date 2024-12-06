@@ -82,9 +82,9 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth ->
                                 auth
-                                        .requestMatchers("/login", "/admin/login", "/signup/**", "/cart/**").permitAll()
+                                        .requestMatchers("/login", "/admin/login", "/signup/**", "/cart/**", "/customers/**").permitAll()
                                         .requestMatchers("/", "/payment/**", "/order/**", "/search", "/books/**").permitAll()
-                                        .requestMatchers("/members/**").hasRole("MEMBER")
+                                        .requestMatchers("/members/**").hasAnyRole("ADMIN", "MEMBER")
                                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                                         .requestMatchers("/logout").hasAnyRole("ADMIN", "MEMBER")
                                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()

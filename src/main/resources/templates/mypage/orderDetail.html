@@ -65,7 +65,12 @@
             </tbody>
         </table>
         <button type="button" id="order-cancel-button" class="order-cancel-button"
-                th:attr="data-toss-id=${myPageOrderDetailResponse.orderDetailResponse.tossOrderId}">주문취소</button>
+                th:attr="data-toss-id=${myPageOrderDetailResponse.orderDetailResponse.tossOrderId}"
+                th:attrappend="disabled=${not (#strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제대기')
+                                    or #strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제완료')) ? 'disabled' : null}"
+                style="float: right;">
+            주문취소
+        </button>
     </section>
 </main>
 
@@ -82,7 +87,8 @@
                 if (response.ok) {
                     alert('주문이 성공적으로 취소되었습니다.');
                     // 페이지 새로고침 또는 리다이렉션
-                    location.reload();
+                    // location.reload();
+                    history.back();
                 } else {
                     alert('주문 취소에 실패했습니다. 다시 시도해주세요.');
                 }

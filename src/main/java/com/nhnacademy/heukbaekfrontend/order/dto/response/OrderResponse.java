@@ -1,8 +1,8 @@
 package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public record OrderResponse(
-        List<OrderSummaryResponse> orderSummaryResponseList
+        Page<OrderSummaryResponse> orderSummaryResponsePage
 ) {
 }
