@@ -134,6 +134,7 @@ class MemberLoginFilterTest {
         memberLoginFilter.unsuccessfulAuthentication(request, response, new BadCredentialsException("Authentication failed"));
 
         // Assert
-        assertThat(response.getStatus()).isEqualTo(401); // HttpStatus.UNAUTHORIZED
+        assertThat(response.getStatus()).isEqualTo(302);
+        assertThat(response.getRedirectedUrl()).isEqualTo("/login");
     }
 }

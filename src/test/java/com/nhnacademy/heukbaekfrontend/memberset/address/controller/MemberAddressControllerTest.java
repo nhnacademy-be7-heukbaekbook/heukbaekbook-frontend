@@ -1,137 +1,133 @@
-//package com.nhnacademy.heukbaekfrontend.memberset.address.controller;
-//
-//import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
-//import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRequest;
-//import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
-//import com.nhnacademy.heukbaekfrontend.memberset.address.service.MemberAddressService;
-//import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
-//import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
-//import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberStatus;
-//import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
-//import org.junit.jupiter.api.BeforeEach;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mock;
-//import org.mockito.MockitoAnnotations;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.ResponseEntity;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-//import org.springframework.web.servlet.view.InternalResourceViewResolver;
-//
-//import java.math.BigDecimal;
-//import java.sql.Date;
-//import java.time.LocalDateTime;
-//import java.util.List;
-//
-//import static org.mockito.ArgumentMatchers.any;
-//import static org.mockito.ArgumentMatchers.eq;
-//import static org.mockito.Mockito.when;
-//import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-//
-//@WebMvcTest(MemberAddressController.class)
-//class MemberAddressControllerTest {
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//    @MockBean
-//    private MemberAddressService memberAddressService;
-//
-//    @MockBean
-//    private MemberService memberService;
-//
-//    @MockBean
-//    private CookieUtil cookieUtil;
-//
-//
-//    @BeforeEach
-//    void setUp() {
-//        MockitoAnnotations.openMocks(this);
-//
-//        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-//        viewResolver.setPrefix("/WEB-INF/views/");
-//        viewResolver.setSuffix(".jsp");
-//
-//        mockMvc = MockMvcBuilders.standaloneSetup(new MemberAddressController(memberAddressService, memberService))
-//                .setViewResolvers(viewResolver)
-//                .build();
-//    }
-//
-//    @Test
-//    void testGetMyPageAddresses() throws Exception {
-//        List<MemberAddressResponse> addressList = List.of(
-//                new MemberAddressResponse(1L, 1L, "City", "State", "12345"),
-//                new MemberAddressResponse(2L, 2L, "City", "State", "67890")
-//        );
-//
-//        GradeDto gradeDto = new GradeDto(
-//                "Gold",
-//                new BigDecimal("15.00"),
-//                new BigDecimal("1000.00")
-//        );
-//
-//        MemberResponse memberResponse = new MemberResponse(
-//                "John Doe",
-//                "010-1234-5678",
-//                "john.doe@example.com",
-//                "johndoe",
-//                Date.valueOf("1990-01-01"),
-//                LocalDateTime.of(2023, 1, 1, 10, 0),
-//                LocalDateTime.of(2024, 1, 1, 12, 0),
-//                MemberStatus.ACTIVE,
-//                gradeDto
-//        );
-//
-//        when(memberAddressService.getMemberAddressesList()).thenReturn(addressList);
-//        when(memberService.getMember()).thenReturn(ResponseEntity.ok(memberResponse));
-//
-//        mockMvc.perform(get("/members/mypage/addresses"))
-//                .andExpect(status().isOk())
-//                .andExpect(view().name("mypage/mypage-address"))
-//                .andExpect(model().attributeExists("memberResponse"))
-//                .andExpect(model().attributeExists("addressList"))
-//                .andExpect(model().attribute("memberResponse", memberResponse))
-//                .andExpect(model().attribute("addressList", addressList));
-//    }
-//
-//
-//
-//    @Test
-//    void testCountMemberAddresses() throws Exception {
-//        when(memberAddressService.countMemberAddresses()).thenReturn(ResponseEntity.ok(2L));
-//
-//        mockMvc.perform(get("/members/mypage/addresses/count"))
-//                .andExpect(status().isOk())
-//                .andExpect(content().string("2"));
-//    }
-//
-//    @Test
-//    void testAddMemberAddress() throws Exception {
-//        MemberAddressRequest request = new MemberAddressRequest(1L, "City", "State", "12345");
-//
-//        mockMvc.perform(post("/members/mypage/addresses")
-//                        .flashAttr("memberAddressRequest", request))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/members/mypage/addresses"));
-//    }
-//
-//    @Test
-//    void testUpdateMemberAddress() throws Exception {
-//        MemberAddressRequest request = new MemberAddressRequest(1L, "New City", "New State", "67890");
-//
-//        mockMvc.perform(put("/members/mypage/addresses/1")
-//                        .flashAttr("memberAddressRequest", request))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/members/mypage/addresses"));
-//    }
-//
-//    @Test
-//    void testDeleteMemberAddress() throws Exception {
-//        mockMvc.perform(delete("/members/mypage/addresses/1"))
-//                .andExpect(status().is3xxRedirection())
-//                .andExpect(redirectedUrl("/members/mypage/addresses"));
-//    }
-//}
+package com.nhnacademy.heukbaekfrontend.memberset.address.controller;
+
+import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRequest;
+import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressResponse;
+import com.nhnacademy.heukbaekfrontend.memberset.address.service.MemberAddressService;
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
+import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@WebMvcTest(MemberAddressController.class)
+@AutoConfigureMockMvc(addFilters = false) // Spring Security 필터 비활성화
+class MemberAddressControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private MemberAddressService memberAddressService;
+
+    @MockBean
+    private MemberService memberService;
+
+    @Test
+    void testGetMyPageAddresses() throws Exception {
+        // Given
+        List<MemberAddressResponse> mockAddresses = List.of(
+                new MemberAddressResponse(1L, 12345L, "서울특별시 강남구", "101호", "집"),
+                new MemberAddressResponse(2L, 67890L, "서울특별시 서초구", "102호", "회사")
+        );
+        GradeDto mockGrade = new GradeDto("VIP", BigDecimal.valueOf(0.15), BigDecimal.valueOf(2000));
+
+        when(memberAddressService.getMemberAddressesList()).thenReturn(mockAddresses);
+        when(memberService.getMembersGrade()).thenReturn(Optional.of(mockGrade));
+
+        // When & Then
+        mockMvc.perform(get("/members/mypage/addresses"))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("addressList"))
+                .andExpect(model().attributeExists("gradeDto"))
+                .andExpect(view().name("mypage/mypage-address"));
+
+        verify(memberAddressService, times(1)).getMemberAddressesList();
+        verify(memberService, times(1)).getMembersGrade();
+    }
+
+    @Test
+    void testCountMemberAddresses() throws Exception {
+        // Given
+        when(memberAddressService.countMemberAddresses()).thenReturn(ResponseEntity.ok(2L));
+
+        // When & Then
+        mockMvc.perform(get("/members/mypage/addresses/count"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("2"));
+
+        verify(memberAddressService, times(1)).countMemberAddresses();
+    }
+
+    @Test
+    void testAddMemberAddress_Success() throws Exception {
+        // Given
+        MemberAddressRequest request = new MemberAddressRequest(
+                12345L,
+                "서울특별시 강남구",
+                "101호",
+                "집"
+        );
+
+        // When & Then
+        mockMvc.perform(post("/members/mypage/addresses")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("postalCode", String.valueOf(request.postalCode()))
+                        .param("roadNameAddress", request.roadNameAddress())
+                        .param("detailAddress", request.detailAddress())
+                        .param("alias", request.alias()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/members/mypage/addresses"));
+
+        verify(memberAddressService, times(1)).addMemberAddress(any(MemberAddressRequest.class));
+    }
+
+    @Test
+    void testUpdateMemberAddress() throws Exception {
+        // Given
+        Long addressId = 1L;
+        MemberAddressRequest request = new MemberAddressRequest(
+                12345L,
+                "서울특별시 강남구",
+                "101호",
+                "집"
+        );
+
+        // When & Then
+        mockMvc.perform(put("/members/mypage/addresses/{addressId}", addressId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("postalCode", String.valueOf(request.postalCode()))
+                        .param("roadNameAddress", request.roadNameAddress())
+                        .param("detailAddress", request.detailAddress())
+                        .param("alias", request.alias()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/members/mypage/addresses"));
+
+        verify(memberAddressService, times(1)).updateMemberAddress(eq(addressId), any(MemberAddressRequest.class));
+    }
+
+    @Test
+    void testDeleteMemberAddress() throws Exception {
+        // Given
+        Long addressId = 1L;
+
+        // When & Then
+        mockMvc.perform(delete("/members/mypage/addresses/{addressId}", addressId))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/members/mypage/addresses"));
+
+        verify(memberAddressService, times(1)).deleteMemberAddress(addressId);
+    }
+}

@@ -1,10 +1,12 @@
 package com.nhnacademy.heukbaekfrontend.common.filter;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
+import com.nhnacademy.heukbaekfrontend.common.filter.wrapper.MutableHttpServletRequest;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,13 +69,17 @@ class ReissueFilterTest {
 
         when(authClient.refreshTokens("refreshToken=validRefreshToken")).thenReturn(responseEntity);
 
+        ArgumentCaptor<MutableHttpServletRequest> requestCaptor = ArgumentCaptor.forClass(MutableHttpServletRequest.class);
+
         reissueFilter.doFilterInternal(request, response, filterChain);
 
-        ArgumentCaptor<String> headerCaptor = ArgumentCaptor.forClass(String.class);
-        verify(response, atLeastOnce()).addHeader(eq("Set-Cookie"), headerCaptor.capture());
-        assertEquals("accessToken=newAccessToken; Path=/; HttpOnly", headerCaptor.getValue());
+        verify(filterChain).doFilter(requestCaptor.capture(), eq(response));
+        MutableHttpServletRequest capturedRequest = requestCaptor.getValue();
 
-        verify(filterChain, times(1)).doFilter(request, response);
+        Cookie[] cookies = capturedRequest.getCookies();
+        assertEquals(1, cookies.length);
+        assertEquals(ACCESS_TOKEN, cookies[0].getName());
+        assertEquals("newAccessToken", cookies[0].getValue());
     }
 
     @Test
@@ -92,14 +99,11 @@ class ReissueFilterTest {
 
         when(authClient.refreshTokens("refreshToken=expiredRefreshToken")).thenThrow(new RuntimeException("Invalid refresh token"));
 
-        PrintWriter writer = mock(PrintWriter.class);
-        when(response.getWriter()).thenReturn(writer);
+        assertThrows(RuntimeException.class, () -> {
+            reissueFilter.doFilterInternal(request, response, filterChain);
+        });
 
-        reissueFilter.doFilterInternal(request, response, filterChain);
-
-        verify(response, times(1)).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        verify(writer, times(1)).write("Unauthorized: Invalid refresh token");
-        verify(response, times(1)).sendRedirect("/login");
+        verify(filterChain, never()).doFilter(any(HttpServletRequest.class), eq(response));
     }
 
     @Test

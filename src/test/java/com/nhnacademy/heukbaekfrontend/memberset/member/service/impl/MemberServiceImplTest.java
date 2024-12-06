@@ -1,9 +1,12 @@
 package com.nhnacademy.heukbaekfrontend.memberset.member.service.impl;
 
+import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import com.nhnacademy.heukbaekfrontend.memberset.member.client.MemberClient;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.*;
-import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
+import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import feign.FeignException;
+import feign.Request;
+import feign.RequestTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +18,7 @@ import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,45 +43,38 @@ class MemberServiceImplTest {
     void testSignup_Success() {
         // Given
         MemberCreateRequest request = new MemberCreateRequest(
-                "user",
-                "pass",
+                "user123",
+                "Pass@1234",
                 Date.valueOf("2000-01-01"),
-                "p",
+                "홍길동",
                 "010-1234-5678",
-                "u@example.com",
+                "user@example.com",
                 12345L,
-                "seoul",
-                "Address",
+                "서울특별시 강남구",
+                "123호",
                 "Home"
         );
 
-        GradeDto gradeDto = new GradeDto(
-                "Basic",
-                BigDecimal.valueOf(0.10),
-                BigDecimal.valueOf(1000)
-        );
-
         MemberResponse mockResponse = new MemberResponse(
-                "p",
+                "홍길동",
                 "010-1234-5678",
-                "u@example.com",
-                "user",
+                "user@example.com",
+                "user123",
                 Date.valueOf("2000-01-01"),
                 LocalDateTime.now(),
                 null,
                 MemberStatus.ACTIVE,
-                gradeDto
+                new GradeDto("Basic", BigDecimal.valueOf(0.10), BigDecimal.valueOf(1000))
         );
 
-        when(memberClient.signup(any(MemberCreateRequest.class)))
-                .thenReturn(ResponseEntity.ok(mockResponse));
+        when(memberClient.signup(any(MemberCreateRequest.class))).thenReturn(ResponseEntity.ok(mockResponse));
 
         // When
         Optional<MemberResponse> result = memberService.signup(request);
 
         // Then
         assertThat(result).isPresent();
-        assertThat(result.get().name()).isEqualTo("p");
+        assertThat(result.get().name()).isEqualTo("홍길동");
         verify(memberClient, times(1)).signup(any(MemberCreateRequest.class));
     }
 
@@ -87,19 +83,18 @@ class MemberServiceImplTest {
         // Given
         MemberCreateRequest request = new MemberCreateRequest(
                 "user123",
-                "password@1",
+                "Pass@1234",
                 Date.valueOf("2000-01-01"),
                 "홍길동",
                 "010-1234-5678",
-                "user123@example.com",
+                "user@example.com",
                 12345L,
-                "Seoul Road",
-                "Detail Address",
+                "서울특별시 강남구",
+                "123호",
                 "Home"
         );
 
-        when(memberClient.signup(any(MemberCreateRequest.class)))
-                .thenThrow(FeignException.class);
+        when(memberClient.signup(any(MemberCreateRequest.class))).thenThrow(FeignException.class);
 
         // When
         Optional<MemberResponse> result = memberService.signup(request);
@@ -108,11 +103,11 @@ class MemberServiceImplTest {
         assertThat(result).isEmpty();
         verify(memberClient, times(1)).signup(any(MemberCreateRequest.class));
     }
+
     @Test
     void testExistsLoginId_Success() {
         // Given
-        when(memberClient.existsLoginId(anyString()))
-                .thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
+        when(memberClient.existsLoginId(anyString())).thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         // When
         ResponseEntity<Boolean> result = memberService.existsLoginId("user123");
@@ -125,8 +120,7 @@ class MemberServiceImplTest {
     @Test
     void testExistsLoginId_Failure() {
         // Given
-        when(memberClient.existsLoginId(anyString()))
-                .thenThrow(FeignException.class);
+        when(memberClient.existsLoginId(anyString())).thenThrow(FeignException.class);
 
         // When & Then
         assertThrows(RuntimeException.class, () -> memberService.existsLoginId("user123"));
@@ -136,11 +130,10 @@ class MemberServiceImplTest {
     @Test
     void testExistsEmail_Success() {
         // Given
-        when(memberClient.existsEmail(anyString()))
-                .thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
+        when(memberClient.existsEmail(anyString())).thenReturn(new ResponseEntity<>(true, HttpStatus.OK));
 
         // When
-        ResponseEntity<Boolean> result = memberService.existsEmail("user123@example.com");
+        ResponseEntity<Boolean> result = memberService.existsEmail("user@example.com");
 
         // Then
         assertThat(result.getBody()).isTrue();
@@ -150,62 +143,17 @@ class MemberServiceImplTest {
     @Test
     void testExistsEmail_Failure() {
         // Given
-        when(memberClient.existsEmail(anyString()))
-                .thenThrow(FeignException.class);
+        when(memberClient.existsEmail(anyString())).thenThrow(FeignException.class);
 
         // When & Then
-        assertThrows(RuntimeException.class, () -> memberService.existsEmail("user123@example.com"));
+        assertThrows(RuntimeException.class, () -> memberService.existsEmail("user@example.com"));
         verify(memberClient, times(1)).existsEmail(anyString());
-    }
-
-    @Test
-    void testGetMember_Success() {
-        // Given
-        MemberResponse mockResponse = mock(MemberResponse.class);
-        when(memberClient.getMemberInfo())
-                .thenReturn(new ResponseEntity<>(mockResponse, HttpStatus.OK));
-
-        // When
-        ResponseEntity<MemberResponse> result = memberService.getMember();
-
-        // Then
-        assertThat(result.getBody()).isNotNull();
-        verify(memberClient, times(1)).getMemberInfo();
-    }
-
-    @Test
-    void testGetMember_Failure() {
-        // Given
-        when(memberClient.getMemberInfo())
-                .thenThrow(FeignException.class);
-
-        // When & Then
-        assertThrows(RuntimeException.class, () -> memberService.getMember());
-        verify(memberClient, times(1)).getMemberInfo();
-    }
-
-    @Test
-    void testUpdateMember_Success() {
-        // Given
-        MemberUpdateRequest request = mock(MemberUpdateRequest.class);
-        MemberResponse mockResponse = mock(MemberResponse.class);
-
-        when(memberClient.updateMember(any(MemberUpdateRequest.class)))
-                .thenReturn(new ResponseEntity<>(mockResponse, HttpStatus.OK));
-
-        // When
-        Optional<MemberResponse> result = memberService.updateMember(request);
-
-        // Then
-        assertThat(result).isPresent();
-        verify(memberClient, times(1)).updateMember(any(MemberUpdateRequest.class));
     }
 
     @Test
     void testDeleteMember_Success() {
         // Given
-        when(memberClient.deleteMember())
-                .thenReturn(new ResponseEntity<>(HttpStatus.OK));
+        when(memberClient.deleteMember()).thenReturn(new ResponseEntity<>(HttpStatus.OK));
 
         // When
         boolean result = memberService.deleteMember();
@@ -218,8 +166,7 @@ class MemberServiceImplTest {
     @Test
     void testDeleteMember_Failure() {
         // Given
-        when(memberClient.deleteMember())
-                .thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
+        when(memberClient.deleteMember()).thenReturn(new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR));
 
         // When
         boolean result = memberService.deleteMember();
@@ -229,12 +176,168 @@ class MemberServiceImplTest {
         verify(memberClient, times(1)).deleteMember();
     }
 
-//    @Test
-//    void testGetAllMemberAddress_NotImplemented() {
-//        // When
-//        ResponseEntity<List<MemberAddressDto>> result = memberService.getAllMemberAddress();
-//
-//        // Then
-//        assertThat(result).isNull(); // 해당 메서드가 현재 구현되지 않음
-//    }
+    @Test
+    void testUpdateMember_Success() {
+        // Given
+        MemberUpdateRequest request = mock(MemberUpdateRequest.class);
+        MemberResponse mockResponse = mock(MemberResponse.class);
+
+        when(memberClient.updateMember(any(MemberUpdateRequest.class))).thenReturn(new ResponseEntity<>(mockResponse, HttpStatus.OK));
+
+        // When
+        Optional<MemberResponse> result = memberService.updateMember(request);
+
+        // Then
+        assertThat(result).isPresent();
+        verify(memberClient, times(1)).updateMember(any(MemberUpdateRequest.class));
+    }
+
+    @Test
+    void testUpdateMember_NullResponse() {
+        // Given
+        MemberUpdateRequest request = mock(MemberUpdateRequest.class);
+
+        when(memberClient.updateMember(any(MemberUpdateRequest.class))).thenReturn(new ResponseEntity<>(null, HttpStatus.OK));
+
+        // When
+        Optional<MemberResponse> result = memberService.updateMember(request);
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(memberClient, times(1)).updateMember(any(MemberUpdateRequest.class));
+    }
+    @Test
+    void testGetMember_Success() {
+        // Given
+        MemberResponse mockResponse = new MemberResponse(
+                "홍길동",
+                "010-1234-5678",
+                "user@example.com",
+                "user123",
+                Date.valueOf("2000-01-01"),
+                LocalDateTime.now(),
+                null,
+                MemberStatus.ACTIVE,
+                new GradeDto("VIP", BigDecimal.valueOf(0.15), BigDecimal.valueOf(2000))
+        );
+
+        when(memberClient.getMemberInfo()).thenReturn(ResponseEntity.ok(mockResponse));
+
+        // When
+        ResponseEntity<MemberResponse> result = memberService.getMember();
+
+        // Then
+        assertThat(result.getBody()).isNotNull();
+        assertThat(result.getBody().name()).isEqualTo("홍길동");
+        verify(memberClient, times(1)).getMemberInfo();
+    }
+
+    @Test
+    void testGetMember_Failure() {
+        // Given
+        when(memberClient.getMemberInfo()).thenThrow(FeignException.class);
+
+        // When & Then
+        assertThrows(RuntimeException.class, () -> memberService.getMember());
+        verify(memberClient, times(1)).getMemberInfo();
+    }
+
+    @Test
+    void testCreateMyPageResponse_Success() {
+        // Given
+        MyPageResponse mockResponse = mock(MyPageResponse.class);
+        when(memberClient.getMyPageResponse()).thenReturn(mockResponse);
+
+        // When
+        MyPageResponse result = memberService.createMyPageResponse();
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(memberClient, times(1)).getMyPageResponse();
+    }
+
+    @Test
+    void testGetMyPageOrderDetail_Success() {
+        // Given
+        String orderId = "order123";
+        MyPageOrderDetailResponse mockResponse = mock(MyPageOrderDetailResponse.class);
+        when(memberClient.getMyPageOrderDetail(orderId)).thenReturn(mockResponse);
+
+        // When
+        MyPageOrderDetailResponse result = memberService.getMyPageOrderDetail(orderId);
+
+        // Then
+        assertThat(result).isNotNull();
+        verify(memberClient, times(1)).getMyPageOrderDetail(orderId);
+    }
+
+    @Test
+    void testGetMyPageOrderDetail_Failure() {
+        // Given
+        String orderId = "order123";
+        when(memberClient.getMyPageOrderDetail(orderId)).thenThrow(FeignException.class);
+
+        // When & Then
+        assertThrows(FeignException.class, () -> memberService.getMyPageOrderDetail(orderId));
+        verify(memberClient, times(1)).getMyPageOrderDetail(orderId);
+    }
+
+    @Test
+    void testGetMembersGrade_Success() {
+        // Given
+        GradeDto mockGrade = new GradeDto("Gold", BigDecimal.valueOf(0.10), BigDecimal.valueOf(5000));
+        when(memberClient.getMembersGrade()).thenReturn(ResponseEntity.ok(mockGrade));
+
+        // When
+        Optional<GradeDto> result = memberService.getMembersGrade();
+
+        // Then
+        assertThat(result).isPresent();
+        assertThat(result.get().gradeName()).isEqualTo("Gold");
+        verify(memberClient, times(1)).getMembersGrade();
+    }
+
+    @Test
+    void testGetMembersGrade_Failure() {
+        // Given
+        Request request = Request.create(Request.HttpMethod.GET, "/grade", Map.of(), null, new RequestTemplate());
+        when(memberClient.getMembersGrade()).thenThrow(new FeignException.BadRequest("Bad Request", request, null, null));
+
+        // When & Then
+        assertThrows(FeignException.BadRequest.class, () -> memberService.getMembersGrade());
+
+        verify(memberClient, times(1)).getMembersGrade();
+    }
+
+    @Test
+    void testSignupOAuth_Success() {
+        // Given
+        OAuthMemberCreateRequest request = mock(OAuthMemberCreateRequest.class);
+        MemberResponse mockResponse = mock(MemberResponse.class);
+
+        when(memberClient.signupOAuth(any(OAuthMemberCreateRequest.class))).thenReturn(ResponseEntity.ok(mockResponse));
+
+        // When
+        Optional<MemberResponse> result = memberService.signupOAuth(request);
+
+        // Then
+        assertThat(result).isPresent();
+        verify(memberClient, times(1)).signupOAuth(any(OAuthMemberCreateRequest.class));
+    }
+
+    @Test
+    void testSignupOAuth_Failure() {
+        // Given
+        OAuthMemberCreateRequest request = mock(OAuthMemberCreateRequest.class);
+        when(memberClient.signupOAuth(any(OAuthMemberCreateRequest.class))).thenThrow(FeignException.class);
+
+        // When
+        Optional<MemberResponse> result = memberService.signupOAuth(request);
+
+        // Then
+        assertThat(result).isEmpty();
+        verify(memberClient, times(1)).signupOAuth(any(OAuthMemberCreateRequest.class));
+    }
+
+
 }

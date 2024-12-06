@@ -14,10 +14,8 @@
             height: 100vh;
             margin: 0;
             background: linear-gradient(to right, #1a1a1a 50%, #f2f2f2 50%) no-repeat;
-            position: relative;
         }
 
-        /* 로그인 컨테이너 스타일 */
         .login-container {
             background-color: rgba(250, 250, 250, 0.95);
             padding: 3rem;
@@ -27,10 +25,8 @@
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
             position: relative;
             overflow: hidden;
-            z-index: 1;
         }
 
-        /* 로고 배경 이미지 스타일 */
         .login-container::before {
             content: "";
             background-image: url('/images/logo.png');
@@ -45,21 +41,47 @@
             width: 80%;
             height: 80%;
             z-index: 0;
+            pointer-events: none;
         }
 
-        /* 텍스트 및 폼 스타일 */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 1.5rem;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: 0.3s;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid #444;
+            color: #222;
+        }
+
+        .form-content {
+            display: none;
+        }
+
+        .form-content.active {
+            display: block;
+        }
+
         h2 {
             color: #222;
             margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
             font-size: 1.8rem;
         }
 
         .form-group {
             margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
         }
 
         label {
@@ -69,15 +91,16 @@
             margin-bottom: 0.5rem;
         }
 
-        input[type="text"], input[type="password"] {
-            width: 100%;
+        input {
+            width: calc(100% - 2px);
+            max-width: 100%;
             padding: 0.75rem;
             border: 1px solid #666;
             border-radius: 5px;
             font-size: 1.1rem;
+            box-sizing: border-box;
         }
 
-        /* 버튼 스타일 */
         button[type="submit"] {
             background-color: #444;
             color: #f9f9f9;
@@ -88,20 +111,15 @@
             width: 100%;
             font-size: 1.1rem;
             transition: background-color 0.3s ease;
-            position: relative;
-            z-index: 1;
         }
 
         button[type="submit"]:hover {
             background-color: #555;
         }
 
-        /* 회원가입 링크 스타일 */
         p {
             margin-top: 1.5rem;
             color: #444;
-            position: relative;
-            z-index: 1;
             font-size: 1rem;
         }
 
@@ -110,24 +128,10 @@
             text-decoration: underline;
         }
 
-        /* 반응형 디자인 */
-        @media (max-width: 600px) {
-            .login-container {
-                width: 90%;
-                padding: 2rem;
-            }
-
-            .login-container::before {
-                width: 100%;
-                height: 100%;
-                opacity: 0.02;
-            }
-        }
-
         .error-message {
-            color: red;
+            color: #ff231c;
             margin-bottom: 1rem;
-            font-weight: bold;
+            font-size: 1.1rem;
         }
 
         .payco-login-button {
@@ -139,13 +143,12 @@
             cursor: pointer;
             width: 100%;
             font-size: 1.1rem;
-            margin-top: 1rem;
+            transition: background-color 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-sizing: border-box;
             text-decoration: none;
-            position: relative;
-            z-index: 1;
         }
 
         .payco-login-button img {
@@ -153,35 +156,96 @@
             margin-right: 8px;
         }
 
-        .payco-login-button span {
-            font-family: inherit;
-            font-size: 1.1rem;
-            letter-spacing: 0;
+        .logo {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
         }
+
+        .logo img {
+            width: 100px;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .logo-text {
+            margin-left: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
     </style>
+    <script>
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.form-content');
+
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+
+            document.querySelector(`.tab[data-target="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+    </script>
 </head>
 <body>
-<!-- 로그인 폼 -->
+<a href="/" class="logo">
+    <img src="/images/logo.png" alt="흑백문고 로고">
+    <span class="logo-text">흑백문고</span>
+</a>
+
+
 <div class="login-container">
-    <h2>로그인</h2>
-    <div th:if="${error}" class="error-message" th:text="${error}"></div>
-    <form id="loginForm" th:action="@{/login}" method="post">
-    <div class="form-group">
-            <label for="loginId">아이디</label>
-            <input type="text" id="loginId" name="loginId" placeholder="아이디를 입력하세요" required>
-        </div>
-        <div class="form-group">
-            <label for="password">비밀번호</label>
-            <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
-        </div>
-        <button type="submit">로그인</button>
-    </form>
-    <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+    <div class="tabs">
+        <div class="tab active" data-target="memberForm" onclick="switchTab('memberForm')">회원</div>
+        <div class="tab" data-target="guestOrderForm" onclick="switchTab('guestOrderForm')">비회원 주문확인</div>
+    </div>
 
-    <a href="/oauth2/authorization/payco" class="payco-login-button">
-        PAYCO 로그인
-    </a>
+    <div id="memberForm" class="form-content active">
+        <h2>로그인</h2>
+        <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
+        <form id="loginForm" th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="loginId">아이디</label>
+                <input type="text" id="loginId" name="loginId" placeholder="아이디를 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="password">비밀번호</label>
+                <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요" required>
+            </div>
+            <button type="submit">로그인</button>
+        </form>
+        <p>계정이 없으신가요? <a href="/signup">회원가입</a></p>
+        <a href="/oauth2/authorization/payco" class="payco-login-button">PAYCO 로그인</a>
+    </div>
 
+    <div id="guestOrderForm" class="form-content">
+        <h2>비회원 주문확인</h2>
+
+        <!-- TODO path 확인, Security 권한 추가-->
+
+        <form id="orderCheckForm" th:action="@{/guest/order-check}" method="post">
+            <div class="form-group">
+                <label for="orderNumber">주문번호</label>
+                <input type="text" id="orderNumber" name="orderNumber" placeholder="주문번호를 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="email">이메일</label>
+                <input type="email" id="email" name="email" placeholder="주문 시 작성한 이메일을 입력하세요" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">전화번호 <span style="font-size: 0.9rem; color: #888;">(예: 010-0000-0000)</span></label>
+                <input type="text" id="phone" name="phone" placeholder="주문 시 작성한 전화번호를 입력하세요" required>
+            </div>
+            <button type="submit">확인</button>
+        </form>
+    </div>
 </div>
 </body>
 </html>
