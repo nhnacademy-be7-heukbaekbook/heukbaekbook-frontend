@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>흑백문고 - 내 리뷰 목록</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        /* 테이블 스타일 */
+        .review-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 16px;
+            text-align: left;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+
+        .review-table th, .review-table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .review-table th {
+            background-color: #696969;
+            color: #fff;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .review-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .review-table tr:hover {
+            background-color: #e0e0e0;
+        }
+
+        .review-image {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .review-table {
+                font-size: 14px;
+            }
+
+            .review-image {
+                max-width: 70px;
+                max-height: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- 헤더 레이아웃 적용 -->
+<header th:replace="~{layout :: header}"></header>
+
+<!-- 마이페이지 헤더 영역 -->
+<div id="mypage-header">
+    <span class="header-title">마이페이지</span>
+</div>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="mypage-container">
+
+    <!-- 왼쪽 사이드바 -->
+    <aside id="sidebar" th:replace="~{mypage/mypage-sidebar :: sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h2>내 리뷰 목록</h2>
+
+        <table class="review-table">
+            <thead>
+            <tr>
+                <th>책 제목</th>
+                <th>제목</th>
+                <th>내용</th>
+                <th>평점</th>
+                <th>이미지</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- 리뷰 반복 -->
+            <tr th:each="review : ${reviews}">
+                <!-- 책 제목 및 링크 -->
+                <td>
+                    <a th:href="@{/books/detail(bookId=${review.bookId})}" th:text="${review.bookTitle}">책 제목</a>
+                </td>
+                <td th:text="${review.title}">제목</td>
+                <td th:text="${review.content}">내용</td>
+                <td th:text="${review.score}">평점</td>
+                <td>
+                    <div th:if="${review.imageUrls != null}">
+                        <ul style="list-style: none; padding: 0; margin: 0;">
+                            <li th:each="image : ${review.imageUrls}" style="display: inline-block; margin-right: 5px;">
+                                <img th:src="${image}" alt="리뷰 이미지" class="review-image"/>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </section>
+</main>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
+</body>
+</html>
