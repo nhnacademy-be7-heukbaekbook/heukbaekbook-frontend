@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.order.controller;
 
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
@@ -60,9 +61,16 @@ public class OrderController {
 
     @DeleteMapping("/{orderId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public ResponseEntity<Void> deleteOrder(@PathVariable String orderId) {
+    public void deleteOrder(@PathVariable String orderId) {
         log.info("orderId = {}", orderId);
+        orderService.deleteOrder(orderId);
+    }
 
-        return orderService.deleteOrder(orderId);
+    @PutMapping("/{orderId}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void updateOrder(@PathVariable String orderId,
+                            @RequestBody OrderUpdateRequest orderUpdateRequest) {
+        log.info("orderId = {}, orderUpdateRequest = {}", orderId, orderUpdateRequest);
+        orderService.updateOrder(orderId, orderUpdateRequest);
     }
 }

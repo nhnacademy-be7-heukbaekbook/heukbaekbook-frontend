@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -246,14 +247,15 @@ class MemberServiceImplTest {
     void testCreateMyPageResponse_Success() {
         // Given
         MyPageResponse mockResponse = mock(MyPageResponse.class);
-        when(memberClient.getMyPageResponse()).thenReturn(mockResponse);
+        PageRequest pageRequest = PageRequest.of(1, 10);
+        when(memberClient.getMyPageResponse(pageRequest)).thenReturn(mockResponse);
 
         // When
-        MyPageResponse result = memberService.createMyPageResponse();
+        MyPageResponse result = memberService.createMyPageResponse(pageRequest);
 
         // Then
         assertThat(result).isNotNull();
-        verify(memberClient, times(1)).getMyPageResponse();
+        verify(memberClient, times(1)).getMyPageResponse(pageRequest);
     }
 
     @Test

@@ -12,6 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,10 +54,11 @@ class MemberControllerTest {
     @Test
     @WithMockUser(username = "testUser", roles = "USER")
     void testGetMyPageHome() throws Exception {
-        OrderResponse orderResponse = new OrderResponse(List.of());
+        OrderResponse orderResponse = new OrderResponse(new PageImpl<>(List.of()));
         MyPageResponse myPageResponse = new MyPageResponse(gradeDto, orderResponse);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        when(memberService.createMyPageResponse()).thenReturn(myPageResponse);
+        when(memberService.createMyPageResponse(pageRequest)).thenReturn(myPageResponse);
 
         mockMvc.perform(get("/members/mypage"))
                 .andExpect(status().isOk())
@@ -151,10 +154,11 @@ class MemberControllerTest {
     @Test
     @WithMockUser(username = "testUser", roles = "USER")
     void testGetMyPageOrders() throws Exception {
-        OrderResponse orderResponse = new OrderResponse(List.of());
+        OrderResponse orderResponse = new OrderResponse(new PageImpl<>(List.of()));
         MyPageResponse myPageResponse = new MyPageResponse(gradeDto, orderResponse);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        when(memberService.createMyPageResponse()).thenReturn(myPageResponse);
+        when(memberService.createMyPageResponse(pageRequest)).thenReturn(myPageResponse);
 
         mockMvc.perform(get("/members/mypage/orders"))
                 .andExpect(status().isOk())

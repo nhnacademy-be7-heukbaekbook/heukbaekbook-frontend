@@ -11,11 +11,13 @@ import com.nhnacademy.heukbaekfrontend.order.client.DeliveryFeeClient;
 import com.nhnacademy.heukbaekfrontend.order.client.OrderClient;
 import com.nhnacademy.heukbaekfrontend.order.client.WrappingPaperClient;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.*;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;
 import com.nhnacademy.heukbaekfrontend.util.Utils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -129,7 +131,17 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ResponseEntity<Void> deleteOrder(String orderId) {
-        return orderClient.deleteOrder(orderId);
+    public void deleteOrder(String orderId) {
+        orderClient.deleteOrder(orderId);
+    }
+
+    @Override
+    public OrderResponse getOrders(Pageable pageable) {
+        return orderClient.getOrders(pageable);
+    }
+
+    @Override
+    public void updateOrder(String orderId, OrderUpdateRequest orderUpdateRequest) {
+        orderClient.updateOrder(orderId, orderUpdateRequest);
     }
 }
