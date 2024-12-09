@@ -3,7 +3,6 @@ package com.nhnacademy.heukbaekfrontend.review.client;
 import com.nhnacademy.heukbaekfrontend.review.dto.request.ReviewImageRequest;
 import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewCreateResponse;
 import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
-import com.nhnacademy.heukbaekfrontend.util.Utils;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,5 +23,15 @@ public interface ReviewClient {
     );
     @GetMapping("/my")
     List<ReviewDetailResponse> getMyReviews();
+
+    @GetMapping("/book/{bookId}")
+    List<ReviewDetailResponse> getReviewsByBook(@RequestParam("bookId") Long bookId);
+
+    @GetMapping("/{orderId}/{bookId}")
+    Boolean hasReview(@PathVariable Long orderId,
+                      @PathVariable Long bookId);
+    @GetMapping("/order/{orderId}")
+    List<ReviewDetailResponse> getReviewsByOrder(@PathVariable ("orderId") String orderId);
+
 
 }

@@ -1,5 +1,8 @@
 package com.nhnacademy.heukbaekfrontend.review.dto.response;
 
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
+import com.nhnacademy.heukbaekfrontend.book.dto.response.BookViewResponse;
+
 import java.util.List;
 
 /**
@@ -12,5 +15,6 @@ public record ReviewDetailResponse(
         String content,
         String title,
         int score,
-        List<String> imageUrls // 업로드된 이미지 URL 리스트
+        List<String> imageUrls,
+        String bookTitle
 ) {}

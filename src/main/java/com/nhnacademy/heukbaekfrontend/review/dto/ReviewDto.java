@@ -4,15 +4,13 @@ public class ReviewDto {
     private String title;
     private String content;
     private int score;
-    private String bookTitle; // 책 제목
-    private String orderId;   // 주문 ID
+    private String bookTitle;
 
-    public ReviewDto(String title, String content, int score, String bookTitle, String orderId) {
+    public ReviewDto(String title, String content, int score, String bookTitle) {
         this.title = title;
         this.content = content;
         this.score = score;
         this.bookTitle = bookTitle;
-        this.orderId = orderId;
     }
 
     public String getTitle() {
@@ -47,11 +45,4 @@ public class ReviewDto {
         this.bookTitle = bookTitle;
     }
 
-    public String getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(String orderId) {
-        this.orderId = orderId;
-    }
 }

@@ -7,6 +7,9 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailRes
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.review.dto.ReviewDto;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
+import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +21,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,6 +34,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final LogoutService logoutService;
+    private final ReviewService reviewService;
 
     public static final String MEMBER_RESPONSE = "memberResponse";
 
@@ -107,16 +114,18 @@ public class MemberController {
         MyPageOrderDetailResponse myPageOrderDetailResponse = memberService.getMyPageOrderDetail(orderId);
         log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
 
+        List<ReviewDetailResponse> reviews = reviewService.getMyReviewsByOrder(orderId);
+
+
+        myPageOrderDetailResponse.orderDetailResponse().books().forEach(book -> {
+            boolean hasReview = reviews.stream()
+                    .anyMatch(review -> review.bookId().equals(book.getId()));
+            book.setHasReview(hasReview);
+        });
         return new ModelAndView("mypage/orderDetail")
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
                 .addObject("gradeDto", myPageOrderDetailResponse.gradeDto())
-                .addObject("orderId",orderId);
-
+                .addObject("orderId",orderId)
+                .addObject("reviews", reviews);
     }
-
-//    @GetMapping("/reviews")
-//    public ModelAndView getMyPageReviews() {
-//        return new ModelAndView("mypage/reviews")
-//                .addObject("gradeDto", memberService.getMembersGrade().get());
-//    }
 }
