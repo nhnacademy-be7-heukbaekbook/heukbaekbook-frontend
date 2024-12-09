@@ -53,6 +53,11 @@ class BaseLoginFilterTest {
             protected String getSuccessRedirectUrl() {
                 return "/home";
             }
+
+            @Override
+            protected String getFailureRedirectUrl() {
+                return "/login";
+            }
         };
     }
 

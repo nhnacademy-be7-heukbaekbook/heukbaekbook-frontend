@@ -49,6 +49,8 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
 
     protected abstract String getSuccessRedirectUrl();
 
+    protected abstract String getFailureRedirectUrl();
+
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
         return requiresAuthenticationRequestMatcher.matches(request);
@@ -112,9 +114,9 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
 
         Cookie errorCookie = new Cookie("loginError", URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
         errorCookie.setPath("/");
-        errorCookie.setMaxAge(10);
+        errorCookie.setMaxAge(5);
         response.addCookie(errorCookie);
 
-        response.sendRedirect("/login");
+        response.sendRedirect(getFailureRedirectUrl());
     }
 }
