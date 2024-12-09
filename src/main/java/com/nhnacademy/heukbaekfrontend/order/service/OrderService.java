@@ -1,10 +1,9 @@
 package com.nhnacademy.heukbaekfrontend.order.service;
 
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailListResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderUpdateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.*;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -20,5 +19,9 @@ public interface OrderService {
 
     MyPageRefundableOrderDetailResponse getRefundableOrderDetail(Long orderId);
 
-    ResponseEntity<Void> deleteOrder(String orderId);
+    void deleteOrder(String orderId);
+
+    OrderResponse getOrders(Pageable pageable);
+
+    void updateOrder(String orderId, OrderUpdateRequest orderUpdateRequest);
 }

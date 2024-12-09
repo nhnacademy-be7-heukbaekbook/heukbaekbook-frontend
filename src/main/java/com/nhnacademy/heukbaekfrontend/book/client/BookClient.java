@@ -33,5 +33,4 @@ public interface BookClient {
 
     @PostMapping("/search")
     Page<BookResponse> searchBooks(@RequestBody BookSearchRequest searchRequest, Pageable pageable);
-
 }

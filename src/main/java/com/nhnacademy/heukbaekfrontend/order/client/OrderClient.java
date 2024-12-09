@@ -1,10 +1,15 @@
 package com.nhnacademy.heukbaekfrontend.order.client;
 
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
+import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailListResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.MyPageRefundableOrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
+import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderResponse;
+import feign.Response;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,5 +32,12 @@ public interface OrderClient {
     );
 
     @DeleteMapping("/{orderId}")
-    ResponseEntity<Void> deleteOrder(@PathVariable String orderId);
+    void deleteOrder(@PathVariable String orderId);
+
+    @GetMapping
+    OrderResponse getOrders(Pageable pageable);
+
+    @PutMapping("/{orderId}")
+    void updateOrder(@PathVariable String orderId,
+                     @RequestBody OrderUpdateRequest orderUpdateRequest);
 }
