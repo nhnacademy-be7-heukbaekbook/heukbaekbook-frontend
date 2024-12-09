@@ -33,6 +33,9 @@ class CategoryServiceTest {
     @Mock
     private CategoryClient categoryClient;
 
+    @Mock
+    private RedisCategoryService redisCategoryService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -120,7 +123,7 @@ class CategoryServiceTest {
                 new CategorySummaryResponse(3L, "Category B", List.of())
         );
 
-        when(categoryClient.getCategories()).thenReturn(mockTopCategories);
+        when(redisCategoryService.getCategories()).thenReturn(mockTopCategories);
 
         List<CategorySummaryResponse> result = categoryService.getTopCategories();
 
@@ -128,7 +131,8 @@ class CategoryServiceTest {
         assertThat(result.get(0).name()).isEqualTo("Category A");
         assertThat(result.get(0).subCategorySummaryResponses()).hasSize(1);
         assertThat(result.get(1).name()).isEqualTo("Category B");
-        verify(categoryClient, times(1)).getCategories();
+
+        verify(redisCategoryService, times(1)).getCategories();
     }
 
     @Test
