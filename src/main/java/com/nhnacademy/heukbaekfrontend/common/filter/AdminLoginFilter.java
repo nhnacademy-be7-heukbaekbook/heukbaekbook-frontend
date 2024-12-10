@@ -28,4 +28,9 @@ public class AdminLoginFilter extends BaseLoginFilter {
     protected String getSuccessRedirectUrl() {
         return "/admin/home";
     }
+
+    @Override
+    protected String getFailureRedirectUrl() {
+        return "/admin/login";
+    }
 }
