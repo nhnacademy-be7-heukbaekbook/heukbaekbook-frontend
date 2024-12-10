@@ -2,7 +2,6 @@ package com.nhnacademy.heukbaekfrontend.bookCategory.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.bookCategory.service.client.BookCategoryClient;
-import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

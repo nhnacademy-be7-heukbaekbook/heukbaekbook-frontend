@@ -27,7 +27,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthClient authClient;
     private final CookieUtil cookieUtil;
 
-    private TokenResponse validateToken(String token) throws IOException {
+    private TokenResponse validateToken(String token) {
         TokenResponse response = validateMemberToken(token);
         if (response != null) {
             return response;

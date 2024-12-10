@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.cart.client;
 
-import com.nhnacademy.heukbaekfrontend.cart.dto.CartBookResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartBookSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.cart.dto.CartCreateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
