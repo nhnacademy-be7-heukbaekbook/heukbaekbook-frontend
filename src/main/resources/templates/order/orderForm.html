@@ -1167,7 +1167,7 @@
             const recipientPhone1 = document.getElementById("recipientPhone1").value;
             const recipientPhone2 = document.getElementById("recipientPhone2").value;
             const recipientPhone3 = document.getElementById("recipientPhone3").value;
-            const deliveryFeeText = document.getElementById("deliveryFee").textContent;
+            const deliveryFeeText = document.getElementById("deliveryFee").textContent.trim().replace(",", "");
             const deliveryFee = parseFloat(deliveryFeeText.replace('원', ''));
             const deliveryDate = getSelectedDate();
             const usedPoint = document.getElementById('discountAmount').textContent;

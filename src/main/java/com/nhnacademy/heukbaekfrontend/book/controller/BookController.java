@@ -48,7 +48,7 @@ public class BookController {
     }
 
     @GetMapping("/detail")
-    public ModelAndView viewBookDetail(HttpServletRequest request, @RequestParam Long bookId) {
+    public ModelAndView viewBookDetail(@RequestParam Long bookId) {
         log.info("bookId : {}", bookId);
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
@@ -60,7 +60,7 @@ public class BookController {
                 .addObject("book", bookViewResponse)
                 .addObject("categories", parentCategoryResponses)
                 .addObject("availableCoupons", List.of());
-        ;
+
         return modelAndView;
     }
 }

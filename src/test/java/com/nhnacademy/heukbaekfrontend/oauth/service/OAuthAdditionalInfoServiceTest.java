@@ -36,6 +36,8 @@ class OAuthAdditionalInfoServiceTest {
         memberService = mock(MemberService.class);
         loginClient = mock(LoginClient.class);
         service = new OAuthAdditionalInfoService(cookieUtil, memberService, loginClient);
+
+        SecurityContextHolder.clearContext();
     }
 
     @Test

@@ -4,7 +4,6 @@ import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.client.CouponPolic
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.request.CouponPolicyRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
-import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.impl.CouponPolicyServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

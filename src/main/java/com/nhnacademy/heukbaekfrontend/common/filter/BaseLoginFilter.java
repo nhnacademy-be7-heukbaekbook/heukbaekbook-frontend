@@ -6,12 +6,10 @@ import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -25,6 +23,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,6 +48,8 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
     protected abstract ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest);
 
     protected abstract String getSuccessRedirectUrl();
+
+    protected abstract String getFailureRedirectUrl();
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
@@ -108,6 +110,13 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        String errorMessage = "로그인 실패: 아이디 또는 비밀번호를 확인해주세요.";
+
+        Cookie errorCookie = new Cookie("loginError", URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
+        errorCookie.setPath("/");
+        errorCookie.setMaxAge(5);
+        response.addCookie(errorCookie);
+
+        response.sendRedirect(getFailureRedirectUrl());
     }
 }

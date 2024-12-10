@@ -1,6 +1,5 @@
 package com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.controller;
 
-import com.nhnacademy.heukbaekfrontend.couponset.coupon.controller.CouponController;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.request.CouponPolicyRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;

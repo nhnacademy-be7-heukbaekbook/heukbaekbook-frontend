@@ -7,6 +7,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 public class Utils {
 
+    private Utils() {}
+
     public static String getRedirectUrl(Integer page, Integer size, String sort, String uri) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromPath(uri);
         if (page != null) {
@@ -16,7 +18,7 @@ public class Utils {
             uriBuilder.queryParam("size", size);
         }
         if (sort != null && !sort.isEmpty()) {
-            uriBuilder.queryParam("sort", sort.replaceAll(": ", ","));
+            uriBuilder.queryParam("sort", sort.replace(": ", ","));
         }
 
         return uriBuilder.toUriString();
@@ -27,8 +29,8 @@ public class Utils {
         String userId = null;
         if (authentication != null && authentication.isAuthenticated()) {
             Object principal = authentication.getPrincipal();
-            if (principal instanceof UserDetails) {
-                userId = ((UserDetails) principal).getUsername();
+            if (principal instanceof UserDetails userDetails) {
+                userId = userDetails.getUsername();
             } else {
                 userId = principal.toString();
             }

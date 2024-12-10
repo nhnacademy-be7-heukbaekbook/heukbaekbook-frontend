@@ -4,7 +4,6 @@ import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponStatus;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.DiscountType;
 import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
-import com.nhnacademy.heukbaekfrontend.memberset.grade.dto.GradeDto;
 import org.springframework.data.domain.Page;
 
 import java.io.Serial;

@@ -1,10 +1,12 @@
 package com.nhnacademy.heukbaekfrontend.common.filter;
 
 import com.nhnacademy.heukbaekfrontend.common.client.AuthClient;
+import com.nhnacademy.heukbaekfrontend.common.filter.wrapper.MutableHttpServletRequest;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.common.util.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import static com.nhnacademy.heukbaekfrontend.common.interceptor.FeignClientInterceptor.ACCESS_TOKEN;
@@ -32,29 +35,34 @@ public class ReissueFilter extends OncePerRequestFilter {
         String accessToken = cookieUtil.getCookieValue(request, ACCESS_TOKEN);
         String refreshToken = cookieUtil.getCookieValue(request, REFRESH_TOKEN);
 
-        try {
-            if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
-                ResponseEntity<String> refreshResponse = authClient.refreshTokens(REFRESH_TOKEN + "=" + refreshToken);
+        if ((accessToken == null || jwtUtil.isExpired(accessToken)) && refreshToken != null) {
+            ResponseEntity<String> refreshResponse = authClient.refreshTokens(REFRESH_TOKEN + "=" + refreshToken);
 
-                Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie"))
-                        .forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
+            Objects.requireNonNull(refreshResponse.getHeaders().get("Set-Cookie"))
+                    .forEach(cookie -> response.addHeader(HttpHeaders.SET_COOKIE, cookie));
 
-                String newAccessToken = extractAccessTokenFromSetCookie(refreshResponse);
-                if (newAccessToken != null) {
-                    request.setAttribute(ACCESS_TOKEN, newAccessToken);
+            String newAccessToken = extractAccessTokenFromSetCookie(refreshResponse);
+            if (newAccessToken != null) {
+                Cookie[] existingCookies = request.getCookies();
+                if (existingCookies == null) {
+                    existingCookies = new Cookie[0];
                 }
+
+                Cookie newAccessTokenCookie = new Cookie(ACCESS_TOKEN, newAccessToken);
+                newAccessTokenCookie.setPath("/");
+                newAccessTokenCookie.setHttpOnly(true);
+
+                Cookie[] newCookies = Arrays.copyOf(existingCookies, existingCookies.length + 1);
+                newCookies[existingCookies.length] = newAccessTokenCookie;
+
+                MutableHttpServletRequest mutableRequest = new MutableHttpServletRequest(request);
+                mutableRequest.setCookies(newCookies);
+
+                filterChain.doFilter(mutableRequest, response);
+                return;
             }
-
-            filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("Unauthorized: " + e.getMessage());
-            cookieUtil.deleteCookie(response, REFRESH_TOKEN);
-
-
-            log.error(e.getMessage());
-            response.sendRedirect("/login");
         }
+        filterChain.doFilter(request, response);
     }
 
     @Override
@@ -63,7 +71,9 @@ public class ReissueFilter extends OncePerRequestFilter {
 
         return path.startsWith("/css") ||
                 path.startsWith("/images") ||
-                path.startsWith("/js");
+                path.startsWith("/js") ||
+                path.startsWith("/favicon") ||
+                path.startsWith("/error");
     }
 
     private String extractAccessTokenFromSetCookie(ResponseEntity<String> response) {

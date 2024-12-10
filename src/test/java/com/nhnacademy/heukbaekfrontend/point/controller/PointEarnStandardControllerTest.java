@@ -1,7 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.point.controller;
 
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
-import com.nhnacademy.heukbaekfrontend.order.controller.OrderController;
 import com.nhnacademy.heukbaekfrontend.point.dto.*;
 import com.nhnacademy.heukbaekfrontend.point.service.PointEarnStandardService;
 
@@ -14,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

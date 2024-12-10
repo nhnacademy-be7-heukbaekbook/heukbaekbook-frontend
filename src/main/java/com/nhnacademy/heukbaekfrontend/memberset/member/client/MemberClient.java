@@ -7,6 +7,7 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,7 +42,7 @@ public interface MemberClient {
     ResponseEntity<GradeDto> getMembersGrade();
 
     @GetMapping("/my-page")
-    MyPageResponse getMyPageResponse();
+    MyPageResponse getMyPageResponse(Pageable pageable);
 
     @GetMapping("/orders/{orderId}")
     MyPageOrderDetailResponse getMyPageOrderDetail(@PathVariable String orderId);

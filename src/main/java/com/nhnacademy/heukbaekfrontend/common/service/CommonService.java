@@ -4,14 +4,10 @@ import com.nhnacademy.heukbaekfrontend.book.domain.Book;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-
-import static java.math.BigDecimal.ROUND_HALF_UP;
 
 @Service
 public class CommonService {

@@ -29,4 +29,9 @@ public class MemberLoginFilter extends BaseLoginFilter {
     protected String getSuccessRedirectUrl() {
         return "/";
     }
+
+    @Override
+    protected String getFailureRedirectUrl() {
+        return "/login";
+    }
 }

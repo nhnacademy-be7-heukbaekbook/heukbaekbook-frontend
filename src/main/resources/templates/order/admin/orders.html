@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/sidebar.css">
+</head>
+<body>
+
+<header th:replace="~{admin/layout :: header}"></header>
+
+<!-- 마이페이지 메인 콘텐츠 영역 -->
+<main class="admin-page-container">
+
+    <!-- 사이드바 -->
+    <aside id="admin-sidebar" th:replace="~{admin/admin-sidebar :: admin-sidebar}"></aside>
+
+    <!-- 오른쪽 콘텐츠 영역 -->
+    <section id="content-area">
+        <h2>주문내역/배송조회</h2>
+
+        <h3 class="content-title">주문정보</h3>
+        <table>
+            <colgroup>
+                <col style="width: 20%;">
+                <col style="width: 15%;">
+                <col style="width: 35%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+                <col style="width: 10%;">
+            </colgroup>
+            <thead>
+            <tr class="table-header">
+                <th>주문번호</th>
+                <th>주문일자</th>
+                <th>주문내역</th>
+                <th>주문금액/수량</th>
+                <th>주문상태</th>
+                <th>배송</th>
+            </tr>
+            </thead>
+            <tbody style="font-size: 12px">
+            <!-- 여러 책을 반복해서 표시 -->
+            <tr th:each="order, iterStat : ${orderResponse.orderSummaryResponsePage.content}">
+                <td>
+                    <a th:href="@{/admin/orders/{orderId}(orderId=${order.tossOrderId})}"
+                       th:text="${order.tossOrderId}" class="underline-on-hover">
+                    </a>
+                </td>
+                <td th:text="${order.createdAt}">주문일자</td>
+                <td th:text="${order.title}">주문내역</td>
+                <td th:text="${order.priceAndQuantity}">주문금액/수량</td>
+                <td>
+                    <!-- '결제대기'일 경우 텍스트만 표시 -->
+                    <span th:if="${!#strings.equals(order.status, '결제완료')}" th:text="${order.status}"></span>
+
+                    <!-- '결제대기'가 아닐 경우 셀렉트 박스를 표시 -->
+                    <label>
+                        <select th:unless="${!#strings.equals(order.status, '결제완료')}"
+                                th:attr="onchange='updateStatus(&quot;' + ${order.tossOrderId} + '&quot;, this.value)'">
+                            <option th:value="'결제완료'" th:selected="${#strings.equals(order.status, '결제완료')}">결제완료</option>
+                            <option th:value="'배송중'" th:selected="${#strings.equals(order.status, '배송중')}">배송중</option>
+                            <option th:value="'주문취소'" th:selected="${#strings.equals(order.status, '주문취소')}">주문취소</option>
+                        </select>
+                    </label>
+                </td>
+                <td>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div th:if="${!orderResponse.orderSummaryResponsePage.content.isEmpty()}">
+            <div th:replace="~{fragments/pagination :: pagination(${orderResponse.orderSummaryResponsePage})}"></div>
+        </div>
+    </section>
+
+
+</main>
+
+<script>
+    function updateStatus(orderId, newStatus) {
+        fetch(`/order/${orderId}`, { // 문자열 템플릿 리터럴 사용
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: newStatus }),
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (response.ok) {
+                    alert('주문 상태가 성공적으로 변경되었습니다.');
+                    location.reload(); // 페이지 새로고침
+                } else {
+                    alert('주문 상태 변경에 실패했습니다.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('오류가 발생했습니다.');
+            });
+    }
+</script>
+
+<footer th:replace="~{admin/layout :: footer}"></footer>
+
+</body>
+</html>

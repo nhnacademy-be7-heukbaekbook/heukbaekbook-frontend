@@ -26,7 +26,7 @@
     <section id="content-area">
         <h2>주문내역/배송조회</h2>
 
-        <h3 class="content-title">주문상품정보</h3>
+        <h3 class="content-title">주문정보</h3>
         <table>
             <colgroup>
                 <col style="width: 20%;">
@@ -52,7 +52,7 @@
             </thead>
             <tbody style="font-size: 12px">
             <!-- 여러 책을 반복해서 표시 -->
-            <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponseList}">
+            <tr th:each="order : ${myPageResponse.orderResponse.orderSummaryResponsePage.content}">
                 <td>
                     <a th:href="@{/members/mypage/order/detail(orderId=${order.tossOrderId})}"
                        th:text="${order.tossOrderId}" class="underline-on-hover">
@@ -75,6 +75,10 @@
             </tr>
             </tbody>
         </table>
+
+        <div th:if="${!myPageResponse.orderResponse.orderSummaryResponsePage.content.isEmpty()}">
+            <div th:replace="~{fragments/pagination :: pagination(${myPageResponse.orderResponse.orderSummaryResponsePage})}"></div>
+        </div>
     </section>
 </main>
 
