@@ -7,7 +7,8 @@ import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import jakarta.servlet.http.HttpServletRequest;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,8 @@ public class BookController {
 
     private final BookCategoryService bookCategoryService;
 
+    private final CouponService couponService;
+
     @GetMapping("/category")
     public ModelAndView viewBooksByCategory(@RequestParam Long categoryId,
                                             Pageable pageable) {
@@ -54,12 +57,13 @@ public class BookController {
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
         List<ParentCategoryResponse> parentCategoryResponses = bookCategoryService.getBookCategoriesByBookId(bookId);
+        List<CouponResponse> downloadableCoupons = couponService.getDownloadableCouponsByBookId(bookId);
         log.info("parentCategoryResponses : {}", parentCategoryResponses);
 
         modelAndView
                 .addObject("book", bookViewResponse)
                 .addObject("categories", parentCategoryResponses)
-                .addObject("availableCoupons", List.of());
+                .addObject("availableCoupons", downloadableCoupons);
 
         return modelAndView;
     }

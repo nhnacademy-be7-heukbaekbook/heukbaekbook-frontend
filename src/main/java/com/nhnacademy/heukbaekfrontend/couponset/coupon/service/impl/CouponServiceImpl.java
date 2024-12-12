@@ -1,6 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.couponset.coupon.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.client.CouponClient;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.client.DownloadableCouponClient;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.request.CouponRequest;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.BookCouponResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CategoryCouponResponse;
@@ -13,12 +14,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CouponServiceImpl implements CouponService {
     private final CouponClient couponClient;
+    private final DownloadableCouponClient downloadableCouponClient;
 
 
     @Override
@@ -68,5 +71,10 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public CouponPageResponse getCouponPageResponse(Pageable pageable) {
         return couponClient.getCouponPageResponse(pageable.getPageNumber(), pageable.getPageSize()).getBody();
+    }
+
+    @Override
+    public List<CouponResponse> getDownloadableCouponsByBookId(Long bookId) {
+        return downloadableCouponClient.getDownloadableCoupons(bookId).getBody();
     }
 }
