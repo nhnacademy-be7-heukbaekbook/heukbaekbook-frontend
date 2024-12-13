@@ -15,9 +15,6 @@ nhncloud:
 redis:
   key: "8bf046001ecc4ee09792d17bfa05db73"
 
-rabbitmq:
-  key: "fab1693fcc834712927a3108b85a2a06"
-
 payco:
   client-id-key: 52a6943306d343c290333018f2096f9e
   client-secret-key: 4ed34dc0f902489884ed663554d0d9ed

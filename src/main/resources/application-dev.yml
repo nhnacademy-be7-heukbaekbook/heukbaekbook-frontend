@@ -1,6 +1,9 @@
 redis:
   database: 102
 
+rabbitmq:
+  key: "fab1693fcc834712927a3108b85a2a06"
+
 server:
   servlet:
     session:
