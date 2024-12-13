@@ -9,10 +9,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
@@ -51,6 +48,8 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
     protected abstract ResponseEntity<LoginResponse> performLogin(LoginRequest loginRequest);
 
     protected abstract String getSuccessRedirectUrl();
+
+    protected abstract String getFailureRedirectUrl();
 
     @Override
     protected boolean requiresAuthentication(HttpServletRequest request, HttpServletResponse response) {
@@ -115,9 +114,9 @@ public abstract class BaseLoginFilter extends UsernamePasswordAuthenticationFilt
 
         Cookie errorCookie = new Cookie("loginError", URLEncoder.encode(errorMessage, StandardCharsets.UTF_8));
         errorCookie.setPath("/");
-        errorCookie.setMaxAge(10);
+        errorCookie.setMaxAge(5);
         response.addCookie(errorCookie);
 
-        response.sendRedirect("/login");
+        response.sendRedirect(getFailureRedirectUrl());
     }
 }

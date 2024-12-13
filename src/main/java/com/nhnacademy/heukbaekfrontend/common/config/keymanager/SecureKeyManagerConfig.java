@@ -1,9 +1,7 @@
 package com.nhnacademy.heukbaekfrontend.common.config.keymanager;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

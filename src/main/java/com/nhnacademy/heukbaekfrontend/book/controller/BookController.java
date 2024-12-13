@@ -29,7 +29,9 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
+
     private final CategoryService categoryService;
+
     private final BookCategoryService bookCategoryService;
     private final ReviewService reviewService;
 

@@ -252,20 +252,64 @@
             return;
         }
 
+        // 모달 데이터 설정
         document.getElementById('bookId').value = bookId;
         document.getElementById('orderId').value = orderId;
 
+        // 제목 및 버튼 텍스트 변경
+        const modalTitle = document.querySelector('#reviewModal h2');
+        const submitButton = document.querySelector('#reviewForm button[type="submit"]');
+
         if (hasReview) {
+            modalTitle.textContent = "리뷰 수정";
+            submitButton.textContent = "리뷰 수정";
             alert("리뷰 수정 모드로 전환합니다.");
+
+            // 기존 리뷰 데이터 로드 (API 호출)
+            fetch(`/reviews/${orderId}/${bookId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('리뷰 데이터를 불러오는데 실패했습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById('title').value = data.title;
+                    document.getElementById('content').value = data.content;
+
+                    // 별점 선택 처리
+                    document.querySelectorAll('input[name="score"]').forEach(input => {
+                        input.checked = input.value === String(data.score);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('리뷰 데이터를 불러오는 중 오류가 발생했습니다.');
+                });
         } else {
+            modalTitle.textContent = "리뷰 작성";
+            submitButton.textContent = "리뷰 등록";
             alert("리뷰 작성 모드로 전환합니다.");
+
+            // 폼 초기화
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            document.querySelectorAll('input[name="score"]').forEach(input => input.checked = false);
         }
 
+        // 모달 열기
         document.getElementById('reviewModal').style.display = 'flex';
     }
 
     function closeReviewModal() {
+        // 모달 닫기
         document.getElementById('reviewModal').style.display = 'none';
+
+        // 폼 초기화
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        document.querySelectorAll('input[name="score"]').forEach(input => input.checked = false);
+        document.getElementById('images').value = '';
     }
 
     document.getElementById('order-cancel-button').addEventListener('click', function () {
