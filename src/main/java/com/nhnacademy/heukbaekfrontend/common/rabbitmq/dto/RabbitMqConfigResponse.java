@@ -8,6 +8,7 @@ public record RabbitMqConfigResponse (
         @JsonProperty("username")
         String userName,
         String password,
+        @JsonProperty("virtual-host")
         String virtualHost
 ){
 }
