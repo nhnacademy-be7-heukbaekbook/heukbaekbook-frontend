@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>리뷰 작성</title>
+</head>
+<body>
+<h1>리뷰 작성</h1>
+<form th:action="@{/members/mypage/reviews}" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="orderId" th:value="${orderId}" />
+    <input type="hidden" name="bookId" th:value="${bookId}" />
+
+    <label for="title">제목:</label>
+    <input type="text" id="title" name="title" required/><br/>
+
+    <label for="content">내용:</label>
+    <textarea id="content" name="content" required></textarea><br/>
+
+    <label for="score">평점:</label>
+    <input type="number" id="score" name="score" min="1" max="5" required/><br/>
+
+    <label for="images">이미지 업로드:</label>
+    <input type="file" id="images" name="images" multiple/><br/>
+
+    <button type="submit">리뷰 작성</button>
+</form>
+</body>
+</html>

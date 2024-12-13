@@ -10,6 +10,7 @@ import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.ContributorSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
 import com.nhnacademy.heukbaekfrontend.publisher.dto.PublisherSummaryResponse;
+import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,10 +54,13 @@ class BookControllerTest {
     @MockBean
     private CouponService couponService;
 
+    @MockBean
+    private ReviewService reviewService;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, categoryService, bookCategoryService, couponService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new BookController(bookService, categoryService, bookCategoryService, reviewService ,couponService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }
