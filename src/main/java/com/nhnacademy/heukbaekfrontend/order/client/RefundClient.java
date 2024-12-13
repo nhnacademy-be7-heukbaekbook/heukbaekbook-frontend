@@ -18,5 +18,6 @@ public interface RefundClient {
     ResponseEntity<MyPageRefundDetailResponse> getRefunds(@RequestParam String customerId);
 
     @PostMapping
+
     ResponseEntity<RefundCreateResponse> createRefund(@RequestBody RefundCreateRequest request);
 }

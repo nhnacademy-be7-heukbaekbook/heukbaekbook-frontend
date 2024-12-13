@@ -3,9 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <title>흑백문고</title>
-    <!--  <title th:text="${pageTitle}">마이페이지</title>-->
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/sidebar.css">
+    <style>
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 15px;
+            width: 350px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .modal-content h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .modal-content form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-content label {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #333;
+            text-align: left;
+        }
+
+        .modal-content input,
+        .modal-content textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .modal-content textarea {
+            resize: none;
+            height: 80px;
+        }
+
+        .review-stars {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .review-stars input[type="radio"] {
+            display: none;
+        }
+
+        .review-stars label {
+            font-size: 2rem;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .review-stars input[type="radio"]:checked ~ label,
+        .review-stars label:hover,
+        .review-stars label:hover ~ label {
+            color: #000;
+        }
+
+        .review-stars input[type="radio"]:checked ~ label ~ label {
+            color: #ccc;
+        }
+
+        .modal-content button {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 0;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background-color: #444;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            color: #000;
+            background: none;
+            border: none;
+        }
+    </style>
 </head>
 <body>
 
@@ -14,7 +128,7 @@
 
 <!-- 마이페이지 헤더 영역 -->
 <div id="mypage-header">
-    <span class="header-title" >마이페이지</span>
+    <span class="header-title">마이페이지</span>
 </div>
 
 <!-- 마이페이지 메인 콘텐츠 영역 -->
@@ -31,7 +145,8 @@
         <table>
             <colgroup>
                 <col style="width: 10%;">
-                <col style="width: 60%;">
+                <col style="width: 50%;">
+                <col style="width: 10%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
@@ -43,10 +158,10 @@
                 <th>수량</th>
                 <th>가격</th>
                 <th>선택</th>
+                <th>리뷰작성</th>
             </tr>
             </thead>
             <tbody style="font-size: 12px">
-            <!-- 여러 책을 반복해서 표시 -->
             <tr th:each="book : ${myPageOrderDetailResponse.orderDetailResponse.books}">
                 <td th:text="${myPageOrderDetailResponse.orderDetailResponse.status}">상태</td>
                 <td>
@@ -61,33 +176,151 @@
                         <input type="checkbox" name="selectedBooks" th:value="${book.id}" />
                     </label>
                 </td>
+                <td>
+                    <button type="button"
+                            class="review-button"
+                            th:attr="data-book-id=${book.id}, data-order-id=${orderId}, data-has-review=${book.hasReview ? 'true' : 'false'}"
+                            th:text="${book.hasReview ? '리뷰 수정' : '리뷰 작성'}"
+                            onclick="openReviewModal(this)">
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>
-        <button type="button" id="order-cancel-button" class="order-cancel-button"
-                th:attr="data-toss-id=${myPageOrderDetailResponse.orderDetailResponse.tossOrderId}"
-                th:attrappend="disabled=${not (#strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제대기')
-                                    or #strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제완료')) ? 'disabled' : null}"
-                style="float: right;">
-            주문취소
-        </button>
+
+        <div class="button-container">
+            <button type="button" id="order-cancel-button" class="order-cancel-button"
+                    th:attr="data-toss-id=${myPageOrderDetailResponse.orderDetailResponse.tossOrderId}"
+                    th:attrappend="disabled=${not (#strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제대기')
+                                    or #strings.equals(myPageOrderDetailResponse.orderDetailResponse.status, '결제완료')) ? 'disabled' : null}">
+                주문취소
+            </button>
+        </div>
     </section>
 </main>
 
+<!-- 리뷰 작성 모달 -->
+<div id="reviewModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeReviewModal()">&times;</span>
+        <h2>리뷰 작성</h2>
+        <form id="reviewForm" method="POST" action="/members/mypage/reviews" enctype="multipart/form-data">
+            <input type="hidden" id="bookId" name="bookId">
+            <input type="hidden" id="orderId" name="orderId">
+            <div>
+                <label for="title">제목:</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+            <div>
+                <label for="content">내용:</label>
+                <textarea id="content" name="content" required></textarea>
+            </div>
+            <div class="review-stars">
+                <input type="radio" id="star5" name="score" value="5">
+                <label for="star5">★</label>
+                <input type="radio" id="star4" name="score" value="4">
+                <label for="star4">★</label>
+                <input type="radio" id="star3" name="score" value="3">
+                <label for="star3">★</label>
+                <input type="radio" id="star2" name="score" value="2">
+                <label for="star2">★</label>
+                <input type="radio" id="star1" name="score" value="1">
+                <label for="star1">★</label>
+            </div>
+            <div>
+                <label for="images">이미지:</label>
+                <input type="file" id="images" name="images" multiple>
+            </div>
+            <button type="submit">리뷰 등록</button>
+        </form>
+    </div>
+</div>
+
+<!-- 푸터 레이아웃 적용 -->
+<footer th:replace="~{layout :: footer}"></footer>
+
 <script>
+    function openReviewModal(button) {
+        const bookId = button.getAttribute('data-book-id');
+        const orderId = button.getAttribute('data-order-id');
+        const hasReview = button.getAttribute('data-has-review') === 'true';
+
+        console.log('bookId:', bookId, 'orderId:', orderId, 'hasReview:', hasReview);
+
+        if (!orderId) {
+            alert('필수 데이터가 없습니다.');
+            return;
+        }
+
+        // 모달 데이터 설정
+        document.getElementById('bookId').value = bookId;
+        document.getElementById('orderId').value = orderId;
+
+        // 제목 및 버튼 텍스트 변경
+        const modalTitle = document.querySelector('#reviewModal h2');
+        const submitButton = document.querySelector('#reviewForm button[type="submit"]');
+
+        if (hasReview) {
+            modalTitle.textContent = "리뷰 수정";
+            submitButton.textContent = "리뷰 수정";
+            alert("리뷰 수정 모드로 전환합니다.");
+
+            // // 기존 리뷰 데이터 로드 (API 호출)
+            // fetch(`/reviews/${orderId}/${bookId}`)
+            //     .then(response => {
+            //         if (!response.ok) {
+            //             throw new Error('리뷰 데이터를 불러오는데 실패했습니다.');
+            //         }
+            //         return response.json();
+            //     })
+            //     .then(data => {
+            //         document.getElementById('title').value = data.title;
+            //         document.getElementById('content').value = data.content;
+            //
+            //         // 별점 선택 처리
+            //         document.querySelectorAll('input[name="score"]').forEach(input => {
+            //             input.checked = input.value === String(data.score);
+            //         });
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //         alert('리뷰 데이터를 불러오는 중 오류가 발생했습니다.');
+            //     });
+        } else {
+            modalTitle.textContent = "리뷰 작성";
+            submitButton.textContent = "리뷰 등록";
+            alert("리뷰 작성 모드로 전환합니다.");
+
+            // 폼 초기화
+            document.getElementById('title').value = '';
+            document.getElementById('content').value = '';
+            document.querySelectorAll('input[name="score"]').forEach(input => input.checked = false);
+        }
+
+        // 모달 열기
+        document.getElementById('reviewModal').style.display = 'flex';
+    }
+
+    function closeReviewModal() {
+        // 모달 닫기
+        document.getElementById('reviewModal').style.display = 'none';
+
+        // 폼 초기화
+        document.getElementById('title').value = '';
+        document.getElementById('content').value = '';
+        document.querySelectorAll('input[name="score"]').forEach(input => input.checked = false);
+        document.getElementById('images').value = '';
+    }
+
     document.getElementById('order-cancel-button').addEventListener('click', function () {
-        // 데이터 속성에서 tossOrderId 가져오기
         const tossOrderId = this.getAttribute('data-toss-id');
 
-        // DELETE 요청 전송
         fetch(`/order/${tossOrderId}`, {
             method: 'DELETE',
         })
             .then(response => {
                 if (response.ok) {
                     alert('주문이 성공적으로 취소되었습니다.');
-                    // 페이지 새로고침 또는 리다이렉션
-                    // location.reload();
                     history.back();
                 } else {
                     alert('주문 취소에 실패했습니다. 다시 시도해주세요.');
@@ -99,9 +332,6 @@
             });
     });
 </script>
-
-<!-- 푸터 레이아웃 적용 -->
-<footer th:replace="~{layout :: footer}"></footer>
 
 </body>
 </html>

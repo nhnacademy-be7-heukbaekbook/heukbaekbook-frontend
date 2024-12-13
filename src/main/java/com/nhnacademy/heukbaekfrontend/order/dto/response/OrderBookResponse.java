@@ -1,14 +1,21 @@
 package com.nhnacademy.heukbaekfrontend.order.dto.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.math.BigDecimal;
 
-public record OrderBookResponse(
-        Long id,
-        String thumbnailUrl,
-        String title,
-        String price,
-        int quantity,
-        String salePrice,
-        BigDecimal discountRate,
-        String totalPrice) {
+@Getter
+public class OrderBookResponse {
+    private Long id;
+    private String thumbnailUrl;
+    private String title;
+    private String price;
+    private int quantity;
+    private String salePrice;
+    private BigDecimal discountRate;
+    private String totalPrice;
+    @Setter
+    private boolean hasReview;
+
 }
