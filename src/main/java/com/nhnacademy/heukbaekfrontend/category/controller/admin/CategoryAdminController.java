@@ -7,6 +7,9 @@ import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDeleteRespo
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryDetailResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.CouponType;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.dto.response.CouponPolicyResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +21,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 
 @Controller
@@ -25,10 +30,13 @@ import static com.nhnacademy.heukbaekfrontend.util.Utils.getRedirectUrl;
 public class CategoryAdminController {
 
     private final CategoryService categoryService;
+    private final CouponPolicyService couponPolicyService;
+
 
     @Autowired
-    public CategoryAdminController(CategoryService categoryService) {
+    public CategoryAdminController(CategoryService categoryService, CouponPolicyService couponPolicyService) {
         this.categoryService = categoryService;
+        this.couponPolicyService = couponPolicyService;
     }
 
     @GetMapping
@@ -37,7 +45,12 @@ public class CategoryAdminController {
             Model model
     ) {
         Page<CategoryDetailResponse> categories = categoryService.getAllCategories(pageable);
+        List<CouponPolicyResponse> couponPolicyResponses = couponPolicyService.getCouponPolicyList();
+
         model.addAttribute("categories", categories);
+        model.addAttribute("couponType", CouponType.CATEGORY);
+        model.addAttribute("couponPolicyList", couponPolicyResponses);
+
         return "category/admin/viewAllCategories";
     }
 
