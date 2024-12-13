@@ -1,8 +1,9 @@
-package com.nhnacademy.heukbaekfrontend.couponset.membercoupon.service;
+package com.nhnacademy.heukbaekfrontend.couponset.membercoupon.service.impl;
 
 import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.client.MemberCouponClient;
 import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.dto.CouponHistoryResponse;
 import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.dto.MemberCouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.service.CouponPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;

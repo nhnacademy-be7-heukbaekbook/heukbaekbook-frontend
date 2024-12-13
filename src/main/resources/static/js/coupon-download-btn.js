@@ -23,32 +23,25 @@ window.onclick = function (event) {
 // 쿠폰 다운로드 기능
 function downloadCoupon(button) {
     const couponId = button.getAttribute("data-id");
-    // 서버로 다운로드 요청 보내기
-    fetch(`/download/coupon/${couponId}`, {
-        method: 'GET',
+
+    fetch(`/members/coupons/${couponId}`, {
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         }
     })
         .then(response => {
-            if (response.ok) {
-                return response.blob();
+            if (!response.ok) {
+                return response.text().then(errorMessage => {
+                    throw new Error(errorMessage);
+                });
             }
-            throw new Error('Network response was not ok.');
+            return response.text();
         })
-        .then(blob => {
-            // 다운로드 트리거
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'coupon.pdf'; // 서버에서 제공하는 파일 이름을 사용
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            window.URL.revokeObjectURL(url);
+        .then(message => {
+            alert(message); // 정상 쿠폰 발급이 요청
         })
         .catch(error => {
-            alert('쿠폰 다운로드에 실패했습니다.');
-            console.error('There was a problem with the download operation:', error);
+            alert(error.message); // 예외 발생 시: "이미 발급 받은 쿠폰입니다", "발급 가능 기간이 아닙니다" 등
         });
 }
