@@ -145,8 +145,7 @@
         <table>
             <colgroup>
                 <col style="width: 10%;">
-                <col style="width: 50%;">
-                <col style="width: 10%;">
+                <col style="width: 60%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
                 <col style="width: 10%;">
@@ -157,7 +156,6 @@
                 <th>상품명</th>
                 <th>수량</th>
                 <th>가격</th>
-                <th>선택</th>
                 <th>리뷰작성</th>
             </tr>
             </thead>
@@ -171,11 +169,6 @@
                 </td>
                 <td th:text="${book.quantity}">수량</td>
                 <td th:text="${book.totalPrice} + '원'">가격</td>
-                <td>
-                    <label>
-                        <input type="checkbox" name="selectedBooks" th:value="${book.id}" />
-                    </label>
-                </td>
                 <td>
                     <button type="button"
                             class="review-button"
@@ -264,28 +257,6 @@
             modalTitle.textContent = "리뷰 수정";
             submitButton.textContent = "리뷰 수정";
             alert("리뷰 수정 모드로 전환합니다.");
-
-            // // 기존 리뷰 데이터 로드 (API 호출)
-            // fetch(`/reviews/${orderId}/${bookId}`)
-            //     .then(response => {
-            //         if (!response.ok) {
-            //             throw new Error('리뷰 데이터를 불러오는데 실패했습니다.');
-            //         }
-            //         return response.json();
-            //     })
-            //     .then(data => {
-            //         document.getElementById('title').value = data.title;
-            //         document.getElementById('content').value = data.content;
-            //
-            //         // 별점 선택 처리
-            //         document.querySelectorAll('input[name="score"]').forEach(input => {
-            //             input.checked = input.value === String(data.score);
-            //         });
-            //     })
-            //     .catch(error => {
-            //         console.error('Error:', error);
-            //         alert('리뷰 데이터를 불러오는 중 오류가 발생했습니다.');
-            //     });
         } else {
             modalTitle.textContent = "리뷰 작성";
             submitButton.textContent = "리뷰 등록";
