@@ -217,6 +217,70 @@
             background-color: #218838;
         }
 
+        .review-container {
+            margin-top: 30px;
+        }
+
+        .review-container h2 {
+            font-size: 1.5rem;
+            color: #2980b9;
+            margin-bottom: 15px;
+        }
+
+        .review-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .review-item {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+        .review-title {
+            font-size: 1.4em;
+            color: #34495e;
+        }
+
+        .review-content {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+
+        .review-score {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #e67e22;
+        }
+
+        .review-images {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .review-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-review {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+
     </style>
 </head>
 <body>
@@ -349,6 +413,22 @@
     <script
             th:src="@{/js/order-button.js}">
     </script>
+
+    <div th:if="${!#lists.isEmpty(reviews)}" class="review-container common-container">
+        <h2>사용자 리뷰</h2>
+        <ul class="review-list">
+            <li class="review-item" th:each="review : ${reviews}">
+                <h4 th:text="${review.title}" class="review-title">제목</h4>
+                <p th:text="${review.content}" class="review-content">내용</p>
+                <p class="review-score">평점: <span th:text="${review.score != null ? review.score : 0}"></span>/5</p>
+                <div class="review-images" th:if="${review.imageUrls.size() > 0}">
+                    <img th:each="url : ${review.imageUrls}" th:src="${url}" alt="리뷰 이미지" class="review-image">
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <p th:if="${#lists.isEmpty(reviews)}" class="no-review">아직 작성된 리뷰가 없습니다.</p>
 </main>
 
 <!-- 푸터 불러오기 -->
