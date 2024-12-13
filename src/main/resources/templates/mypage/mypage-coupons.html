@@ -120,8 +120,8 @@
                 </thead>
                 <tbody>
                 <tr th:each="coupon : ${availableCoupons}">
-                    <td th:text="${coupon.couponName}"></td>
-                    <td th:text="${coupon.couponDescription}"></td>
+                    <td th:text="${coupon.couponResponse().couponName()}"></td>
+                    <td th:text="${coupon.couponResponse().couponDescription}"></td>
                     <td th:text="${#temporals.format(coupon.couponIssuedAt, 'yyyy-MM-dd')}"></td>
                     <td th:text="${#temporals.format(coupon.couponExpirationDate, 'yyyy-MM-dd')}"></td>
                 </tr>

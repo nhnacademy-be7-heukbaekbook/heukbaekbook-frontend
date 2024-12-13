@@ -13,7 +13,7 @@ import static com.nhnacademy.heukbaekfrontend.util.Utils.getCustomerId;
 @Controller
 @RequestMapping("/members/coupons")
 @RequiredArgsConstructor
-public class MemberCouponController {
+public class CouponIssueController {
 
     private final CouponIssueService redisCouponService;
 
@@ -22,8 +22,6 @@ public class MemberCouponController {
 
         Long customerId = Long.parseLong(getCustomerId());
 
-        redisCouponService.issueCoupon(customerId, couponId);
-
-        return null;
+        return ResponseEntity.ok(redisCouponService.issueCoupon(couponId, customerId));
     }
 }

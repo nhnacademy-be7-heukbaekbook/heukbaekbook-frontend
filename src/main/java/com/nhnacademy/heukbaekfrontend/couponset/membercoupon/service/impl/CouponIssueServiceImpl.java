@@ -36,12 +36,12 @@ public class CouponIssueServiceImpl implements CouponIssueService {
 
         // 1. 발급 기간 유효 체크
         if (!checkCouponIssueTime(couponEntries, requestTime)) {
-            throw new CouponIssueTimeException("발급 가능 기간이 아닙니다");
+            throw new CouponIssueTimeException("발급 가능 기간이 아닙니다.");
         }
 
         // 2. 중복 발급 여부
-        if (!isCouponIssuedDuplicated(ISSUED_COUPON_KEY.formatted(couponId), customerId)) {
-            throw new DuplicatedCouponException("이미 발급 받은 쿠폰입니다");
+        if (isCouponIssuedDuplicated(ISSUED_COUPON_KEY.formatted(couponId), customerId)) {
+            throw new DuplicatedCouponException("이미 발급 받은 쿠폰입니다.");
         }
 
         // 3. 수량 검증 && 가능 시 -1
@@ -49,7 +49,7 @@ public class CouponIssueServiceImpl implements CouponIssueService {
         log.debug("Coupon Quantity decreased successfully");
 
         // 4. Rabbit MQ, 쿠폰 히스토리 저장 메세지 생산
-        LocalDateTime couponExpirationDate = getEarlierDateTime(LocalDateTime.now().plusDays((long)couponEntries.get("availableDuration")), (LocalDateTime) couponEntries.get("couponTimeEnd"));
+        LocalDateTime couponExpirationDate = getEarlierDateTime(LocalDateTime.now().plusDays((Integer)couponEntries.get("availableDuration")), LocalDateTime.parse((String)couponEntries.get("couponTimeEnd")));
         CouponIssueRequest couponIssueRequest = new CouponIssueRequest(couponId, customerId, couponExpirationDate);
         rabbitMessageSender.sendMessage(COUPON_ISSUE_EXCHANGE, COUPON_ISSUE_ROUTING_KEY, couponIssueRequest);
         log.debug("Coupon produce successful");
@@ -63,6 +63,8 @@ public class CouponIssueServiceImpl implements CouponIssueService {
 
 
     private boolean checkCouponIssueTime(Map<Object, Object> couponEntries, LocalDateTime requestTime) {
+        String test = (String)couponEntries.get("couponTimeStart");
+
         LocalDateTime couponTimeStart = LocalDateTime.parse((String)couponEntries.get("couponTimeStart"));
         LocalDateTime couponTimeEnd = LocalDateTime.parse((String)couponEntries.get("couponTimeEnd"));
 

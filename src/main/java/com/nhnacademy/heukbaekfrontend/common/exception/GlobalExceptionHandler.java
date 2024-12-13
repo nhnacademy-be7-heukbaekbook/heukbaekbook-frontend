@@ -1,5 +1,9 @@
 package com.nhnacademy.heukbaekfrontend.common.exception;
 
+import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.exception.CouponIssueTimeException;
+import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.exception.CouponQuntatiyException;
+import com.nhnacademy.heukbaekfrontend.couponset.membercoupon.exception.DuplicatedCouponException;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -82,5 +86,20 @@ public class GlobalExceptionHandler {
                 ? "템플릿 처리 중 오류가 발생했습니다." : ex.getMessage());
 
         return ERROR_PAGE;
+    }
+
+    @ExceptionHandler(DuplicatedCouponException.class)
+    public ResponseEntity<String> handleDuplicatedCouponException(DuplicatedCouponException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CouponIssueTimeException.class)
+    public ResponseEntity<String> handleCouponIssueTimeException(CouponIssueTimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(CouponQuntatiyException.class)
+    public ResponseEntity<String> handleCouponQuntatiyException(CouponQuntatiyException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
