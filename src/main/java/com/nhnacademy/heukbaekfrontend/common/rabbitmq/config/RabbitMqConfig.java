@@ -56,47 +56,11 @@ public class RabbitMqConfig {
         return rabbitTemplate;
     }
 
-
     // CouponIssue
 
     @Bean
     public DirectExchange couponIssueExchange() {
         return new DirectExchange(COUPON_ISSUE_EXCHANGE);
-    }
-
-    @Bean
-    public Queue couponIssueRequestQueue(){
-        return QueueBuilder.durable(COUPON_ISSUE_QUEUE)
-                .withArgument("x-dead-letter-exchange", COUPON_ISSUE_DEAD_LETTER_EXCHANGE)
-                .withArgument("x-dead-letter-routing-key", COUPON_ISSUE_DEAD_LETTER_ROUTING_KEY)
-                .build();
-    }
-
-    @Bean
-    public Binding couponIssueRequestBinding() {
-        return BindingBuilder.bind(couponIssueRequestQueue())
-                .to(couponIssueExchange())
-                .with(COUPON_ISSUE_ROUTING_KEY);
-    }
-
-
-    // CouponIssue DeadLetter
-
-    @Bean
-    public DirectExchange couponIssueDeadLetterExchange(){
-        return new DirectExchange(COUPON_ISSUE_DEAD_LETTER_EXCHANGE);
-    }
-
-    @Bean
-    public Queue couponIssueDeadLetterQueue(){
-        return QueueBuilder.durable(COUPON_ISSUE_DEAD_LETTER_QUEUE).build();
-    }
-
-    @Bean
-    public Binding couponIssueDeadLetterBinding() {
-        return BindingBuilder.bind(couponIssueDeadLetterQueue())
-                .to(couponIssueDeadLetterExchange())
-                .with(COUPON_ISSUE_DEAD_LETTER_ROUTING_KEY);
     }
 
 
