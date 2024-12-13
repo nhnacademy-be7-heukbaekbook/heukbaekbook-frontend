@@ -32,10 +32,10 @@ public class CouponPageController {
         MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute("memberResponse", memberResponse);
         Page<MemberCouponResponse> availableCoupons = couponPageService.getAvailableCoupons();
-        Page<CouponHistoryResponse> usedCoupons = couponPageService.getUsedCoupons();
+//        Page<CouponHistoryResponse> usedCoupons = couponPageService.getUsedCoupons();
 
         model.addAttribute("availableCoupons", availableCoupons);
-        model.addAttribute("usedCoupons", usedCoupons);
+        model.addAttribute("usedCoupons", null);
 
         return "mypage/mypage-coupons";
     }
