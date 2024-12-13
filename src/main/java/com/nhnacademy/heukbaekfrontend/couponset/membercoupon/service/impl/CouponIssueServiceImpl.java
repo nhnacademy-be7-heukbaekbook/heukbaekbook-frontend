@@ -36,7 +36,7 @@ public class CouponIssueServiceImpl implements CouponIssueService {
 
         // 1. 발급 기간 유효 체크
         if (!checkCouponIssueTime(couponEntries, requestTime)) {
-            throw new CouponIssueTimeException("이미 종료된 쿠폰입니다");
+            throw new CouponIssueTimeException("발급 가능 기간이 아닙니다");
         }
 
         // 2. 중복 발급 여부
@@ -49,7 +49,8 @@ public class CouponIssueServiceImpl implements CouponIssueService {
         log.debug("Coupon Quantity decreased successfully");
 
         // 4. Rabbit MQ, 쿠폰 히스토리 저장 메세지 생산
-        CouponIssueRequest couponIssueRequest = new CouponIssueRequest(couponId, customerId, (int)couponEntries.get("availableDuration"));
+        LocalDateTime couponExpirationDate = getEarlierDateTime(LocalDateTime.now().plusDays((long)couponEntries.get("availableDuration")), (LocalDateTime) couponEntries.get("couponTimeEnd"));
+        CouponIssueRequest couponIssueRequest = new CouponIssueRequest(couponId, customerId, couponExpirationDate);
         rabbitMessageSender.sendMessage(COUPON_ISSUE_EXCHANGE, COUPON_ISSUE_ROUTING_KEY, couponIssueRequest);
         log.debug("Coupon produce successful");
 
@@ -83,5 +84,8 @@ public class CouponIssueServiceImpl implements CouponIssueService {
         return redisTemplate.opsForSet().isMember(issuedCouponKey, customerId);
     }
 
+    private LocalDateTime getEarlierDateTime(LocalDateTime dateTime1, LocalDateTime dateTime2) {
+        return dateTime1.isBefore(dateTime2) ? dateTime1 : dateTime2;
+    }
 
 }
