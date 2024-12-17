@@ -11,17 +11,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
 
     private final CategoryAdmin categoryAdmin;
-    private final CategoryClient categoryClient;
+    private final RedisCategoryService redisCategoryService;
 
     public Page<CategoryDetailResponse> getAllCategories(Pageable pageable) {
         return categoryAdmin.getCategories(pageable);
@@ -44,7 +41,8 @@ public class CategoryService {
     }
 
     public List<CategorySummaryResponse> getTopCategories() {
-        return categoryClient.getTopCategories();
+//        return categoryClient.getTopCategories();
+        return redisCategoryService.getCategories();
     }
 
     public List<String> getCategoryPaths() {

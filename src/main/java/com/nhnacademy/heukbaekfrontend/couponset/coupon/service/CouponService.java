@@ -8,6 +8,7 @@ import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponRespo
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CouponService {
@@ -20,4 +21,6 @@ public interface CouponService {
     void deleteCoupon(Long couponId);
 
     CouponPageResponse getCouponPageResponse(Pageable pageable);
+
+    List<CouponResponse> getDownloadableCouponsByBookId(Long bookId);
 }

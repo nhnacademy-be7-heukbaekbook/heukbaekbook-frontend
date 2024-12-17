@@ -42,7 +42,7 @@ public class CartServiceImpl implements CartService {
         this.redisTemplate = redisTemplate;
         this.hashOperations = redisTemplate.opsForHash();
         this.redisBookService = redisBookService;
-        this.cartClient = cartClient;;
+        this.cartClient = cartClient;
         this.bookClient = bookClient;
         this.commonService = commonService;
     }

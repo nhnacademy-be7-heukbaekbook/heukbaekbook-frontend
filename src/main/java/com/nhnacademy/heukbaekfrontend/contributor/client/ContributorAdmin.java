@@ -2,8 +2,6 @@ package com.nhnacademy.heukbaekfrontend.contributor.client;
 
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorUpdateRequest;
-import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherCreateRequest;
-import com.nhnacademy.heukbaekfrontend.contributor.dto.request.PublisherUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.data.domain.Page;

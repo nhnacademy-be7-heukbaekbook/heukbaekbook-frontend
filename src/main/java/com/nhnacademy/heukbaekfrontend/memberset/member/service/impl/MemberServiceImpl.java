@@ -7,10 +7,10 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
 import com.nhnacademy.heukbaekfrontend.oauth.dto.OAuthMemberCreateRequest;
 import feign.FeignException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -90,8 +90,8 @@ public class MemberServiceImpl implements MemberService {
 //    }
 
     @Override
-    public MyPageResponse createMyPageResponse() {
-        return memberClient.getMyPageResponse();
+    public MyPageResponse createMyPageResponse(Pageable pageable) {
+        return memberClient.getMyPageResponse(pageable);
     }
 
     @Override

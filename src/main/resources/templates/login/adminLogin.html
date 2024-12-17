@@ -125,9 +125,9 @@
         }
 
         .error-message {
-            color: red;
+            color: #ff231c;
             margin-bottom: 1rem;
-            font-weight: bold;
+            font-size: 1.1rem;
         }
     </style>
 </head>
@@ -135,7 +135,7 @@
 <!-- 로그인 폼 -->
 <div class="login-container">
     <h2>관리자 로그인</h2>
-    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+    <div th:if="${errorMessage}" class="error-message" th:text="${errorMessage}"></div>
     <form id="loginForm" th:action="@{/admin/login}" method="post">
         <div class="form-group">
             <label for="loginId">아이디</label>

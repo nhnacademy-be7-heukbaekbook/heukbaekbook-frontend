@@ -1,7 +1,6 @@
 package com.nhnacademy.heukbaekfrontend.contributor.service;
 
 import com.nhnacademy.heukbaekfrontend.contributor.client.ContributorAdmin;
-import com.nhnacademy.heukbaekfrontend.contributor.client.ContributorAdmin;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorCreateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.request.ContributorUpdateRequest;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.response.ContributorCreateResponse;
@@ -16,29 +15,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class ContributorService {
 
-    private final ContributorAdmin ContributorAdmin;
+    private final ContributorAdmin contributorAdmin;
 
-    public ContributorService(ContributorAdmin ContributorAdmin) {
-        this.ContributorAdmin = ContributorAdmin;
+    public ContributorService(ContributorAdmin contributorAdmin) {
+        this.contributorAdmin = contributorAdmin;
     }
 
     public ResponseEntity<ContributorCreateResponse> registerContributor(ContributorCreateRequest request) {
-        return ContributorAdmin.registerContributor(request);
+        return contributorAdmin.registerContributor(request);
     }
 
     public Page<ContributorDetailResponse> getContributors(Pageable pageable) {
-        return ContributorAdmin.getContributors(pageable).getBody();
+        return contributorAdmin.getContributors(pageable).getBody();
     }
 
     public ResponseEntity<ContributorUpdateResponse> updateContributor(Long contributorId, ContributorUpdateRequest request) {
-        return ContributorAdmin.updateContributor(contributorId, request);
+        return contributorAdmin.updateContributor(contributorId, request);
     }
 
     public ResponseEntity<ContributorDeleteResponse> deleteContributor(Long contributorId) {
-        return ContributorAdmin.deleteContributor(contributorId);
+        return contributorAdmin.deleteContributor(contributorId);
     }
 
     public ContributorDetailResponse getContributor(Long contributorId) {
-        return ContributorAdmin.getContributor(contributorId).getBody();
+        return contributorAdmin.getContributor(contributorId).getBody();
     }
 }

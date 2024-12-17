@@ -7,10 +7,14 @@ import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageOrderDetailRes
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MyPageResponse;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.LogoutService;
 import com.nhnacademy.heukbaekfrontend.memberset.member.service.MemberService;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
+import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -28,13 +33,14 @@ public class MemberController {
 
     private final MemberService memberService;
     private final LogoutService logoutService;
+    private final ReviewService reviewService;
 
     public static final String MEMBER_RESPONSE = "memberResponse";
 
     @GetMapping
-    public String getMyPageHome(Model model) {
-        MyPageResponse myPageResponse = memberService.createMyPageResponse();
-//        MemberResponse memberResponse = memberService.getMember().getBody();
+    public String getMyPageHome(Model model, @PageableDefault Pageable pageable) {
+        log.info("pageable: {}", pageable);
+        MyPageResponse myPageResponse = memberService.createMyPageResponse(pageable);
         model.addAttribute("gradeDto", myPageResponse.gradeDto());
         model.addAttribute("myPageResponse", myPageResponse);
         return "mypage/mypage";
@@ -60,11 +66,10 @@ public class MemberController {
             redirectAttributes.addFlashAttribute("error", bindingResult.getAllErrors().getFirst().getDefaultMessage());
             return "redirect:/members/mypage/info";
         }
+
         Optional<MemberResponse> optionalMemberResponse = memberService.updateMember(memberUpdateRequest);
 
-
         if (optionalMemberResponse.isEmpty()) {
-            // error
             redirectAttributes.addFlashAttribute("error", "처리하지 못했습니다. 다시 시도해주세요.");
         } else {
             model.addAttribute("gradeDto", optionalMemberResponse.get().grade());
@@ -79,7 +84,6 @@ public class MemberController {
         MemberResponse memberResponse = memberService.getMember().getBody();
         model.addAttribute("gradeDto", memberResponse.grade());
         return "mypage/mypage-withdraw";
-
     }
 
     @PostMapping("/withdraw")
@@ -93,8 +97,9 @@ public class MemberController {
     }
 
     @GetMapping("/orders")
-    public ModelAndView getMyPageOrders() {
-        MyPageResponse myPageResponse = memberService.createMyPageResponse();
+    public ModelAndView getMyPageOrders(@PageableDefault Pageable pageable) {
+        log.info("pageable: {}", pageable);
+        MyPageResponse myPageResponse = memberService.createMyPageResponse(pageable);
         log.info("myPageResponse: {}", myPageResponse);
 
         return new ModelAndView("mypage/orders")
@@ -108,14 +113,24 @@ public class MemberController {
         MyPageOrderDetailResponse myPageOrderDetailResponse = memberService.getMyPageOrderDetail(orderId);
         log.info("myPageOrderDetailResponse: {}", myPageOrderDetailResponse);
 
+        List<ReviewDetailResponse> reviews = reviewService.getMyReviewsByOrder(orderId);
+
+        myPageOrderDetailResponse.orderDetailResponse().books().forEach(book -> {
+            boolean hasReview = reviews.stream()
+                    .anyMatch(review -> review.bookId().equals(book.getId()));
+            book.setHasReview(hasReview);
+        });
+
         return new ModelAndView("mypage/orderDetail")
                 .addObject("myPageOrderDetailResponse", myPageOrderDetailResponse)
-                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto());
+                .addObject("gradeDto", myPageOrderDetailResponse.gradeDto())
+                .addObject("orderId", orderId)
+                .addObject("reviews", reviews);
     }
-
-    @GetMapping("/reviews")
-    public ModelAndView getMyPageReviews() {
-        return new ModelAndView("mypage/reviews")
-                .addObject("gradeDto", memberService.getMembersGrade().get());
-    }
+//
+//    @GetMapping("/reviews")
+//    public ModelAndView getMyPageReviews() {
+//        return new ModelAndView("mypage/reviews")
+//                .addObject("gradeDto", memberService.getMembersGrade().get());
+//    }
 }

@@ -10,6 +10,7 @@ import com.nhnacademy.heukbaekfrontend.category.dto.response.CategoryUpdateRespo
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
 import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
+import com.nhnacademy.heukbaekfrontend.couponset.couponpolicy.service.CouponPolicyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
@@ -42,6 +43,9 @@ class CategoryAdminControllerTest {
     private CategoryService categoryService;
 
     @MockBean
+    private CouponPolicyService couponPolicyService;
+
+    @MockBean
     private CookieUtil cookieUtil;
 
     @MockBean
@@ -50,9 +54,9 @@ class CategoryAdminControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService, couponPolicyService)).build();
         MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService))
+        mockMvc = MockMvcBuilders.standaloneSetup(new CategoryAdminController(categoryService, couponPolicyService))
                 .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
                 .build();
     }

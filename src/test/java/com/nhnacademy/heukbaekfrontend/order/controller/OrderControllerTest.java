@@ -4,7 +4,6 @@ import com.nhnacademy.heukbaekfrontend.memberset.address.dto.MemberAddressRespon
 import com.nhnacademy.heukbaekfrontend.memberset.member.dto.MemberDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderBookRequest;
 import com.nhnacademy.heukbaekfrontend.order.dto.request.OrderCreateRequest;
-import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderDetailResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.OrderFormResponse;
 import com.nhnacademy.heukbaekfrontend.order.dto.response.WrappingPaperResponse;
 import com.nhnacademy.heukbaekfrontend.order.service.OrderService;

@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -53,6 +52,11 @@ class BaseLoginFilterTest {
             @Override
             protected String getSuccessRedirectUrl() {
                 return "/home";
+            }
+
+            @Override
+            protected String getFailureRedirectUrl() {
+                return "/login";
             }
         };
     }
@@ -109,7 +113,7 @@ class BaseLoginFilterTest {
         baseLoginFilter.unsuccessfulAuthentication(request, response, new BadCredentialsException("Authentication failed"));
 
         // Assert
-        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_UNAUTHORIZED);
+        assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_FOUND);
+        assertThat(response.getRedirectedUrl()).isEqualTo("/login");
     }
-
 }

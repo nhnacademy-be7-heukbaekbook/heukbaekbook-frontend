@@ -7,6 +7,10 @@ import com.nhnacademy.heukbaekfrontend.bookCategory.service.BookCategoryService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.ParentCategoryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.dto.response.CouponResponse;
+import com.nhnacademy.heukbaekfrontend.couponset.coupon.service.CouponService;
+import com.nhnacademy.heukbaekfrontend.review.dto.response.ReviewDetailResponse;
+import com.nhnacademy.heukbaekfrontend.review.service.ReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,10 +31,10 @@ import java.util.List;
 public class BookController {
 
     private final BookService bookService;
-
     private final CategoryService categoryService;
-
     private final BookCategoryService bookCategoryService;
+    private final ReviewService reviewService;
+    private final CouponService couponService;
 
     @GetMapping("/category")
     public ModelAndView viewBooksByCategory(@RequestParam Long categoryId,
@@ -48,19 +52,24 @@ public class BookController {
     }
 
     @GetMapping("/detail")
-    public ModelAndView viewBookDetail(HttpServletRequest request, @RequestParam Long bookId) {
+    public ModelAndView viewBookDetail(@RequestParam Long bookId) {
         log.info("bookId : {}", bookId);
         ModelAndView modelAndView = new ModelAndView("book/detail");
 
         BookViewResponse bookViewResponse = bookService.getBookDetailByBookId(bookId);
         List<ParentCategoryResponse> parentCategoryResponses = bookCategoryService.getBookCategoriesByBookId(bookId);
+        List<ReviewDetailResponse> reviews = reviewService.getMyReviewsByBook(bookId);
+        List<CouponResponse> downloadableCoupons = couponService.getDownloadableCouponsByBookId(bookId);
+
         log.info("parentCategoryResponses : {}", parentCategoryResponses);
+        log.info("reviews : {}", reviews);
 
         modelAndView
                 .addObject("book", bookViewResponse)
                 .addObject("categories", parentCategoryResponses)
-                .addObject("availableCoupons", List.of());
-        ;
+                .addObject("reviews", reviews)
+                .addObject("availableCoupons", downloadableCoupons);
+
         return modelAndView;
     }
 }

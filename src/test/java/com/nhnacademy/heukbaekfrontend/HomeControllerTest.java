@@ -5,7 +5,6 @@ import com.nhnacademy.heukbaekfrontend.book.dto.response.BookResponse;
 import com.nhnacademy.heukbaekfrontend.book.service.BookService;
 import com.nhnacademy.heukbaekfrontend.category.dto.response.CategorySummaryResponse;
 import com.nhnacademy.heukbaekfrontend.category.service.CategoryService;
-import com.nhnacademy.heukbaekfrontend.common.filter.ReissueFilter;
 import com.nhnacademy.heukbaekfrontend.common.util.CookieUtil;
 import com.nhnacademy.heukbaekfrontend.contributor.dto.ContributorSummaryResponse;
 import com.nhnacademy.heukbaekfrontend.publisher.dto.PublisherSummaryResponse;
